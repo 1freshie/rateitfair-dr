@@ -1,3 +1,33 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800,900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .heading {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #084887;
+  }
+
+  .paragraph {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    color: #f9ab55;
+  }
+
+  .button {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #f7f5fb;
+    background-color: #f58a07;
+    border-radius: 30px;
+    padding: 10px 20px;
+    text-align: center;
+  }
+
+  .button:hover {
+    background-color: #f9ab55;
+  }
+}
