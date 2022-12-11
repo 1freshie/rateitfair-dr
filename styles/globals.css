@@ -7,12 +7,16 @@
 @layer components {
   .heading {
     font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    line-height: 2rem;
     font-weight: 600;
     color: #084887;
   }
 
   .paragraph {
     font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    line-height: 1.5rem;
     font-weight: 400;
     color: #f9ab55;
   }
@@ -20,6 +24,8 @@
   .button {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.5rem;
     color: #f7f5fb;
     background-color: #f58a07;
     border-radius: 30px;
@@ -29,5 +35,83 @@
 
   .button:hover {
     background-color: #f9ab55;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 20rem;
+  }
+
+  .input {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 400;
+    color: #084887;
+    border: 1px solid #909cc2;
+    background: #f7f5fb;
+    border-radius: 30px;
+    padding: 10px 20px;
+    height: 36px;
+    width: 100%;
+  }
+
+  @media screen and (min-width: 768px) {
+    .heading {
+      font-size: 1.875rem /* 30px */;
+      line-height: 2.25rem /* 36px */;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .heading {
+      font-size: 2.25rem /* 36px */;
+      line-height: 2.5rem /* 40px */;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .paragraph,
+    .input,
+    .button {
+      font-size: 1.125rem /* 18px */;
+      line-height: 1.75rem /* 28px */;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .paragraph,
+    .input,
+    .button {
+      font-size: 1.25rem /* 20px */;
+      line-height: 1.75rem /* 28px */;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .form {
+      width: 24rem;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .form {
+      width: 28rem;
+    }
+  }
+
+  @media screen and (min-width: 768px) {
+    .input {
+      height: 44px;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .input {
+      height: 56px;
+    }
   }
 }

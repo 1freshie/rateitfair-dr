@@ -1,5 +1,4 @@
 import StarRow from '../components/Star/StarRow';
-import Star from '../components/Star/Star';
 
 const HomePage = () => {
   // TODO: add a useEffect or smth else to animate the stars
@@ -10,7 +9,7 @@ const HomePage = () => {
         <h1 className="heading font-bold text-3xl md:text-4xl lg:text-5xl">
           Rate whatever you want. Whenever you want
         </h1>
-        <p className="paragraph text-base md:text-lg lg:text-xl">
+        <p className="paragraph">
           We have a large list of your favourite companies' products. Rate the
           ones you used and share your opinion! Be a part of them improving!
         </p>

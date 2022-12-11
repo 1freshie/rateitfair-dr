@@ -14,11 +14,11 @@ const StarRow: React.FC<StarRowProps> = ({ starCount, width, height }) => {
   const [starRow, setStarRow] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
-    let starRow: JSX.Element[] = [];
+    let currentStarRow: JSX.Element[] = [];
     for (let i = 0; i < starCount; i++) {
-      starRow.push(<Star width={width} height={height} key={i} />);
+      currentStarRow.push(<Star width={width} height={height} key={i} />);
     }
-    setStarRow(starRow);
+    setStarRow(currentStarRow);
   }, [starCount]);
 
   // useEffect(() => {
