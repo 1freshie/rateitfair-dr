@@ -30,6 +30,7 @@ const LoginPage = () => {
         <Link href="#" className="paragraph mt-5 hover:text-primary--orange">
           Forgot your password? Click here.
         </Link>
+        {/* Forgot your password field must be button with functionality, not Link! */}
         <Link href="/signup" className="paragraph hover:text-primary--orange">
           Don't have an account? Click here.
         </Link>
