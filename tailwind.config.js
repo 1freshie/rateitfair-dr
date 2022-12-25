@@ -15,6 +15,7 @@ module.exports = {
       'secondary--orange': '#F9AB55',
       'secondary--gray': '#909CC2',
       'background--white': '#F7F5FB',
+      'error--red': '#FF522C',
     },
     fontFamily: {
       Montserrat: ['Montserrat', ...fontFamily.sans],
