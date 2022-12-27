@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { auth } from '../../firebase/firebaseApp';
@@ -11,11 +10,10 @@ import SignInWithGoogle from '../../components/SignIn/SignInWithGoogle';
 
 const SignUpPage = () => {
   const [user, loading, error] = useAuthState(auth);
-  const router = useRouter();
 
-  if (user) {
-    router.push('/');
-  }
+  // if (user) {
+  //   return <h1>Welcome, {user.displayName}</h1>
+  // }
 
   if (loading)
     return (
@@ -54,7 +52,10 @@ const SignUpPage = () => {
           placeholder="Confirm your password..."
           className="input"
         />
-        <button type="submit" className="button mt-3 md:mt-5 duration-300 hover:bg-secondary--orange">
+        <button
+          type="submit"
+          className="button mt-3 md:mt-5 duration-300 hover:bg-secondary--orange"
+        >
           Sign Up
         </button>
       </form>
