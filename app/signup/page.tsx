@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { auth } from '../../firebase/firebaseApp';
-import SignInWithGoogle from '../../components/SignIn/SignInWithGoogle';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import SignInWithFacebook from '../../components/SignIn/SignInWithFacebook';
+import SignInWithGoogle from '../../components/SignIn/SignInWithGoogle';
 
 const SignUpPage = () => {
   const [user, loading, error] = useAuthState(auth);
@@ -23,11 +24,13 @@ const SignUpPage = () => {
       </div>
     );
 
-  if (error) return (
-    <div className="flex h-96 flex-1 justify-center items-center">
-      <p className="paragraph text-center text-error--red">{error.message}</p>;
-    </div>
-  );
+  if (error)
+    return (
+      <div className="flex h-96 flex-1 justify-center items-center">
+        <p className="paragraph text-center text-error--red">{error.message}</p>
+        ;
+      </div>
+    );
 
   return (
     <div className="h-full flex flex-col items-center justify-center">
@@ -51,23 +54,23 @@ const SignUpPage = () => {
           placeholder="Confirm your password..."
           className="input"
         />
-        <p className="paragraph text-secondary--gray">Or continue with...</p>
-        <div className="flex flex-row justify-between w-full gap-x-6">
-          <button className="input flex items-center justify-between">
-            <p className="paragraph text-secondary--gray">Facebook</p>
-          </button>
-          <SignInWithGoogle />
-        </div>
-        <Link
-          href="/login"
-          className="paragraph mt-5 hover:text-primary--orange"
-        >
-          Already have an account? Click here.
-        </Link>
-        <button type="submit" className="button">
+        <button type="submit" className="button mt-3 md:mt-5 duration-300 hover:bg-secondary--orange">
           Sign Up
         </button>
       </form>
+      <div className="form mt-4 md:mt-6 gap-y-3 max-w-xs md:max-w-sm lg:max-w-md">
+        <p className="paragraph text-secondary--gray">Or continue with...</p>
+        <div className="flex flex-row justify-between w-full gap-x-6">
+          <SignInWithFacebook />
+          <SignInWithGoogle />
+        </div>
+      </div>
+      <Link
+        href="/login"
+        className="paragraph mt-6 duration-300 hover:text-primary--orange"
+      >
+        Already have an account? Click here.
+      </Link>
     </div>
   );
 };

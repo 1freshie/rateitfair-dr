@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import SignInWithFacebook from '../../components/SignIn/SignInWithFacebook';
+import SignInWithGoogle from '../../components/SignIn/SignInWithGoogle';
 
 const LoginPage = () => {
   return (
@@ -18,26 +20,29 @@ const LoginPage = () => {
           placeholder="Enter your password..."
           className="input"
         />
-        <p className="paragraph text-secondary--gray">Or continue with...</p>
-        <div className="flex flex-row justify-between w-full gap-x-6">
-          <button className="input flex items-center justify-between">
-            <p className="paragraph text-secondary--gray">Facebook</p>
-          </button>
-          <button className="input flex items-center justify-between">
-            <p className="paragraph text-secondary--gray">Google</p>
-          </button>
-        </div>
-        <Link href="#" className="paragraph mt-5 hover:text-primary--orange">
-          Forgot your password? Click here.
-        </Link>
-        {/* Forgot your password field must be button with functionality, not Link! */}
-        <Link href="/signup" className="paragraph hover:text-primary--orange">
-          Don't have an account? Click here.
-        </Link>
-        <button type="submit" className="button">
+        <button type="submit" className="button mt-3 md:mt-5 duration-300 hover:bg-secondary--orange">
           Login
         </button>
       </form>
+      <div className="form mt-4 md:mt-6 gap-y-3 max-w-xs md:max-w-sm lg:max-w-md">
+        <p className="paragraph text-secondary--gray">Or continue with...</p>
+        <div className="flex flex-row justify-between w-full gap-x-6">
+          <SignInWithFacebook />
+          <SignInWithGoogle />
+        </div>
+      </div>
+      <Link
+        href="#"
+        className="paragraph mt-5 duration-300 hover:text-primary--orange"
+      >
+        Forgot your password? Click here.
+      </Link>
+      <Link
+        href="/signup"
+        className="paragraph duration-300 hover:text-primary--orange"
+      >
+        Don't have an account? Click here.
+      </Link>
     </div>
   );
 };

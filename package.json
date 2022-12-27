@@ -6,6 +6,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@fortawesome/free-brands-svg-icons": "^6.2.1",
+    "@fortawesome/free-solid-svg-icons": "^6.2.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@heroicons/react": "^2.0.13",
     "@next/font": "^13.0.6",
     "encoding": "^0.1.13",

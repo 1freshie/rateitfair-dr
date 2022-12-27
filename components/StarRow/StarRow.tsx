@@ -1,15 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { StarIcon } from '@heroicons/react/24/solid';
+import { useEffect, useState } from 'react';
 
 type StarRowProps = {
   stars: number;
-  width: number;
-  height: number;
 };
 
-const StarRow: React.FC<StarRowProps> = ({ stars, width, height }) => {
+const StarRow: React.FC<StarRowProps> = ({ stars }) => {
   const [toFill, setToFill] = useState<boolean[]>([]);
 
   useEffect(() => {
@@ -49,11 +47,10 @@ const StarRow: React.FC<StarRowProps> = ({ stars, width, height }) => {
     <>
       {toFill.map((value: boolean, index: number) => (
         <StarIcon
-          width={width}
-          height={height}
           fill={value ? '#f9ab55' : 'none'}
           stroke="#f9ab55"
           key={index}
+          className="w-24 md:w-28 lg:w-32 xl:w-36 h-24 md:h-28 lg:h-32 xl:h-36"
         />
       ))}
     </>
