@@ -1,34 +1,34 @@
-'use client';
+// 'use client';
 
 import Link from 'next/link';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { auth } from '../../firebase/firebaseApp';
 import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import SignInWithFacebook from '../../components/SignIn/SignInWithFacebook';
 import SignInWithGoogle from '../../components/SignIn/SignInWithGoogle';
+import { auth } from '../../firebase/firebaseApp';
 
 const SignUpPage = () => {
-  const [user, loading, error] = useAuthState(auth);
+  // const [user, loading, error] = useAuthState(auth);
 
-  // if (user) {
-  //   return <h1>Welcome, {user.displayName}</h1>
-  // }
+  // // if (user) {
+  // //   return <h1>Welcome, {user.displayName}</h1>
+  // // }
 
-  if (loading)
-    return (
-      <div className="flex h-96 flex-1 justify-center items-center">
-        <LoadingSpinner />
-      </div>
-    );
+  // if (loading)
+  //   return (
+  //     <div className="flex h-96 flex-1 justify-center items-center">
+  //       <LoadingSpinner />
+  //     </div>
+  //   );
 
-  if (error)
-    return (
-      <div className="flex h-96 flex-1 justify-center items-center">
-        <p className="paragraph text-center text-error--red">{error.message}</p>
-        ;
-      </div>
-    );
+  // if (error)
+  //   return (
+  //     <div className="flex h-96 flex-1 justify-center items-center">
+  //       <p className="paragraph text-center text-error--red">{error.message}</p>
+  //       ;
+  //     </div>
+  //   );
 
   return (
     <div className="h-full flex flex-col items-center justify-center">

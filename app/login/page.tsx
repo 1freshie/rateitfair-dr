@@ -1,8 +1,34 @@
+'use client';
+
 import Link from 'next/link';
+import { useAuthState } from 'react-firebase-hooks/auth';
+
+import { auth } from '../../firebase/firebaseApp';
+import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
 import SignInWithFacebook from '../../components/SignIn/SignInWithFacebook';
 import SignInWithGoogle from '../../components/SignIn/SignInWithGoogle';
 
 const LoginPage = () => {
+  const [user, loading, error] = useAuthState(auth);
+
+  // if (user) {
+  //   return <h1>Welcome, {user.displayName}</h1>
+  // }
+
+  if (loading)
+    return (
+      <div className="flex h-96 flex-1 justify-center items-center">
+        <LoadingSpinner />
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex h-96 flex-1 justify-center items-center">
+        <p className="paragraph text-center text-error--red">{error.message}</p>
+        ;
+      </div>
+    );
   return (
     <div className="h-full flex flex-col items-center justify-center">
       <header className="mt-16 text-center">
@@ -20,7 +46,10 @@ const LoginPage = () => {
           placeholder="Enter your password..."
           className="input"
         />
-        <button type="submit" className="button mt-3 md:mt-5 duration-300 hover:bg-secondary--orange">
+        <button
+          type="submit"
+          className="button mt-3 md:mt-5 duration-300 hover:bg-secondary--orange"
+        >
           Login
         </button>
       </form>

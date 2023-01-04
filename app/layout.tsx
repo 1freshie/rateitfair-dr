@@ -9,7 +9,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="font-Montserrat">
       <body className="py-5 px-7 md:py-10 md:px-14 h-screen max-h-screen bg-background--white">
-        <Navbar isLoggedIn={false} />
+        <Navbar />
         {children}
       </body>
     </html>

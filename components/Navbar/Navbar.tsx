@@ -1,12 +1,9 @@
 // 'use client';
 
 import Link from 'next/link';
+import NavState from './NavState';
 
-type NavbarProps = {
-  isLoggedIn: boolean;
-};
-
-const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
+const Navbar = () => {
   return (
     <nav className="sticky top-0 w-full max-h-20 h-20 bg-background--white flex flex-col gap-y-4 md:gap-y-0 md:flex-row justify-between items-center tracking-wide">
       <Link
@@ -19,25 +16,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
         <li className="duration-300 hover:text-primary--orange">
           <Link href="/">Home</Link>
         </li>
-        {isLoggedIn ? (
-          <>
-            <li className="duration-300 hover:text-primary--orange">
-              <Link href="/login">Products</Link>
-            </li>
-            <li className="duration-300 hover:text-primary--orange">
-              <Link href="/signup">Logout</Link>
-            </li>
-          </>
-        ) : (
-          <>
-            <li className="duration-300 hover:text-primary--orange">
-              <Link href="/login">Login</Link>
-            </li>
-            <li className="duration-300 hover:text-primary--orange">
-              <Link href="/signup">Sign Up</Link>
-            </li>
-          </>
-        )}
+        <NavState />
       </ul>
     </nav>
   );
