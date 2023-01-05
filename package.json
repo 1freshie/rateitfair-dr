@@ -13,7 +13,7 @@
     "@next/font": "^13.0.6",
     "encoding": "^0.1.13",
     "firebase": "^9.15.0",
-    "next": "latest",
+    "next": "^13.1.2-canary.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-firebase-hooks": "^5.1.1"

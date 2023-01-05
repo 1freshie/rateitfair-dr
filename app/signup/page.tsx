@@ -31,7 +31,7 @@ const SignUpPage = () => {
   //   );
 
   return (
-    <div className="h-full flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center">
       <header className="mt-16 text-center">
         <h1 className="heading">Here for a first time?</h1>
         <p className="paragraph mt-2 md:mt-3">Create your new account!</p>

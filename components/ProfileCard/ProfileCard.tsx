@@ -1,15 +1,24 @@
 'use client';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
+
 import { auth } from '../../firebase/firebaseApp';
+import { signOutUser } from '../../context/auth-context';
+import { useRouter } from 'next/navigation';
 
 const ProfileCard: React.FC = () => {
   const [user] = useAuthState(auth);
+  const router = useRouter();
 
   console.log(user?.photoURL);
 
+  const handleSignOut = async () => {
+    await signOutUser();
+    router.push('/');
+  };
+
   return (
-    <div className="h-2/3 flex flex-col flex-1 justify-center items-center border border-primary--blue rounded-[30px] p-6">
+    <div className="flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-6">
       <div className="flex flex-col justify-center items-center">
         <img
           src={user?.photoURL || 'https://via.placeholder.com/110'}
@@ -37,6 +46,12 @@ const ProfileCard: React.FC = () => {
           <span className="paragraph text-secondary--gray">{user?.email}</span>
         </span>
       </div>
+      <button
+        onClick={handleSignOut}
+        className="button mt-5 md:mt-7 duration-300 hover:bg-secondary--orange"
+      >
+        Sign out
+      </button>
     </div>
   );
 };

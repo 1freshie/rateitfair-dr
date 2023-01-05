@@ -1,5 +1,5 @@
-import '../styles/globals.css';
 import Navbar from '../components/Navbar/Navbar';
+import '../styles/globals.css';
 
 export default function RootLayout({
   children,
@@ -7,8 +7,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="font-Montserrat">
-      <body className="py-5 px-7 md:py-10 md:px-14 h-screen max-h-screen bg-background--white">
+    <html lang="en">
+      <body className="py-5 px-7 md:py-10 md:px-14 min-h-screen bg-background--white font-Montserrat">
         <Navbar />
         {children}
       </body>

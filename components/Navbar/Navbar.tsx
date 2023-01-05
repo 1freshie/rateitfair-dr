@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import NavState from './NavState';
 
+// LASKOV HELP TUPIQ HEIGHT
+
 const Navbar = () => {
   return (
-    <nav className="sticky top-0 w-full max-h-20 h-20 bg-background--white flex flex-col gap-y-4 md:gap-y-0 md:flex-row justify-between items-center tracking-wide">
+    <nav className="sticky top-0 w-full h-20 max-h-20 bg-background--white flex flex-col gap-y-4 md:gap-y-0 md:flex-row justify-between items-center tracking-wide">
       <Link
         href="/"
         className="font-extrabold text-3xl lg:text-5xl text-primary--orange select-none duration-300 hover:text-secondary--orange"
