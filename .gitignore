@@ -37,3 +37,6 @@ next-env.d.ts
 
 #backup
 /backup
+
+# Firebase cache
+.firebase/

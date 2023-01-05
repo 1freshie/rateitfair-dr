@@ -1,24 +1,37 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-import { auth } from '../../firebase/firebaseApp';
+import { faEnvelope, faStar } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { signOutUser } from '../../context/auth-context';
-import { useRouter } from 'next/navigation';
+import { auth } from '../../firebase/firebaseApp';
+import AuthState from '../AuthState/AuthState';
+
+const iconStyle = {
+  width: '20px',
+  height: '20px',
+  color: '#909CC2',
+};
 
 const ProfileCard: React.FC = () => {
-  const [user] = useAuthState(auth);
+  const [user, loading, error] = useAuthState(auth);
   const router = useRouter();
 
-  console.log(user?.photoURL);
+  // console.log(user?.photoURL);
 
   const handleSignOut = async () => {
     await signOutUser();
     router.push('/');
   };
 
+  if (loading || error) {
+    return <AuthState />;
+  }
+
   return (
-    <div className="flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-6">
+    <div className="w-[350px] lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-6">
       <div className="flex flex-col justify-center items-center">
         <img
           src={user?.photoURL || 'https://via.placeholder.com/110'}
@@ -30,21 +43,17 @@ const ProfileCard: React.FC = () => {
         <h1 className="heading mt-3">{user?.displayName}</h1>
         <p className="paragraph mt-2">User | Organization | Admin</p>
       </div>
-      <div className="flex flex-col justify-center items-center mt-6 space-y-1">
-        <span className="flex items-center space-x-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-            aria-label="Email address"
-            className="w-4 h-4 text-secondary--gray"
-          >
-            <path
-              fill="currentColor"
-              d="M274.6,25.623a32.006,32.006,0,0,0-37.2,0L16,183.766V496H496V183.766ZM464,402.693,339.97,322.96,464,226.492ZM256,51.662,454.429,193.4,311.434,304.615,256,268.979l-55.434,35.636L57.571,193.4ZM48,226.492,172.03,322.96,48,402.693ZM464,464H48V440.735L256,307.021,464,440.735Z"
-            ></path>
-          </svg>
-          <span className="paragraph text-secondary--gray">{user?.email}</span>
-        </span>
+      <div className="w-5/6 flex flex-col lg:flex-row items-center justify-between mt-6">
+        <FontAwesomeIcon icon={faEnvelope} style={iconStyle} />
+        <p className="paragraph text-secondary--gray p-1">
+          {user?.email || ''}
+        </p>
+      </div>
+      <div className="w-5/6 flex flex-col lg:flex-row items-center justify-between">
+        <FontAwesomeIcon icon={faStar} style={iconStyle} />
+        <p className="paragraph text-secondary--gray">
+          9999 rated products
+        </p>
       </div>
       <button
         onClick={handleSignOut}
