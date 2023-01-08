@@ -26,10 +26,11 @@ const iconStyle = {
 
 const ProfileCard: React.FC = () => {
   const [user, loading, error] = useAuthState(auth);
-  const [userRole, setUserRole] = useState("");
+  const [userRole, setUserRole] = useState("Loading...");
   const [userRatedProductsCount, setUserRatedProductsCount] = useState(0);
   const router = useRouter();
 
+  // Needs optimization
   useEffect(() => {
     if (user) {
       const userRef = doc(db, "users", user!.uid);
@@ -51,7 +52,7 @@ const ProfileCard: React.FC = () => {
     //   setUserRatedProductsCount(userSnap.data()!.ratedProductsCount);
     // };
     // getUserInfo();
-  }, []);
+  }, [user]);
 
   // console.log(user?.photoURL);
 
