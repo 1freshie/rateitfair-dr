@@ -25,6 +25,7 @@ export const signInWithGoogle = async () => {
         comment: "",
       },
     ],
+    ratedProductsCount: 0,
     createdAt: new Date(),
   });
 };
@@ -43,6 +44,7 @@ export const signInWithFacebook = async () => {
         comment: "",
       },
     ],
+    ratedProductsCount: 0,
     createdAt: new Date(),
   });
 };
