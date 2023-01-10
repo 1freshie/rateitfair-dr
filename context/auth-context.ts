@@ -4,18 +4,23 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebaseApp";
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
 
-export const signInWithGoogle = async () => {
+export async function signInWithGoogle() {
   const result = await signInWithPopup(auth, googleProvider);
+  const { uid, displayName, email, photoURL } = result.user;
 
   const userRef = collection(db, "users");
-  const { uid } = result.user;
+
   await setDoc(doc(userRef, uid), {
+    id: uid,
+    username: displayName,
+    email: email,
+    photoURL: photoURL,
     role: "User",
     orgId: "",
     ratedProducts: [
@@ -28,13 +33,19 @@ export const signInWithGoogle = async () => {
     ratedProductsCount: 0,
     createdAt: new Date(),
   });
-};
+}
 
-export const signInWithFacebook = async () => {
+export async function signInWithFacebook() {
   const result = await signInWithPopup(auth, facebookProvider);
+  const { uid, displayName, email, photoURL } = result.user;
+
   const userRef = collection(db, "users");
-  const { uid } = result.user;
+
   await setDoc(doc(userRef, uid), {
+    id: uid,
+    username: displayName,
+    email: email,
+    photoURL: photoURL,
     role: "User",
     orgId: "",
     ratedProducts: [
@@ -47,8 +58,8 @@ export const signInWithFacebook = async () => {
     ratedProductsCount: 0,
     createdAt: new Date(),
   });
-};
+}
 
-export const signOutUser = async () => {
+export async function signOutUser() {
   await signOut(auth);
-};
+}

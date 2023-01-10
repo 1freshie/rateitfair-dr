@@ -1,17 +1,15 @@
-'use client';
+import { faFacebook } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/router";
 
-import { useRouter } from 'next/navigation';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFacebook } from '@fortawesome/free-brands-svg-icons';
+import { signInWithFacebook } from "../../context/auth-context";
 
-import { signInWithFacebook } from '../../context/auth-context';
-
-const SignInWithFacebook: React.FC = () => {
+export default function SignInWithFacebook() {
   const router = useRouter();
 
   const handleSignIn = async () => {
     await signInWithFacebook();
-    router.push('/');
+    router.push("/");
   };
 
   return (
@@ -19,12 +17,8 @@ const SignInWithFacebook: React.FC = () => {
       onClick={handleSignIn}
       className="input flex items-center justify-center gap-3 text-secondary--gray duration-300 hover:text-primary--blue"
     >
-      <FontAwesomeIcon icon={faFacebook} />
-      <p className="paragraph text-secondary--gray">
-        Facebook
-      </p>
+      <FontAwesomeIcon icon={faFacebook} width={30} height={30} />
+      <p className="paragraph text-secondary--gray">Facebook</p>
     </button>
   );
-};
-
-export default SignInWithFacebook;
+}

@@ -1,12 +1,8 @@
-// 'use client';
-
-import { collection, getDocs } from "firebase/firestore";
 import Link from "next/link";
-import { db } from "../../firebase/firebaseApp";
 
 import NavState from "./NavState";
 
-export default function Navbar({ userId }: { userId: string }) {
+export default function NavbarNew() {
   return (
     <nav className="sticky top-0 w-full h-20 max-h-20 bg-background--white flex flex-col gap-y-4 md:gap-y-0 md:flex-row justify-between items-center tracking-wide">
       <Link

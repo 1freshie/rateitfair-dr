@@ -1,12 +1,10 @@
-'use client';
-
-import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/router';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { signInWithGoogle } from '../../context/auth-context';
 
-const SignInWithGoogle: React.FC = () => {
+export default function SignInWithGoogle() {
   const router = useRouter();
 
   const handleSignIn = async () => {
@@ -19,10 +17,8 @@ const SignInWithGoogle: React.FC = () => {
       onClick={handleSignIn}
       className="input flex items-center justify-center gap-3 text-secondary--gray duration-300 hover:text-primary--blue"
     >
-      <FontAwesomeIcon icon={faGoogle} />
+      <FontAwesomeIcon icon={faGoogle} width={30} height={30} />
       <p className="paragraph text-secondary--gray">Google</p>
     </button>
   );
 };
-
-export default SignInWithGoogle;

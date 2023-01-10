@@ -1,22 +1,20 @@
-'use client';
+import Link from "next/link";
+import { useAuthState } from "react-firebase-hooks/auth";
 
-import Link from 'next/link';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { auth } from "../../firebase/firebaseApp";
 
-import { auth } from '../../firebase/firebaseApp';
-
-const NavState = () => {
+export default function NavState() {
   const [user, loading, error] = useAuthState(auth);
 
   return (
-    <>
+    <>  
       {user ? (
         <>
           <li className="duration-300 hover:text-primary--orange">
             <Link href="/products">Products</Link>
           </li>
           <li className="duration-300 hover:text-primary--orange">
-            <Link href="/profile">Profile</Link>
+            <Link href={`/profile/${user.uid}`}>Profile</Link>
           </li>
         </>
       ) : (
@@ -42,6 +40,4 @@ const NavState = () => {
       {loading && <></>}
     </>
   );
-};
-
-export default NavState;
+}
