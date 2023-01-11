@@ -34,7 +34,7 @@ export default function LoginPage() {
           />
           <button
             type="submit"
-            className="button mt-3 md:mt-5 duration-300 hover:bg-secondary--orange"
+            className="button-orange mt-3 md:mt-5 duration-300"
           >
             Login
           </button>

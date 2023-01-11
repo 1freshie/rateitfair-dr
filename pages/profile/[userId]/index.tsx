@@ -1,3 +1,7 @@
+import { faList, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Dialog, Transition } from "@headlessui/react";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import {
   collection,
   doc,
@@ -6,9 +10,13 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
+import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
-import RoleActivityButton from "../../../components/RoleActivityButton/RoleActivityButton";
+import { Fragment, useRef, useState } from "react";
+import AddProductForm from "../../../components/Forms/AddProductForm";
 import ProfileCardNew from "../../../components/ProfileCard/ProfileCardNew";
+import RoleActivity from "../../../components/RoleActivity/RoleActivity";
+import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
 import { db } from "../../../firebase/firebaseApp";
 
 interface UserData {
@@ -20,11 +28,54 @@ interface Params extends ParsedUrlQuery {
 }
 
 export default function ProfilePage({ userData }: UserData) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  function closeModal() {
+    setIsOpen(false);
+  }
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  // async function handleRoleActivityOnClick() {
+  //   if (userData.role === "Admin") {
+  //     console.log("Add a new organization...");
+  //   } else if (userData.role !== "User" && userData.role !== "Admin") {
+  //     console.log("Add a new product...");
+  //   } else {
+  //     console.log("Recently rated products...");
+  //   }
+  // }
+
+  if (!userData)
+    return (
+      <div className="flex h-96 flex-1 justify-center items-center">
+        <p className="paragraph text-center text-error--red">
+          Error | Something went wrong.
+        </p>
+      </div>
+    );
+
   return (
-    <div className="w-full h-full flex flex-1 flex-col items-center mt-14 lg:mt-24">
-      <ProfileCardNew userData={userData} />
-      <RoleActivityButton userRole={userData.role} />
-    </div>
+    <>
+      <Head>
+        <title>RateItFair - Profile</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta name="description" content="Your RateItFair profile" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <div
+        className={`relative w-full h-full flex flex-1 flex-col items-center mt-14 lg:mt-24 ${
+          isOpen && "-z-20"
+        }`}
+      >
+        <ProfileCardNew userData={userData} />
+        <RoleActivityButton userRole={userData.role} openModal={openModal} />
+        <AddProductForm isOpen={isOpen} closeModal={closeModal} />
+      </div>
+    </>
   );
 }
 
@@ -64,5 +115,6 @@ export const getStaticProps: GetStaticProps<UserData, Params> = async (
         createdAt: userData.createdAt.toString(),
       },
     },
+    revalidate: 1,
   };
 };
