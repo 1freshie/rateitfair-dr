@@ -7,6 +7,7 @@ import {
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
 import { ParsedUrlQuery } from "querystring";
+import RoleActivityButton from "../../../components/RoleActivityButton/RoleActivityButton";
 import ProfileCardNew from "../../../components/ProfileCard/ProfileCardNew";
 import { db } from "../../../firebase/firebaseApp";
 
@@ -19,7 +20,12 @@ interface Params extends ParsedUrlQuery {
 }
 
 export default function ProfilePage({ userData }: UserData) {
-  return <ProfileCardNew userData={userData} />;
+  return (
+    <div className="w-full h-full flex flex-1 flex-col items-center mt-14 lg:mt-24">
+      <ProfileCardNew userData={userData} />
+      <RoleActivityButton userRole={userData.role} />
+    </div>
+  );
 }
 
 export async function getStaticPaths() {

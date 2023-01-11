@@ -59,10 +59,14 @@ export default function ProfileCard({ userData }: UserData) {
 
   return (
     <div className="h-full w-full flex flex-1 justify-center">
-      <div className="w-[350px] lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-6">
+      <div className="w-full lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-6">
         <div className="flex flex-col justify-center items-center">
           <img
-            src={userData.photoURL || "https://via.placeholder.com/110"}
+            src={
+              userData.photoURL
+                ? userData.photoURL
+                : "https://via.placeholder.com/110"
+            }
             alt="Profile Photo"
             width={110}
             height={110}
