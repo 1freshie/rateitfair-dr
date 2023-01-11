@@ -17,7 +17,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <div
-      className={`mt-10 flex flex-col items-center justify-around w-60 h-72 md:w-64 md:h-80 lg:w-72 lg:h-96 cursor-pointer border-2 rounded-3xl ${
+      className={`mt-10 flex flex-col items-center justify-around w-60 h-72 md:w-64 md:h-80 lg:w-72 lg:h-96 cursor-pointer border-2 rounded-3xl duration-300 ${
         isRatedAlready
           ? 'border-secondary--gray hover:border-primary--blue'
           : 'border-secondary--orange hover:border-primary--orange'
@@ -35,13 +35,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {description}
       </p>
       <button
-        className={`button ${
+        className={`duration-300 ${
           isRatedAlready
-            ? 'bg-primary--blue hover:bg-secondary--gray'
-            : 'bg-primary--orange'
+            ? 'button-blue'
+            : 'button-orange'
         }`}
       >
-        {isRatedAlready ? 'Change it' : 'Rate it'}
+        {isRatedAlready ? 'Change' : 'Rate it'}
       </button>
     </div>
   );

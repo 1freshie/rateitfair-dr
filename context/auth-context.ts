@@ -14,9 +14,9 @@ export async function signInWithGoogle() {
   const result = await signInWithPopup(auth, googleProvider);
   const { uid, displayName, email, photoURL } = result.user;
 
-  const userRef = collection(db, "users");
+  const usersCollection = collection(db, "users");
 
-  await setDoc(doc(userRef, uid), {
+  await setDoc(doc(usersCollection, uid), {
     id: uid,
     username: displayName,
     email: email,
@@ -39,9 +39,9 @@ export async function signInWithFacebook() {
   const result = await signInWithPopup(auth, facebookProvider);
   const { uid, displayName, email, photoURL } = result.user;
 
-  const userRef = collection(db, "users");
+  const usersCollection = collection(db, "users");
 
-  await setDoc(doc(userRef, uid), {
+  await setDoc(doc(usersCollection, uid), {
     id: uid,
     username: displayName,
     email: email,

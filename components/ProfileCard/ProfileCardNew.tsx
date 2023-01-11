@@ -87,7 +87,7 @@ export default function ProfileCard({ userData }: UserData) {
         </div>
         <button
           onClick={handleSignOut}
-          className="button mt-5 md:mt-7 duration-300 hover:bg-secondary--orange"
+          className="button-orange mt-5 md:mt-7 duration-300"
         >
           Sign out
         </button>

@@ -21,20 +21,37 @@
     color: #f9ab55;
   }
 
-  .button {
+  .button-orange,
+  .button-blue {
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 1rem;
     line-height: 1.5rem;
     color: #f7f5fb;
-    background-color: #f58a07;
-    border-radius: 24px;
+    border-radius: 30px;
     padding: 10px 20px;
     text-align: center;
+    width: 128px;
   }
 
-  .button:hover {
-    background-color: #f9ab55;
+  .button-orange {
+    background-color: #f58a07;
+    border: 1px solid #f58a07;
+  }
+
+  .button-orange:hover {
+    background-color: #f7f5fb;
+    color: #f58a07;
+  }
+
+  .button-blue {
+    background-color: #084887;
+    border: 1px solid #084887;
+  }
+
+  .button-blue:hover {
+    background-color: #f7f5fb;
+    color: #084887;
   }
 
   .form {
@@ -93,7 +110,8 @@
 
     .paragraph,
     .input,
-    .button {
+    .button-orange,
+    .button-blue {
       font-size: 1.125rem
         /* 18px */
       ;
@@ -107,13 +125,19 @@
 
     .paragraph,
     .input,
-    .button {
+    .button-orange,
+    .button-blue {
       font-size: 1.25rem
         /* 20px */
       ;
       line-height: 1.75rem
         /* 28px */
       ;
+    }
+
+    .button-orange,
+    .button-blue {
+      width: 144px;
     }
 
     .input {
@@ -125,13 +149,19 @@
 
     .paragraph,
     .input,
-    .button {
+    .button-orange,
+    .button-blue {
       font-size: 1.5rem
         /* 24px */
       ;
       line-height: 2rem
         /* 32px */
       ;
+    }
+
+    .button-orange,
+    .button-blue {
+      width: 160px;
     }
   }
 

@@ -15,10 +15,10 @@ export default function SignInWithGoogle() {
   return (
     <button
       onClick={handleSignIn}
-      className="input flex items-center justify-center gap-3 text-secondary--gray duration-300 hover:text-primary--blue"
+      className="w-full button-blue bg-background--white text-secondary--gray border border-secondary--gray hover:bg-background--white hover:text-primary--blue hover:border-primary--blue flex items-center justify-center gap-3 duration-300"
     >
       <FontAwesomeIcon icon={faGoogle} width={30} height={30} />
-      <p className="paragraph text-secondary--gray">Google</p>
+      <p>Google</p>
     </button>
   );
 };
