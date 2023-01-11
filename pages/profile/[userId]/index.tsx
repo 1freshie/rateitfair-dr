@@ -1,4 +1,3 @@
-import { faList, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dialog, Transition } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
@@ -12,10 +11,9 @@ import {
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
-import { Fragment, useRef, useState } from "react";
+import { useState } from "react";
 import AddProductForm from "../../../components/Forms/AddProductForm";
 import ProfileCardNew from "../../../components/ProfileCard/ProfileCardNew";
-import RoleActivity from "../../../components/RoleActivity/RoleActivity";
 import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
 import { db } from "../../../firebase/firebaseApp";
 
