@@ -24,14 +24,15 @@ export async function signInWithGoogle() {
     role: "User",
     orgId: "",
     ratedProducts: [
-      {
-        productId: "",
-        rating: 0,
-        comment: "",
-      },
+      // {
+      //   productId: "",
+      //   rating: 0,
+      //   comment: "",
+      //   ratedAt: new Date(),
+      // },
     ],
     ratedProductsCount: 0,
-    createdAt: new Date(),
+    // createdAt: new Date(),
   });
 }
 

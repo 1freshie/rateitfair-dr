@@ -9,6 +9,7 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
 import { useState } from "react";
+import AddOrganizationForm from "../../../components/Forms/AddOrganizationForm";
 import AddProductForm from "../../../components/Forms/AddProductForm";
 import ProfileCardNew from "../../../components/ProfileCard/ProfileCardNew";
 import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
@@ -68,7 +69,12 @@ export default function ProfilePage({ userData }: UserData) {
       >
         <ProfileCardNew userData={userData} />
         <RoleActivityButton userRole={userData.role} openModal={openModal} />
-        <AddProductForm isOpen={isOpen} closeModal={closeModal} />
+        {userData.role !== "User" && userData.role !== "Admin" && (
+          <AddProductForm isOpen={isOpen} closeModal={closeModal} />
+        )}
+        {userData.role === "Admin" && (
+          <AddOrganizationForm isOpen={isOpen} closeModal={closeModal} />
+        )}
       </div>
     </>
   );
@@ -107,7 +113,7 @@ export const getStaticProps: GetStaticProps<UserData, Params> = async (
     props: {
       userData: {
         ...userData,
-        createdAt: userData.createdAt.toString(),
+        // createdAt: userData.createdAt.toString(),
       },
     },
     revalidate: 1,
