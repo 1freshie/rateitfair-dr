@@ -15,15 +15,16 @@ import ProfileCardNew from "../../../components/ProfileCard/ProfileCardNew";
 import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
 import { db } from "../../../firebase/firebaseApp";
 
-interface UserData {
+interface Data {
   userData: DocumentData;
+  orgData?: DocumentData;
 }
 
 interface Params extends ParsedUrlQuery {
   userId: string;
 }
 
-export default function ProfilePage({ userData }: UserData) {
+export default function ProfilePage({ userData, orgData }: Data) {
   const [isOpen, setIsOpen] = useState(false);
 
   function closeModal() {
@@ -33,16 +34,6 @@ export default function ProfilePage({ userData }: UserData) {
   function openModal() {
     setIsOpen(true);
   }
-
-  // async function handleRoleActivityOnClick() {
-  //   if (userData.role === "Admin") {
-  //     console.log("Add a new organization...");
-  //   } else if (userData.role !== "User" && userData.role !== "Admin") {
-  //     console.log("Add a new product...");
-  //   } else {
-  //     console.log("Recently rated products...");
-  //   }
-  // }
 
   if (!userData)
     return (
@@ -70,11 +61,16 @@ export default function ProfilePage({ userData }: UserData) {
         <ProfileCardNew userData={userData} />
         <RoleActivityButton userRole={userData.role} openModal={openModal} />
         {userData.role !== "User" && userData.role !== "Admin" && (
-          <AddProductForm isOpen={isOpen} closeModal={closeModal} />
+          <AddProductForm
+            orgId={userData.orgId}
+            isOpen={isOpen}
+            closeModal={closeModal}
+          />
         )}
         {userData.role === "Admin" && (
           <AddOrganizationForm isOpen={isOpen} closeModal={closeModal} />
         )}
+        {/* TODO: View rated products list on role === "User" */}
       </div>
     </>
   );
@@ -97,9 +93,7 @@ export async function getStaticPaths() {
   };
 }
 
-export const getStaticProps: GetStaticProps<UserData, Params> = async (
-  context
-) => {
+export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
   const { params } = context;
   const { userId } = params!;
 
@@ -109,12 +103,23 @@ export const getStaticProps: GetStaticProps<UserData, Params> = async (
 
   const userData = userSnapshot.data()!;
 
+  let orgData: DocumentData = {};
+
+  // if (userData.role !== "User" && userData.role !== "Admin") {
+  //   const orgDoc = doc(db, "organizations", userData.orgId);
+
+  //   const orgSnapshot = await getDoc(orgDoc);
+
+  //   orgData = orgSnapshot.data()!;
+  // }
+
   return {
     props: {
-      userData: {
-        ...userData,
-        // createdAt: userData.createdAt.toString(),
-      },
+      // userData: {
+      //   ...userData,
+      //   // createdAt: userData.createdAt.toString(),
+      // },
+      userData,
     },
     revalidate: 1,
   };

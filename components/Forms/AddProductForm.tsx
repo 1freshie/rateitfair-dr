@@ -1,16 +1,67 @@
+import { uuidv4 } from "@firebase/util";
 import { Dialog, Transition } from "@headlessui/react";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  DocumentData,
+  updateDoc,
+} from "firebase/firestore";
 import { Fragment, useRef } from "react";
+import { db } from "../../firebase/firebaseApp";
 
 interface AddProductFormProps {
+  orgId: string;
+  orgData?: DocumentData;
   isOpen: boolean;
   closeModal: () => void;
 }
 
 export default function AddProductForm({
+  orgId,
   isOpen,
   closeModal,
 }: AddProductFormProps) {
+  const productTitleInputRef = useRef<HTMLInputElement>(null);
+  const productDescriptionInputRef = useRef<HTMLTextAreaElement>(null);
+  const productImageURLInputRef = useRef<HTMLInputElement>(null);
   const cancelButtonRef = useRef(null);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const newProductId = uuidv4();
+
+    const newProduct = {
+      id: newProductId,
+      title: productTitleInputRef.current!.value,
+      description: productDescriptionInputRef.current!.value,
+      imageURL: productImageURLInputRef.current!.value,
+      // comments: [],
+      // add comments in updateDoc when adding comments
+      rates: {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        7: 0,
+        8: 0,
+        9: 0,
+        10: 0,
+      },
+      ratesCount: 0,
+    };
+
+    const orgsCollection = collection(db, "organizations");
+    const orgDoc = doc(orgsCollection, orgId);
+
+    await updateDoc(orgDoc, {
+      products: arrayUnion(newProduct),
+    });
+  }
 
   return (
     <Transition.Root show={isOpen} as={Fragment}>
@@ -48,38 +99,44 @@ export default function AddProductForm({
                   <h1 className="heading mt-4 lg:mt-6 text-center">
                     Add a product
                   </h1>
-                  <form className="form bg-white gap-y-3 lg:gap-y-4 mt-4 lg:mt-6 w-full">
+                  <form
+                    onSubmit={handleSubmit}
+                    className="form bg-white gap-y-3 lg:gap-y-4 mt-4 lg:mt-6 w-full"
+                  >
                     <input
                       type="text"
                       placeholder="Enter a product title..."
                       className="input"
+                      ref={productTitleInputRef}
                     />
                     <textarea
                       placeholder="Enter a product description..."
                       className="input resize-none h-44 md:h-48 lg:h-52 xl:h-56"
+                      ref={productDescriptionInputRef}
                     />
                     <input
                       type="text"
                       placeholder="Enter a product image URL..."
                       className="input"
+                      ref={productImageURLInputRef}
                     />
+                    <div className="mt-4 lg:mt-6 flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
+                      <button
+                        type="submit"
+                        className="button-orange duration-300"
+                        onClick={closeModal}
+                      >
+                        Add
+                      </button>
+                      <button
+                        className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--orange hover:bg-primary--orange hover:text-background--white duration-300"
+                        onClick={closeModal}
+                        ref={cancelButtonRef}
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </form>
-                </div>
-                <div className="mt-4 lg:mt-6 flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
-                  <button
-                    type="submit"
-                    className="button-orange duration-300"
-                    onClick={closeModal}
-                  >
-                    Add
-                  </button>
-                  <button
-                    className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--orange hover:bg-primary--orange hover:text-background--white duration-300"
-                    onClick={closeModal}
-                    ref={cancelButtonRef}
-                  >
-                    Cancel
-                  </button>
                 </div>
               </Dialog.Panel>
             </Transition.Child>

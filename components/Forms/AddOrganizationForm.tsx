@@ -1,27 +1,43 @@
+import { uuidv4 } from "@firebase/util";
 import { Dialog, Transition } from "@headlessui/react";
-import React, { Fragment, useRef, useState } from "react";
-import { addOrg } from "../../context/add-org";
+import { collection, doc, setDoc } from "firebase/firestore";
+import React, { Fragment, useRef } from "react";
+import { db } from "../../firebase/firebaseApp";
 
 interface AddOrganizationFormProps {
   isOpen: boolean;
   closeModal: () => void;
 }
 
+// TODO: When adding users to an organization, set the users orgId to the orgId of the organization they are being added to
+// and their role to the organization's name
+
 export default function AddOrganizationForm({
   isOpen,
   closeModal,
 }: AddOrganizationFormProps) {
   const orgNameInputRef = useRef<HTMLInputElement>(null);
-  // const [orgNameInputValue, setOrgNameInputValue] = useState<string | null>(
-  //   null
-  // );
   const cancelButtonRef = useRef(null);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(orgNameInputRef.current?.value);
-    // console.log(orgNameInputValue);
-    addOrg(orgNameInputRef.current!.value);
+
+    const newOrgId = uuidv4();
+
+    const newOrg = {
+      id: newOrgId,
+      name: orgNameInputRef.current!.value,
+      // users: [
+      //   {
+      //     id: "",
+      //     email: "",
+      //   },
+      // ],
+    };
+
+    const orgsCollection = collection(db, "organizations");
+    
+    await setDoc(doc(orgsCollection, newOrgId), newOrg);
   }
 
   return (

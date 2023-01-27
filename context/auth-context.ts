@@ -50,14 +50,14 @@ export async function signInWithFacebook() {
     role: "User",
     orgId: "",
     ratedProducts: [
-      {
-        productId: "",
-        rating: 0,
-        comment: "",
-      },
+      // {
+      //   productId: "",
+      //   rating: 0,
+      //   comment: "",
+      // },
     ],
     ratedProductsCount: 0,
-    createdAt: new Date(),
+    // createdAt: new Date(),
   });
 }
 
