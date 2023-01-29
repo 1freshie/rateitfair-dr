@@ -103,7 +103,7 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
 
   const userData = userSnapshot.data()!;
 
-  let orgData: DocumentData = {};
+  // let orgData: DocumentData = {};
 
   // if (userData.role !== "User" && userData.role !== "Admin") {
   //   const orgDoc = doc(db, "organizations", userData.orgId);

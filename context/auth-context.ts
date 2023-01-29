@@ -16,24 +16,28 @@ export async function signInWithGoogle() {
 
   const usersCollection = collection(db, "users");
 
-  await setDoc(doc(usersCollection, uid), {
-    id: uid,
-    username: displayName,
-    email: email,
-    photoURL: photoURL,
-    role: "User",
-    orgId: "",
-    ratedProducts: [
-      // {
-      //   productId: "",
-      //   rating: 0,
-      //   comment: "",
-      //   ratedAt: new Date(),
-      // },
-    ],
-    ratedProductsCount: 0,
-    // createdAt: new Date(),
-  });
+  try {
+    await setDoc(doc(usersCollection, uid), {
+      id: uid,
+      username: displayName,
+      email: email,
+      photoURL: photoURL,
+      role: "User",
+      orgId: "",
+      ratedProducts: [
+        // {
+        //   productId: "",
+        //   rating: 0,
+        //   comment: "",
+        //   ratedAt: new Date(),
+        // },
+      ],
+      ratedProductsCount: 0,
+      // createdAt: new Date(),
+    });
+  } catch (error: any) {
+    prompt("Error", error.message);
+  }
 }
 
 export async function signInWithFacebook() {
@@ -42,23 +46,28 @@ export async function signInWithFacebook() {
 
   const usersCollection = collection(db, "users");
 
-  await setDoc(doc(usersCollection, uid), {
-    id: uid,
-    username: displayName,
-    email: email,
-    photoURL: photoURL,
-    role: "User",
-    orgId: "",
-    ratedProducts: [
-      // {
-      //   productId: "",
-      //   rating: 0,
-      //   comment: "",
-      // },
-    ],
-    ratedProductsCount: 0,
-    // createdAt: new Date(),
-  });
+  try {
+    await setDoc(doc(usersCollection, uid), {
+      id: uid,
+      username: displayName,
+      email: email,
+      photoURL: photoURL,
+      role: "User",
+      orgId: "",
+      ratedProducts: [
+        // {
+        //   productId: "",
+        //   rating: 0,
+        //   comment: "",
+        //   ratedAt: new Date(),
+        // },
+      ],
+      ratedProductsCount: 0,
+      // createdAt: new Date(),
+    });
+  } catch (error: any) {
+    prompt("Error", error.message);
+  }
 }
 
 export async function signOutUser() {

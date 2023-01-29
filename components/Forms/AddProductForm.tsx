@@ -7,7 +7,7 @@ import {
   DocumentData,
   updateDoc,
 } from "firebase/firestore";
-import { Fragment, useRef } from "react";
+import { Fragment, useRef, useState } from "react";
 import { db } from "../../firebase/firebaseApp";
 
 interface AddProductFormProps {
@@ -22,13 +22,47 @@ export default function AddProductForm({
   isOpen,
   closeModal,
 }: AddProductFormProps) {
+  const [error, setError] = useState<string | null>(null);
+
   const productTitleInputRef = useRef<HTMLInputElement>(null);
   const productDescriptionInputRef = useRef<HTMLTextAreaElement>(null);
   const productImageURLInputRef = useRef<HTMLInputElement>(null);
+
   const cancelButtonRef = useRef(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (
+      productTitleInputRef.current!.value === "" ||
+      (productTitleInputRef.current!.value.length < 2 &&
+        productTitleInputRef.current!.value.length > 50)
+    ) {
+      setError(
+        "Please enter a product title that is greater than 2 characters and less than 50 characters!"
+      );
+      return;
+    }
+
+    if (
+      productDescriptionInputRef.current!.value === "" ||
+      productDescriptionInputRef.current!.value.length > 500
+    ) {
+      setError(
+        "Please enter a product description that is less than 500 characters!"
+      );
+      return;
+    }
+
+    if (
+      productImageURLInputRef.current!.value === "" ||
+      productImageURLInputRef.current!.value.match(
+        /\.(jpeg|jpg|gif|png|svg)$/
+      ) == null
+    ) {
+      setError("Please enter a valid product image URL!");
+      return;
+    }
 
     const newProductId = uuidv4();
 
@@ -58,9 +92,15 @@ export default function AddProductForm({
     const orgsCollection = collection(db, "organizations");
     const orgDoc = doc(orgsCollection, orgId);
 
-    await updateDoc(orgDoc, {
-      products: arrayUnion(newProduct),
-    });
+    try {
+      await updateDoc(orgDoc, {
+        products: arrayUnion(newProduct),
+      });
+    } catch (err: any) {
+      prompt("Error", err.message);
+    }
+
+    setError(null);
   }
 
   return (
@@ -80,7 +120,7 @@ export default function AddProductForm({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-[#000000] bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -94,7 +134,7 @@ export default function AddProductForm({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
+              <Dialog.Panel className="relative transform overflow-hidden bg-background--white rounded-[30px] bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
                 <div className="flex flex-col justify-center items-center">
                   <h1 className="heading mt-4 lg:mt-6 text-center">
                     Add a product
@@ -103,6 +143,9 @@ export default function AddProductForm({
                     onSubmit={handleSubmit}
                     className="form bg-white gap-y-3 lg:gap-y-4 mt-4 lg:mt-6 w-full"
                   >
+                    {error && (
+                      <p className="paragraph text-error--red text-center">{error}</p>
+                    )}
                     <input
                       type="text"
                       placeholder="Enter a product title..."
@@ -124,13 +167,21 @@ export default function AddProductForm({
                       <button
                         type="submit"
                         className="button-orange duration-300"
-                        onClick={closeModal}
+                        onClick={() => {
+                          if (!error) {
+                            closeModal();
+                          }
+                        }}
                       >
                         Add
                       </button>
                       <button
+                        type="button"
                         className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--orange hover:bg-primary--orange hover:text-background--white duration-300"
-                        onClick={closeModal}
+                        onClick={() => {
+                          closeModal();
+                          setError(null);
+                        }}
                         ref={cancelButtonRef}
                       >
                         Cancel

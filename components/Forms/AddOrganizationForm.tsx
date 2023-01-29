@@ -1,7 +1,7 @@
 import { uuidv4 } from "@firebase/util";
 import { Dialog, Transition } from "@headlessui/react";
 import { collection, doc, setDoc } from "firebase/firestore";
-import React, { Fragment, useRef } from "react";
+import React, { Fragment, useRef, useState } from "react";
 import { db } from "../../firebase/firebaseApp";
 
 interface AddOrganizationFormProps {
@@ -16,11 +16,24 @@ export default function AddOrganizationForm({
   isOpen,
   closeModal,
 }: AddOrganizationFormProps) {
+  const [error, setError] = useState<string | null>(null);
+
   const orgNameInputRef = useRef<HTMLInputElement>(null);
   const cancelButtonRef = useRef(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (
+      orgNameInputRef.current!.value === "" ||
+      (orgNameInputRef.current!.value.length < 2 &&
+        orgNameInputRef.current!.value.length > 50)
+    ) {
+      setError(
+        "Please enter an organization name that is greater than 2 characters and less than 50 characters!"
+      );
+      return;
+    }
 
     const newOrgId = uuidv4();
 
@@ -36,8 +49,14 @@ export default function AddOrganizationForm({
     };
 
     const orgsCollection = collection(db, "organizations");
-    
-    await setDoc(doc(orgsCollection, newOrgId), newOrg);
+
+    try {
+      await setDoc(doc(orgsCollection, newOrgId), newOrg);
+    } catch (error: any) {
+      prompt("Error", error.message);
+    }
+
+    setError(null);
   }
 
   return (
@@ -80,6 +99,11 @@ export default function AddOrganizationForm({
                     onSubmit={handleSubmit}
                     className="form bg-white gap-y-3 lg:gap-y-4 mt-4 lg:mt-6 w-full"
                   >
+                    {error && (
+                      <p className="paragraph text-error--red text-center">
+                        {error}
+                      </p>
+                    )}
                     <input
                       type="text"
                       placeholder="Enter an organization name..."
@@ -97,13 +121,21 @@ export default function AddOrganizationForm({
                       <button
                         type="submit"
                         className="button-orange duration-300"
-                        onClick={closeModal}
+                        onClick={() => {
+                          if (!error) {
+                            closeModal();
+                          }
+                        }}
                       >
                         Add
                       </button>
                       <button
+                        type="button"
                         className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--orange hover:bg-primary--orange hover:text-background--white duration-300"
-                        onClick={closeModal}
+                        onClick={() => {
+                          closeModal();
+                          setError(null);
+                        }}
                         ref={cancelButtonRef}
                       >
                         Cancel
@@ -111,22 +143,6 @@ export default function AddOrganizationForm({
                     </div>
                   </form>
                 </div>
-                {/* <div className="mt-4 lg:mt-6 flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
-                  <button
-                    type="submit"
-                    className="button-orange duration-300"
-                    onClick={closeModal}
-                  >
-                    Add
-                  </button>
-                  <button
-                    className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--orange hover:bg-primary--orange hover:text-background--white duration-300"
-                    onClick={closeModal}
-                    ref={cancelButtonRef}
-                  >
-                    Cancel
-                  </button>
-                </div> */}
               </Dialog.Panel>
             </Transition.Child>
           </div>
