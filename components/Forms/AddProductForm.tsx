@@ -5,9 +5,13 @@ import {
   collection,
   doc,
   DocumentData,
+  getDoc,
   updateDoc,
 } from "firebase/firestore";
-import { Fragment, useRef, useState } from "react";
+import { validateImage } from "image-validator";
+import { useRouter } from "next/router";
+import React, { Fragment, useRef, useState } from "react";
+
 import { db } from "../../firebase/firebaseApp";
 
 interface AddProductFormProps {
@@ -22,21 +26,44 @@ export default function AddProductForm({
   isOpen,
   closeModal,
 }: AddProductFormProps) {
+  const [enteredProductTitle, setEnteredProductTitle] = useState<string | null>(
+    null
+  );
+  const [enteredProductDescription, setEnteredProductDescription] = useState<
+    string | null
+  >(null);
+  const [enteredProductImageURL, setEnteredProductImageURL] = useState<
+    string | null
+  >(null);
+
   const [error, setError] = useState<string | null>(null);
 
-  const productTitleInputRef = useRef<HTMLInputElement>(null);
-  const productDescriptionInputRef = useRef<HTMLTextAreaElement>(null);
-  const productImageURLInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  // const productTitleInputRef = useRef<HTMLInputElement>(null);
+  // const productDescriptionInputRef = useRef<HTMLTextAreaElement>(null);
+  // const productImageURLInputRef = useRef<HTMLInputElement>(null);
 
   const cancelButtonRef = useRef(null);
+
+  // async function verifyImageURL(imageURL: string) {
+  //   const image = new Image();
+  //   image.src = imageURL;
+  //   image.onload = () => {
+  //     return true;
+  //   };
+  //   image.onerror = () => {
+  //     return false;
+  //   };
+  // }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (
-      productTitleInputRef.current!.value === "" ||
-      (productTitleInputRef.current!.value.length < 2 &&
-        productTitleInputRef.current!.value.length > 50)
+      enteredProductTitle === null ||
+      enteredProductTitle === "" ||
+      (enteredProductTitle!.length < 2 && enteredProductTitle!.length > 50)
     ) {
       setError(
         "Please enter a product title that is greater than 2 characters and less than 50 characters!"
@@ -45,8 +72,9 @@ export default function AddProductForm({
     }
 
     if (
-      productDescriptionInputRef.current!.value === "" ||
-      productDescriptionInputRef.current!.value.length > 500
+      enteredProductDescription === null ||
+      enteredProductDescription === "" ||
+      enteredProductDescription!.length > 500
     ) {
       setError(
         "Please enter a product description that is less than 500 characters!"
@@ -54,12 +82,11 @@ export default function AddProductForm({
       return;
     }
 
-    if (
-      productImageURLInputRef.current!.value === "" ||
-      productImageURLInputRef.current!.value.match(
-        /\.(jpeg|jpg|gif|png|svg)$/
-      ) == null
-    ) {
+    const isValidImage = await validateImage(
+      enteredProductImageURL === null ? "" : enteredProductImageURL
+    );
+
+    if (!isValidImage) {
       setError("Please enter a valid product image URL!");
       return;
     }
@@ -68,9 +95,9 @@ export default function AddProductForm({
 
     const newProduct = {
       id: newProductId,
-      title: productTitleInputRef.current!.value,
-      description: productDescriptionInputRef.current!.value,
-      imageURL: productImageURLInputRef.current!.value,
+      title: enteredProductTitle,
+      description: enteredProductDescription,
+      imageURL: enteredProductImageURL,
       // comments: [],
       // add comments in updateDoc when adding comments
       rates: {
@@ -92,6 +119,16 @@ export default function AddProductForm({
     const orgsCollection = collection(db, "organizations");
     const orgDoc = doc(orgsCollection, orgId);
 
+    // get the orgDoc data
+    const orgSnapshot = await getDoc(orgDoc);
+
+    if (!orgSnapshot.exists()) {
+      prompt("Error", "Organization doesn't exist!");
+      return;
+    }
+
+    const orgData = orgSnapshot.data();
+
     try {
       await updateDoc(orgDoc, {
         products: arrayUnion(newProduct),
@@ -99,6 +136,12 @@ export default function AddProductForm({
     } catch (err: any) {
       prompt("Error", err.message);
     }
+
+    setEnteredProductTitle(null);
+    setEnteredProductDescription(null);
+    setEnteredProductImageURL(null);
+
+    router.push(`/products/${orgData.name.toLowerCase().replace(/\s/g, "")}`);
 
     setError(null);
   }
@@ -144,24 +187,35 @@ export default function AddProductForm({
                     className="form bg-white gap-y-3 lg:gap-y-4 mt-4 lg:mt-6 w-full"
                   >
                     {error && (
-                      <p className="paragraph text-error--red text-center">{error}</p>
+                      <p className="paragraph text-error--red text-center">
+                        {error}
+                      </p>
                     )}
                     <input
                       type="text"
                       placeholder="Enter a product title..."
                       className="input"
-                      ref={productTitleInputRef}
+                      // ref={productTitleInputRef}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setEnteredProductTitle(e.target.value)
+                      }
                     />
                     <textarea
                       placeholder="Enter a product description..."
                       className="input resize-none h-44 md:h-48 lg:h-52 xl:h-56"
-                      ref={productDescriptionInputRef}
+                      // ref={productDescriptionInputRef}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        setEnteredProductDescription(e.target.value)
+                      }
                     />
                     <input
                       type="text"
                       placeholder="Enter a product image URL..."
                       className="input"
-                      ref={productImageURLInputRef}
+                      // ref={productImageURLInputRef}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setEnteredProductImageURL(e.target.value)
+                      }
                     />
                     <div className="mt-4 lg:mt-6 flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
                       <button
@@ -180,6 +234,9 @@ export default function AddProductForm({
                         className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--orange hover:bg-primary--orange hover:text-background--white duration-300"
                         onClick={() => {
                           closeModal();
+                          setEnteredProductTitle(null);
+                          setEnteredProductDescription(null);
+                          setEnteredProductImageURL(null);
                           setError(null);
                         }}
                         ref={cancelButtonRef}

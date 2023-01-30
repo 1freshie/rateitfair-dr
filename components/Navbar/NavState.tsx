@@ -24,16 +24,14 @@ export default function NavState() {
     getOrgs();
   }, []);
 
-  console.log(orgs);
+  // console.log(orgs);
 
   return (
     <>
       {user ? (
         <>
-          {/* <li className="duration-300 hover:text-primary--orange">
-            <Link href="/products">Products</Link>
-          </li> */}
           <li>
+            {/* TODO: FIX THE DROPDOWN FOR MOBILE AND MAKE Z-INDEX BIGGER */}
             <Menu as="div" className="relative inline-block text-center z-20">
               <div>
                 <Menu.Button className="inline-flex w-full justify-center items-center gap-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 duration-300 hover:text-primary--orange">
@@ -56,7 +54,10 @@ export default function NavState() {
                       <Menu.Item key={org.id}>
                         {({ active }) => (
                           <Link
-                            href={`/products/${org.id}`}
+                            href={`/products/${org.name
+                              .toLowerCase()
+                              .replace(/\s/g, "")}`}
+                            // href={`/products/${org.id}`}
                             className={`${
                               active
                                 ? "duration-300 bg-primary--orange text-background--white"

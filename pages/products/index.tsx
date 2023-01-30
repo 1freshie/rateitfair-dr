@@ -74,7 +74,7 @@ export default function ProductsPage() {
       </Head>
 
       <div>
-        <ProductList products={products} />
+        {/* <ProductList products={products} /> */}
       </div>
     </>
   );

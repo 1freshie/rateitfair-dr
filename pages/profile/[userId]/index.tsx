@@ -83,12 +83,14 @@ export async function getStaticPaths() {
 
   const usersDocs = usersSnapshot.docs;
 
+  const paths = usersDocs.map((userDoc) => ({
+    params: {
+      userId: userDoc.id,
+    },
+  }));
+
   return {
-    paths: usersDocs.map((userDoc) => ({
-      params: {
-        userId: userDoc.id,
-      },
-    })),
+    paths,
     fallback: false,
   };
 }
@@ -101,7 +103,7 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
 
   const userSnapshot = await getDoc(userDoc);
 
-  const userData = userSnapshot.data()!;
+  const userData = userSnapshot.data() as DocumentData;
 
   // let orgData: DocumentData = {};
 
