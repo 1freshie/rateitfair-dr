@@ -5,6 +5,7 @@ import {
   DocumentData,
   getDoc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
 import Head from "next/head";
@@ -24,6 +25,8 @@ interface Params extends ParsedUrlQuery {
 }
 
 export default function ProductPage() {
+  // TODO: make the comments property in the User document! (see if it works)
+
   const [product, setProduct] = useState<{
     title: string;
     description: string;
@@ -53,13 +56,11 @@ export default function ProductPage() {
   });
 
   const [rateValue, setRateValue] = useState<number | null>(null);
-  const [enteredComment, setEnteredComment] = useState<string | null>(null);
+  const [enteredComment, setEnteredComment] = useState<string>("");
 
   const router = useRouter();
 
   const { orgName, productId } = router.query;
-
-  // console.log(orgName, productId);
 
   useEffect(() => {
     async function getProduct() {
@@ -87,8 +88,77 @@ export default function ProductPage() {
     getProduct();
   }, []);
 
-  console.log(product.rates);
+  // console.log(product.rates);
   console.log(rateValue);
+
+  async function handleRateSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    if (rateValue === null) {
+      prompt("Error", "Please select a rate from 0 to 10!");
+      return;
+    }
+
+    const newRates = product.rates;
+    newRates[rateValue] += 1;
+
+    const newRatesCount = product.ratesCount + 1;
+
+    const updatedProduct = {
+      ...product,
+      rates: newRates,
+      ratesCount: newRatesCount,
+    };
+
+    // setProduct(newProduct);
+    console.log(updatedProduct);
+
+    const orgsSnapshot = await getDocs(collection(db, "organizations"));
+
+    const orgsData = orgsSnapshot.docs.map((org) => org.data());
+
+    const orgId = orgsData.filter(
+      (orgData) => orgData.name.toLowerCase().replace(/\s/g, "") === orgName
+    )[0].id;
+
+    const orgDoc = doc(db, "organizations", orgId);
+
+    const orgSnapshot = await getDoc(orgDoc);
+
+    const orgData = orgSnapshot.data() as DocumentData;
+
+    // const newProducts = orgData.products.filter(
+    //   (product: any) => product.id !== productId
+    // );
+
+    // newProducts.push(updatedProduct);
+
+    // const newOrgData = {
+    //   ...orgData,
+    //   products: newProducts,
+    // };
+
+    const newOrgData = {
+      ...orgData,
+      products: orgData.products.map((product: any) => {
+        if (product.id === productId) {
+          return updatedProduct;
+        } else {
+          return product;
+        }
+      }),
+    };
+
+    try {
+      await updateDoc(orgDoc, newOrgData);
+    } catch (err: any) {
+      prompt("Error", err.message);
+    }
+
+    // router.push(`/products/${orgName}/${productId}/success`);
+
+    setRateValue(null);
+  }
 
   return (
     <>
@@ -108,7 +178,9 @@ export default function ProductPage() {
           />
           <div className="w-full h-full flex flex-col justify-center items-center gap-y-4">
             <h1 className="heading">{product.title}</h1>
-            <p className="paragraph text-secondary--gray lg:w-4/5">{product.description}</p>
+            <p className="paragraph text-secondary--gray lg:w-4/5">
+              {product.description}
+            </p>
           </div>
         </div>
 
@@ -143,7 +215,10 @@ export default function ProductPage() {
             ))}
           </div>
 
-          <form className="w-full h-full flex flex-col justify-center items-center gap-y-4">
+          <form
+            onSubmit={handleRateSubmit}
+            className="w-full h-full flex flex-col justify-center items-center gap-y-4"
+          >
             <p className="paragraph text-primary--blue text-center">
               Want the product to be improved?
             </p>
@@ -154,7 +229,9 @@ export default function ProductPage() {
                 setEnteredComment(e.target.value)
               }
             />
-            <button type="submit" className="mt-5 button-orange duration-300">Rate it</button>
+            <button type="submit" className="mt-5 button-orange duration-300">
+              Rate it
+            </button>
           </form>
         </div>
       </div>
