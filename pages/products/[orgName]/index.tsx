@@ -84,17 +84,20 @@ export default function ProductsPage({ orgData }: Data) {
   return (
     <>
       <Head>
-        <title>RateItFair - Products</title>
+        <title>{`RateItFair - ${orgData.name} Products`}</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <meta
           name="description"
-          content={`This is the products list of ${orgData.name}!`}
+          content={`Rate now the ${orgData.name} products!`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div>
-        <ProductList products={orgData.products} />
+        <ProductList
+          org={orgData.name.toLowerCase().replace(/\s/g, "")}
+          products={orgData.products}
+        />
       </div>
     </>
   );
@@ -118,7 +121,7 @@ export async function getStaticPaths() {
 
 export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
   const { params } = context;
-  const { orgName } = params!;
+  const { orgName } = params as Params;
 
   const orgsSnapshot = await getDocs(collection(db, "organizations"));
 

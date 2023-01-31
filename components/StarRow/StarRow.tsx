@@ -3,11 +3,11 @@
 import { StarIcon } from '@heroicons/react/24/solid';
 import { useEffect, useState } from 'react';
 
-type StarRowProps = {
+interface StarRowProps {
   stars: number;
 };
 
-const StarRow: React.FC<StarRowProps> = ({ stars }) => {
+export default function StarRow({ stars }: StarRowProps) {
   const [toFill, setToFill] = useState<boolean[]>([]);
 
   useEffect(() => {
@@ -56,5 +56,3 @@ const StarRow: React.FC<StarRowProps> = ({ stars }) => {
     </>
   );
 };
-
-export default StarRow;

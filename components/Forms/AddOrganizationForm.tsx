@@ -16,18 +16,20 @@ export default function AddOrganizationForm({
   isOpen,
   closeModal,
 }: AddOrganizationFormProps) {
+  const [enteredOrgName, setEnteredOrgName] = useState<string | null>(null);
+
   const [error, setError] = useState<string | null>(null);
 
-  const orgNameInputRef = useRef<HTMLInputElement>(null);
+  // const orgNameInputRef = useRef<HTMLInputElement>(null);
   const cancelButtonRef = useRef(null);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (
-      orgNameInputRef.current!.value === "" ||
-      (orgNameInputRef.current!.value.length < 2 &&
-        orgNameInputRef.current!.value.length > 50)
+      !enteredOrgName ||
+      enteredOrgName === "" ||
+      (enteredOrgName!.length < 2 && enteredOrgName!.length > 50)
     ) {
       setError(
         "Please enter an organization name that is greater than 2 characters and less than 50 characters!"
@@ -39,7 +41,7 @@ export default function AddOrganizationForm({
 
     const newOrg = {
       id: newOrgId,
-      name: orgNameInputRef.current!.value,
+      name: enteredOrgName,
       // users: [
       //   {
       //     id: "",
@@ -55,6 +57,8 @@ export default function AddOrganizationForm({
     } catch (error: any) {
       prompt("Error", error.message);
     }
+
+    setEnteredOrgName(null);
 
     setError(null);
   }
@@ -108,10 +112,10 @@ export default function AddOrganizationForm({
                       type="text"
                       placeholder="Enter an organization name..."
                       className="input"
-                      ref={orgNameInputRef}
-                      // onChange={(e) => {
-                      //   setOrgNameInputValue(e.target.value);
-                      // }}
+                      // ref={orgNameInputRef}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setEnteredOrgName(e.target.value);
+                      }}
                     />
                     <textarea
                       placeholder="Select users for this organization..."
@@ -134,6 +138,7 @@ export default function AddOrganizationForm({
                         className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--orange hover:bg-primary--orange hover:text-background--white duration-300"
                         onClick={() => {
                           closeModal();
+                          setEnteredOrgName(null);
                           setError(null);
                         }}
                         ref={cancelButtonRef}
