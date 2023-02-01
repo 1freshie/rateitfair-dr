@@ -14,7 +14,7 @@ export default function HomePage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="w-full h-full flex flex-1 flex-col md:flex-row items-center justify-between">
+      <main className="w-full h-full mt-20 md:mt-28 lg:mt-36 flex flex-1 flex-col md:flex-row items-center justify-between">
         <div className="flex flex-col items-start justify-center w-full md:w-1/2 gap-y-8 text-center md:text-left">
           <h1 className="heading font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
             Rate whatever you want. Whenever you want

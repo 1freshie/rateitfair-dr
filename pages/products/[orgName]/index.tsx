@@ -93,7 +93,7 @@ export default function ProductsPage({ orgData }: Data) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>
+      <div className="w-full h-full mt-10">
         <ProductList
           org={orgData.name.toLowerCase().replace(/\s/g, "")}
           products={orgData.products}

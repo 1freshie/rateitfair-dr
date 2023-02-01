@@ -32,6 +32,7 @@ export default function NavState() {
         <>
           <li>
             {/* TODO: FIX THE DROPDOWN FOR MOBILE AND MAKE Z-INDEX BIGGER */}
+            {/* IMPORTANT: THE NAVBAR AND THE PROFILE PAGE ARE RELATIVE AND MAKE CONFLICT! TO FIX THAT!!! */}
             <Menu as="div" className="relative inline-block text-center z-20">
               <div>
                 <Menu.Button className="inline-flex w-full justify-center items-center gap-x-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 duration-300 hover:text-primary--orange">
@@ -48,7 +49,7 @@ export default function NavState() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-secondary--orange rounded-xl shadow-lg ring-1 ring-primary--orange ring-opacity-5 focus:outline-none paragraph bg-background--white z-10">
+                <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right divide-y divide-secondary--orange rounded-xl shadow-lg ring-1 ring-primary--orange ring-opacity-5 focus:outline-none paragraph bg-background--white z-20">
                   <div className="p-1">
                     {orgs.map((org) => (
                       <Menu.Item key={org.id}>

@@ -105,6 +105,17 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
 
   const userData = userSnapshot.data() as DocumentData;
 
+  const userRatedProducts = userData.ratedProducts;
+
+  const updatedRatedProducts = userRatedProducts.map((ratedProduct: any) => {
+    return {
+      ...ratedProduct,
+      ratedAt: ratedProduct.ratedAt.toString(),
+    };
+  });
+
+  // userData.products = newProducts;
+
   // let orgData: DocumentData = {};
 
   // if (userData.role !== "User" && userData.role !== "Admin") {
@@ -121,7 +132,10 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
       //   ...userData,
       //   // createdAt: userData.createdAt.toString(),
       // },
-      userData,
+      userData: {
+        ...userData,
+        ratedProducts: updatedRatedProducts,
+      },
     },
     revalidate: 1,
   };

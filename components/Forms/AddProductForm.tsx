@@ -231,7 +231,7 @@ export default function AddProductForm({
                       </button>
                       <button
                         type="button"
-                        className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--orange hover:bg-primary--orange hover:text-background--white duration-300"
+                        className="button-blue mt-3 lg:mt-4 bg-background--white text-primary--blue hover:bg-primary--blue hover:text-background--white duration-300"
                         onClick={() => {
                           closeModal();
                           setEnteredProductTitle(null);

@@ -6,6 +6,7 @@ import {
   DocumentReference,
   getDoc,
   getDocs,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
@@ -62,6 +63,7 @@ export default function ProductPage() {
 
   const [rateValue, setRateValue] = useState<number | null>(null);
   const [enteredComment, setEnteredComment] = useState<string>("");
+  const [inEditMode, setInEditMode] = useState(true);
 
   const router = useRouter();
 
@@ -92,6 +94,40 @@ export default function ProductPage() {
 
     getProduct();
   }, []);
+
+  useEffect(() => {
+    async function checkIfUserRated() {
+      const userDoc = doc(db, "users", user!.uid);
+
+      const userSnapshot = await getDoc(userDoc);
+
+      const userData = userSnapshot.data() as DocumentData;
+
+      if (userData.ratedProducts) {
+        const userRatedProducts = userData.ratedProducts;
+
+        const userRatedProduct = userRatedProducts.filter(
+          (ratedProduct: any) => ratedProduct.productId === productId
+        )[0];
+
+        if (userRatedProduct) {
+          setRateValue(userRatedProduct.rate);
+          setEnteredComment(userRatedProduct.comment);
+          setInEditMode(userRatedProduct.editMode);
+        } else {
+          setRateValue(null);
+          setEnteredComment("");
+          setInEditMode(true);
+        }
+      }
+    }
+
+    checkIfUserRated();
+  }, [inEditMode]);
+
+  if (loading || error) {
+    return <AuthState />;
+  }
 
   // console.log(product.rates);
   // console.log(rateValue);
@@ -168,6 +204,9 @@ export default function ProductPage() {
 
     const userRatedProductsCount = userData.ratedProductsCount;
 
+    // const userRatedAt = new Date().toString();
+    const userRatedAt = Timestamp.fromDate(new Date());
+
     if (!userData.ratedProducts) {
       try {
         await updateDoc(userDoc, {
@@ -178,7 +217,8 @@ export default function ProductPage() {
               productId: productId,
               comment: enteredComment,
               rate: rateValue,
-              ratedAt: new Date(),
+              editMode: false,
+              ratedAt: userRatedAt,
             },
           ],
           ratedProductsCount: userRatedProductsCount + 1,
@@ -194,7 +234,8 @@ export default function ProductPage() {
         productId: productId,
         comment: enteredComment,
         rate: rateValue,
-        ratedAt: new Date(),
+        editMode: false,
+        ratedAt: userRatedAt,
       });
 
       const newUserData = {
@@ -216,10 +257,7 @@ export default function ProductPage() {
 
     setRateValue(null);
     setEnteredComment("");
-  }
-
-  if (loading || error) {
-    return <AuthState />;
+    setInEditMode(false);
   }
 
   return (
@@ -231,12 +269,12 @@ export default function ProductPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="w-full h-full flex flex-1 flex-col lg:flex-row gap-y-11 lg:gap-x-11 justify-between items-center text-center">
-        <div className="w-full h-full flex flex-1 flex-col gap-y-4 lg:gap-y-8 justify-center items-center">
+      <div className="w-full h-full mt-16 flex flex-1 flex-col lg:flex-row gap-y-11 lg:gap-x-11 justify-between items-center text-center">
+        <div className="w-full h-full flex flex-1 flex-col gap-y-4 lg:gap-y-10 justify-center items-center">
           <img
             src={product.imageURL}
             alt={product.title}
-            className="w-1/3 h-1/3"
+            className="w-3/5 h-3/5"
           />
           <div className="w-full h-full flex flex-col justify-center items-center gap-y-4">
             <h1 className="heading">{product.title}</h1>
@@ -247,101 +285,94 @@ export default function ProductPage() {
         </div>
 
         <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-[30px]">
-          <div className="w-full h-full flex flex-col gap-y-2">
-            <h1 className="heading">How would you rate this product?</h1>
-            <p className="paragraph">Choose from 0 to 10...</p>
-          </div>
+          {inEditMode ? (
+            <>
+              <div className="w-full h-full flex flex-col gap-y-2">
+                <h1 className="heading">How would you rate this product?</h1>
+                <p className="paragraph">Choose from 0 to 10...</p>
+              </div>
+              <div className="w-full h-full my-8 grid grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-2">
+                {[...Array(11)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="w-full h-full flex flex-col justify-center items-center cursor-pointer"
+                    onClick={() => setRateValue(i)}
+                  >
+                    <StarIcon
+                      className="w-14 md:w-20 xl:w-24 h-14 md:h-20 xl:h-24 duration-300"
+                      fill={
+                        rateValue! >= i && rateValue != null
+                          ? "#f9ab55"
+                          : "none"
+                      }
+                      stroke="#f9ab55"
+                    />
+                    <p
+                      className={`paragraph duration-300 ${
+                        rateValue! >= i &&
+                        rateValue != null &&
+                        "text-primary--blue"
+                      }`}
+                    >
+                      {i}
+                    </p>
+                  </div>
+                ))}
+              </div>
 
-          <div className="w-full h-full my-8 grid grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-2">
-            {[...Array(11)].map((_, i) => (
-              <div
-                key={i}
-                className="w-full h-full flex flex-col justify-center items-center cursor-pointer"
-                onClick={() => setRateValue(i)}
+              <form
+                onSubmit={handleRateSubmit}
+                className="w-full h-full flex flex-col justify-center items-center gap-y-4"
               >
-                <StarIcon
-                  className="w-14 md:w-20 xl:w-24 h-14 md:h-20 xl:h-24 duration-300"
-                  fill={
-                    rateValue! >= i && rateValue != null ? "#f9ab55" : "none"
+                <p className="paragraph text-primary--blue text-center">
+                  Want the product to be improved?
+                </p>
+                <textarea
+                  placeholder="Is something wrong with the product? Tell us about any improvements that should be made..."
+                  className="input resize-none h-36 md:h-40 lg:h-44 xl:h-48"
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setEnteredComment(e.target.value)
                   }
-                  stroke="#f9ab55"
                 />
-                <p
-                  className={`paragraph duration-300 ${
-                    rateValue! >= i && rateValue != null && "text-primary--blue"
-                  }`}
+                <button
+                  type="submit"
+                  className="mt-5 button-orange duration-300"
                 >
-                  {i}
+                  Rate it
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <div className="w-full h-full mt-8 flex flex-col gap-y-2">
+                <h1 className="heading">Thank you!</h1>
+                <p className="paragraph">
+                  You rated this product{" "}
+                  <span className="text-primary--orange">{rateValue}</span>/10!
                 </p>
               </div>
-            ))}
-          </div>
+              <div className="w-full h-full my-9 flex flex-col gap-y-2">
+                <p className="paragraph text-primary--blue">
+                  You also commented on it:
+                </p>
+                <p className="text-center italic text-secondary--gray text-base md:text-lg lg:text-xl">
+                  {enteredComment}
+                </p>
+              </div>
 
-          <form
-            onSubmit={handleRateSubmit}
-            className="w-full h-full flex flex-col justify-center items-center gap-y-4"
-          >
-            <p className="paragraph text-primary--blue text-center">
-              Want the product to be improved?
-            </p>
-            <textarea
-              placeholder="Is something wrong with the product? Tell us about any improvements that should be made..."
-              className="input resize-none h-36 md:h-40 lg:h-44 xl:h-48"
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setEnteredComment(e.target.value)
-              }
-            />
-            <button type="submit" className="mt-5 button-orange duration-300">
-              Rate it
-            </button>
-          </form>
+              <div className="w-full h-full flex flex-col items-center justify-center gap-y-3">
+                <p className="paragraph">Changed your opinion?</p>
+                <button
+                  className="button-blue duration-300"
+                  onClick={() => setInEditMode(true)}
+                >
+                  Change it
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>
   );
 }
-
-// export async function getStaticPaths() {
-//   const orgsDocs = await getDocs(collection(db, "organizations"));
-
-//   const orgsData = orgsDocs.docs.map((org) => org.data());
-
-//   const orgsNames = orgsData.map((orgData) =>
-//     orgData.name.toLowerCase().replace(/\s/g, "")
-//   );
-
-//   const paths = orgsNames.map((orgName) => ({
-//     params: { orgName },
-//   }));
-
-//   return { paths, fallback: false };
-// }
-
-// export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
-//   const { params } = context;
-//   const { orgName } = params as Params;
-//   const { productId } = params as Params;
-
-//   const orgsSnapshot = await getDocs(collection(db, "organizations"));
-
-//   const orgsData = orgsSnapshot.docs.map((org) => org.data());
-
-//   const orgId = orgsData.filter(
-//     (orgData) => orgData.name.toLowerCase().replace(/\s/g, "") === orgName
-//   )[0].id;
-
-//   const orgDoc = doc(db, "organizations", orgId);
-
-//   const orgSnapshot = await getDoc(orgDoc);
-
-//   const orgData = orgSnapshot.data() as DocumentData;
-
-//   console.log(orgData.products);
-
-//   return {
-//     props: {
-//       productData: orgData,
-//     },
-//     revalidate: 1,
-//   };
-// };
