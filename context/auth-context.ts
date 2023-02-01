@@ -4,7 +4,7 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebase/firebaseApp";
 
 const googleProvider = new GoogleAuthProvider();
@@ -16,27 +16,33 @@ export async function signInWithGoogle() {
 
   const usersCollection = collection(db, "users");
 
-  try {
-    await setDoc(doc(usersCollection, uid), {
-      id: uid,
-      username: displayName,
-      email: email,
-      photoURL: photoURL,
-      role: "User",
-      orgId: "",
-      ratedProducts: [
-        // {
-        //   productId: "",
-        //   rating: 0,
-        //   comment: "",
-        //   ratedAt: new Date(),
-        // },
-      ],
-      ratedProductsCount: 0,
-      // createdAt: new Date(),
-    });
-  } catch (error: any) {
-    prompt("Error", error.message);
+  const userDoc = doc(usersCollection, uid);
+
+  const userSnapshot = await getDoc(userDoc);
+
+  if (!userSnapshot.exists()) {
+    try {
+      await setDoc(userDoc, {
+        id: uid,
+        username: displayName,
+        email: email,
+        photoURL: photoURL,
+        role: "User",
+        orgId: "",
+        // ratedProducts: [
+          // {
+          //   productId: "",
+          //   rating: 0,
+          //   comment: "",
+          //   ratedAt: new Date(),
+          // },
+        // ],
+        ratedProductsCount: 0,
+        // createdAt: new Date(),
+      });
+    } catch (error: any) {
+      prompt("Error", error.message);
+    }
   }
 }
 
@@ -46,27 +52,33 @@ export async function signInWithFacebook() {
 
   const usersCollection = collection(db, "users");
 
-  try {
-    await setDoc(doc(usersCollection, uid), {
-      id: uid,
-      username: displayName,
-      email: email,
-      photoURL: photoURL,
-      role: "User",
-      orgId: "",
-      ratedProducts: [
-        // {
-        //   productId: "",
-        //   rating: 0,
-        //   comment: "",
-        //   ratedAt: new Date(),
-        // },
-      ],
-      ratedProductsCount: 0,
-      // createdAt: new Date(),
-    });
-  } catch (error: any) {
-    prompt("Error", error.message);
+  const userDoc = doc(usersCollection, uid);
+
+  const userSnapshot = await getDoc(userDoc);
+
+  if (!userSnapshot.exists()) {
+    try {
+      await setDoc(userDoc, {
+        id: uid,
+        username: displayName,
+        email: email,
+        photoURL: photoURL,
+        role: "User",
+        orgId: "",
+        // ratedProducts: [
+          // {
+          //   productId: "",
+          //   rating: 0,
+          //   comment: "",
+          //   ratedAt: new Date(),
+          // },
+        // ],
+        ratedProductsCount: 0,
+        // createdAt: new Date(),
+      });
+    } catch (error: any) {
+      prompt("Error", error.message);
+    }
   }
 }
 

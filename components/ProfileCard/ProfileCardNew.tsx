@@ -60,7 +60,7 @@ export default function ProfileCard({ userData }: UserData) {
 
   return (
     <div className="h-full w-full flex justify-center">
-      <div className="w-full lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-6">
+      <div className="w-full lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-4">
         <div className="flex flex-col justify-center items-center">
           <img
             src={
@@ -76,11 +76,11 @@ export default function ProfileCard({ userData }: UserData) {
           <h1 className="heading mt-3">{userData.username}</h1>
           <p className="paragraph mt-2">{userData.role}</p>
         </div>
-        <div className="w-5/6 flex flex-col items-center justify-between mt-6">
+        <div className="w-full flex flex-col items-center justify-between mt-6">
           <FontAwesomeIcon icon={faEnvelope} style={iconStyle} />
-          <p className="paragraph text-secondary--gray p-1">{userData.email}</p>
+          <p className="paragraph text-secondary--gray">{userData.email}</p>
         </div>
-        <div className="w-5/6 flex flex-col items-center justify-between">
+        <div className="w-full mt-2 flex flex-col items-center justify-between">
           <FontAwesomeIcon icon={faStar} style={iconStyle} />
           <p className="paragraph text-secondary--gray">
             {userData.ratedProductsCount} rated products

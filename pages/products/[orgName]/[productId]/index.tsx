@@ -3,6 +3,7 @@ import {
   collection,
   doc,
   DocumentData,
+  DocumentReference,
   getDoc,
   getDocs,
   updateDoc,
@@ -12,8 +13,10 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import React, { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import AuthState from "../../../../components/AuthState/AuthState";
 
-import { db } from "../../../../firebase/firebaseApp";
+import { auth, db } from "../../../../firebase/firebaseApp";
 
 interface Data {
   productData: DocumentData;
@@ -26,6 +29,8 @@ interface Params extends ParsedUrlQuery {
 
 export default function ProductPage() {
   // TODO: make the comments property in the User document! (see if it works)
+
+  const [user, loading, error] = useAuthState(auth);
 
   const [product, setProduct] = useState<{
     title: string;
@@ -89,7 +94,7 @@ export default function ProductPage() {
   }, []);
 
   // console.log(product.rates);
-  console.log(rateValue);
+  // console.log(rateValue);
 
   async function handleRateSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -111,7 +116,7 @@ export default function ProductPage() {
     };
 
     // setProduct(newProduct);
-    console.log(updatedProduct);
+    // console.log(updatedProduct);
 
     const orgsSnapshot = await getDocs(collection(db, "organizations"));
 
@@ -155,9 +160,66 @@ export default function ProductPage() {
       prompt("Error", err.message);
     }
 
+    const userDoc = doc(db, "users", user!.uid);
+
+    const userSnapshot = await getDoc(userDoc);
+
+    const userData = userSnapshot.data() as DocumentData;
+
+    const userRatedProductsCount = userData.ratedProductsCount;
+
+    if (!userData.ratedProducts) {
+      try {
+        await updateDoc(userDoc, {
+          ...userData,
+          ratedProducts: [
+            {
+              orgId: orgId,
+              productId: productId,
+              comment: enteredComment,
+              rate: rateValue,
+              ratedAt: new Date(),
+            },
+          ],
+          ratedProductsCount: userRatedProductsCount + 1,
+        });
+      } catch (err: any) {
+        prompt("Error", err.message);
+      }
+    } else {
+      const newRatedProducts = userData.ratedProducts;
+
+      newRatedProducts.push({
+        orgId: orgId,
+        productId: productId,
+        comment: enteredComment,
+        rate: rateValue,
+        ratedAt: new Date(),
+      });
+
+      const newUserData = {
+        ...userData,
+        ratedProducts: newRatedProducts,
+        ratedProductsCount: userRatedProductsCount + 1,
+      };
+
+      try {
+        await updateDoc(userDoc, newUserData);
+      } catch (err: any) {
+        prompt("Error", err.message);
+      }
+    }
+
+    // TOOD: Change the rate div to successfull rate div and check if the user already rated the product!
+
     // router.push(`/products/${orgName}/${productId}/success`);
 
     setRateValue(null);
+    setEnteredComment("");
+  }
+
+  if (loading || error) {
+    return <AuthState />;
   }
 
   return (

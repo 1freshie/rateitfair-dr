@@ -97,7 +97,7 @@ export async function getStaticPaths() {
 
 export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
   const { params } = context;
-  const { userId } = params!;
+  const { userId } = params as Params;
 
   const userDoc = doc(db, "users", userId);
 
