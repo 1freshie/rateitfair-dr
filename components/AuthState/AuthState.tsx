@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { useAuthState } from "react-firebase-hooks/auth";
 
-import { auth } from '../../firebase/firebaseApp';
-import LoadingSpinner from '../LoadingSpinner/LoadingSpinner';
+import { auth } from "../../firebase/firebaseApp";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
-const AuthState: React.FC = () => {
+export default function AuthState() {
   const [user, loading, error] = useAuthState(auth);
 
   if (loading) {
@@ -25,6 +25,4 @@ const AuthState: React.FC = () => {
   }
 
   return <></>;
-};
-
-export default AuthState;
+}

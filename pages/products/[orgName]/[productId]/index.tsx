@@ -1,5 +1,14 @@
 import { StarIcon } from "@heroicons/react/24/solid";
 import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import {
   collection,
   doc,
   DocumentData,
@@ -14,8 +23,10 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import React, { useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
 import { useAuthState } from "react-firebase-hooks/auth";
 import AuthState from "../../../../components/AuthState/AuthState";
+import LoadingSpinner from "../../../../components/LoadingSpinner/LoadingSpinner";
 
 import { auth, db } from "../../../../firebase/firebaseApp";
 
@@ -27,6 +38,24 @@ interface Params extends ParsedUrlQuery {
   orgName: string;
   productId: string;
 }
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+export const chartOptions = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "bottom" as const,
+    },
+  },
+};
 
 export default function ProductPage() {
   // TODO: make the comments property in the User document! (see if it works)
@@ -61,6 +90,7 @@ export default function ProductPage() {
     },
   });
 
+  const [userRole, setUserRole] = useState("User");
   const [rateValue, setRateValue] = useState<number | null>(null);
   const [enteredComment, setEnteredComment] = useState<string>("");
   const [inEditMode, setInEditMode] = useState(true);
@@ -71,59 +101,65 @@ export default function ProductPage() {
 
   useEffect(() => {
     async function getProduct() {
-      const orgsSnapshot = await getDocs(collection(db, "organizations"));
+      if (user) {
+        const orgsSnapshot = await getDocs(collection(db, "organizations"));
 
-      const orgsData = orgsSnapshot.docs.map((org) => org.data());
+        const orgsData = orgsSnapshot.docs.map((org) => org.data());
 
-      const orgId = orgsData.filter(
-        (orgData) => orgData.name.toLowerCase().replace(/\s/g, "") === orgName
-      )[0].id;
+        const orgId = orgsData.filter(
+          (orgData) => orgData.name.toLowerCase().replace(/\s/g, "") === orgName
+        )[0].id;
 
-      const orgDoc = doc(db, "organizations", orgId);
+        const orgDoc = doc(db, "organizations", orgId);
 
-      const orgSnapshot = await getDoc(orgDoc);
+        const orgSnapshot = await getDoc(orgDoc);
 
-      const orgData = orgSnapshot.data() as DocumentData;
+        const orgData = orgSnapshot.data() as DocumentData;
 
-      const neededProduct = orgData.products.filter(
-        (product: any) => product.id === productId
-      )[0];
+        const neededProduct = orgData.products.filter(
+          (product: any) => product.id === productId
+        )[0];
 
-      setProduct(neededProduct);
+        setProduct(neededProduct);
+      }
     }
 
     getProduct();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     async function checkIfUserRated() {
-      const userDoc = doc(db, "users", user!.uid);
+      if (user) {
+        const userDoc = doc(db, "users", user!.uid);
 
-      const userSnapshot = await getDoc(userDoc);
+        const userSnapshot = await getDoc(userDoc);
 
-      const userData = userSnapshot.data() as DocumentData;
+        const userData = userSnapshot.data() as DocumentData;
 
-      if (userData.ratedProducts) {
-        const userRatedProducts = userData.ratedProducts;
+        setUserRole(userData.role);
 
-        const userRatedProduct = userRatedProducts.filter(
-          (ratedProduct: any) => ratedProduct.productId === productId
-        )[0];
+        if (userData.ratedProducts) {
+          const userRatedProducts = userData.ratedProducts;
 
-        if (userRatedProduct) {
-          setRateValue(userRatedProduct.rate);
-          setEnteredComment(userRatedProduct.comment);
-          setInEditMode(userRatedProduct.editMode);
-        } else {
-          setRateValue(null);
-          setEnteredComment("");
-          setInEditMode(true);
+          const userRatedProduct = userRatedProducts.filter(
+            (ratedProduct: any) => ratedProduct.productId === productId
+          )[0];
+
+          if (userRatedProduct) {
+            setRateValue(userRatedProduct.rate);
+            setEnteredComment(userRatedProduct.comment);
+            setInEditMode(userRatedProduct.editMode);
+          } else {
+            setRateValue(null);
+            setEnteredComment("");
+            setInEditMode(true);
+          }
         }
       }
     }
 
     checkIfUserRated();
-  }, [inEditMode]);
+  }, [inEditMode, user]);
 
   if (loading || error) {
     return <AuthState />;
@@ -260,6 +296,23 @@ export default function ProductPage() {
     setInEditMode(false);
   }
 
+  const chartLabels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+
+  const chartData = {
+    labels: chartLabels,
+    datasets: [
+      {
+        label: "Number of rates",
+        data: product.rates,
+        // backgroundColor: "rgba(255, 99, 132, 0.2)",
+        // borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: "rgba(249, 171, 85, 0.2)",
+        borderColor: "rgba(245, 138, 7, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
   return (
     <>
       <Head>
@@ -284,7 +337,119 @@ export default function ProductPage() {
           </div>
         </div>
 
-        <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-[30px]">
+        {userRole != "Admin" && userRole != "User" ? (
+          <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-[30px]">
+            <h1 className="heading">Ratings</h1>
+            <div className="w-full h-full my-8">
+              <Bar options={chartOptions} data={chartData} />
+            </div>
+            <div className="w-full h-full flex flex-col items-center justify-center gap-y-3">
+              <p className="paragraph">
+                There are 344 comments on this product...
+              </p>
+              <button
+                className="button-blue duration-300"
+                onClick={() => setInEditMode(true)}
+              >
+                View all
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-[30px]">
+            {inEditMode ? (
+              <>
+                <div className="w-full h-full flex flex-col gap-y-2">
+                  <h1 className="heading">How would you rate this product?</h1>
+                  <p className="paragraph">Choose from 0 to 10...</p>
+                </div>
+                <div className="w-full h-full my-8 grid grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-2">
+                  {[...Array(11)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-full h-full flex flex-col justify-center items-center cursor-pointer"
+                      onClick={() => setRateValue(i)}
+                    >
+                      <StarIcon
+                        className="w-14 md:w-20 xl:w-24 h-14 md:h-20 xl:h-24 duration-300"
+                        fill={
+                          rateValue! >= i && rateValue != null
+                            ? "#f9ab55"
+                            : "none"
+                        }
+                        stroke="#f9ab55"
+                      />
+                      <p
+                        className={`paragraph duration-300 ${
+                          rateValue! >= i &&
+                          rateValue != null &&
+                          "text-primary--blue"
+                        }`}
+                      >
+                        {i}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <form
+                  onSubmit={handleRateSubmit}
+                  className="w-full h-full flex flex-col justify-center items-center gap-y-4"
+                >
+                  <p className="paragraph text-primary--blue text-center">
+                    Want the product to be improved?
+                  </p>
+                  <textarea
+                    placeholder="Is something wrong with the product? Tell us about any improvements that should be made..."
+                    className="input resize-none h-36 md:h-40 lg:h-44 xl:h-48"
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      setEnteredComment(e.target.value)
+                    }
+                  />
+                  <button
+                    type="submit"
+                    className="mt-5 button-orange duration-300"
+                  >
+                    Rate it
+                  </button>
+                </form>
+              </>
+            ) : (
+              <>
+                <div className="w-full h-full flex flex-col gap-y-2">
+                  <h1 className="heading">Thank you!</h1>
+                  <p className="paragraph">
+                    You rated this product{" "}
+                    <span className="text-primary--orange">{rateValue}</span>
+                    /10!
+                  </p>
+                </div>
+                {enteredComment.length > 0 && (
+                  <div className="w-full h-full my-10 flex flex-col gap-y-2">
+                    <p className="paragraph text-primary--blue">
+                      You also commented on it:
+                    </p>
+                    <p className="text-center italic text-secondary--gray text-base md:text-lg lg:text-xl">
+                      {enteredComment}
+                    </p>
+                  </div>
+                )}
+
+                <div className="w-full h-full flex flex-col items-center justify-center gap-y-3">
+                  <p className="paragraph">Changed your opinion?</p>
+                  <button
+                    className="button-blue duration-300"
+                    onClick={() => setInEditMode(true)}
+                  >
+                    Change it
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-[30px]">
           {inEditMode ? (
             <>
               <div className="w-full h-full flex flex-col gap-y-2">
@@ -344,14 +509,14 @@ export default function ProductPage() {
             </>
           ) : (
             <>
-              <div className="w-full h-full mt-8 flex flex-col gap-y-2">
+              <div className="w-full h-full flex flex-col gap-y-2">
                 <h1 className="heading">Thank you!</h1>
                 <p className="paragraph">
                   You rated this product{" "}
                   <span className="text-primary--orange">{rateValue}</span>/10!
                 </p>
               </div>
-              <div className="w-full h-full my-9 flex flex-col gap-y-2">
+              <div className="w-full h-full my-10 flex flex-col gap-y-2">
                 <p className="paragraph text-primary--blue">
                   You also commented on it:
                 </p>
@@ -371,7 +536,7 @@ export default function ProductPage() {
               </div>
             </>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   );
