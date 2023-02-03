@@ -105,7 +105,22 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
 
   const userData = userSnapshot.data() as DocumentData;
 
-  const userRatedProducts = userData.ratedProducts;
+  let userRatedProducts;
+
+  // const userRatedProducts = userData.ratedProducts;
+
+  // const updatedRatedProducts = userRatedProducts.map((ratedProduct: any) => {
+  //   return {
+  //     ...ratedProduct,
+  //     ratedAt: ratedProduct.ratedAt.toString(),
+  //   };
+  // });
+
+  if (userData.ratedProducts) {
+    userRatedProducts = userData.ratedProducts;
+  } else {
+    userRatedProducts = [];
+  }
 
   const updatedRatedProducts = userRatedProducts.map((ratedProduct: any) => {
     return {
