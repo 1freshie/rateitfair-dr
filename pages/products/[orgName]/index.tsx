@@ -137,10 +137,87 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
 
   const orgData = orgSnapshot.data() as DocumentData;
 
+  let updatedOrgProducts: any;
+
+  // if (orgData.products) {
+  //   orgProductUsersRated = orgData.products.map((product: any) => {
+  //     return product.usersRated;
+  //   });
+
+  //   if (!orgProductUsersRated) {
+  //     orgProductUsersRated = [];
+  //   } else {
+  //     orgProductUsersRated = orgProductUsersRated.map((usersRated: any) => {
+  //       return usersRated.map((user: any) => {
+  //         return {
+  //           ...user,
+  //           userRatedAt: user.userRatedAt.toString(),
+  //         };
+  //       });
+  //     });
+  //   }
+
+  //   updatedOrgProducts = orgData.products.map((product: any, index: number) => {
+  //     return {
+  //       ...product,
+  //       usersRated: orgProductUsersRated[index],
+  //     };
+  //   });
+  // } else {
+  //   updatedOrgProducts = [];
+  // }
+
+  if (!orgData.products) {
+    updatedOrgProducts = [];
+  } else {
+    updatedOrgProducts = orgData.products.map((product: any) => {
+      if (!product.usersRated) {
+        return {
+          ...product,
+          usersRated: [],
+        };
+      }
+
+      return {
+        ...product,
+        usersRated: product.usersRated.map((user: any) => {
+          return {
+            ...user,
+            userRatedAt: user.userRatedAt.toString(),
+          };
+        }),
+      };
+    });
+  }
+
   return {
     props: {
-      orgData,
+      orgData: {
+        ...orgData,
+        products: updatedOrgProducts,
+      },
     },
-    revalidate: 1,
   };
+
+  // updatedOrgProducts = orgData.products.map((product: any, index: number) => {
+  //   return {
+  //     ...product,
+  //     usersRated: orgProductUsersRated[index].map((user: any) => {
+  //       return {
+  //         ...user,
+  //         userRatedAt: user.userRatedAt.toString(),
+  //       };
+  //     }),
+  //   };
+  // });
+
+  // return {
+  //   props: {
+  //     orgData: {
+  //       ...orgData,
+  //       products: updatedOrgProducts,
+  //     },
+  //   },
+  //   revalidate: 1,
+  // };
 };

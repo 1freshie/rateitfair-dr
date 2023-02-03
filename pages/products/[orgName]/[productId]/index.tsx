@@ -27,6 +27,7 @@ import { Bar } from "react-chartjs-2";
 import { useAuthState } from "react-firebase-hooks/auth";
 import AuthState from "../../../../components/AuthState/AuthState";
 import LoadingSpinner from "../../../../components/LoadingSpinner/LoadingSpinner";
+import ProductInfo from "../../../../components/ProductInfo/ProductInfo";
 
 import { auth, db } from "../../../../firebase/firebaseApp";
 
@@ -362,7 +363,7 @@ export default function ProductPage() {
 
       {user && (
         <div className="w-full h-full mt-16 flex flex-1 flex-col lg:flex-row gap-y-11 lg:gap-x-11 justify-between items-center text-center">
-          <div className="w-full h-full flex flex-1 flex-col gap-y-4 lg:gap-y-10 justify-center items-center">
+          {/* <div className="w-full h-full flex flex-1 flex-col gap-y-4 lg:gap-y-10 justify-center items-center">
             <img
               src={product.imageURL}
               alt={product.title}
@@ -374,7 +375,12 @@ export default function ProductPage() {
                 {product.description}
               </p>
             </div>
-          </div>
+          </div> */}
+          <ProductInfo
+            title={product.title}
+            description={product.description}
+            imageURL={product.imageURL}
+          />
 
           {userRole != "Admin" && userRole != "User" ? (
             <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-[30px]">
