@@ -214,7 +214,7 @@ export default function ProductPage() {
       userId: user!.uid,
       userEmail: user!.email,
       userRate: rateValue,
-      userRomment: enteredComment,
+      userComment: enteredComment,
       userRatedAt: Timestamp.now(),
     });
 
