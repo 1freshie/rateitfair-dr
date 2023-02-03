@@ -137,7 +137,7 @@
 
     .button-orange,
     .button-blue {
-      width: 144px;
+      width: 176px;
     }
 
     .input {
@@ -157,11 +157,6 @@
       line-height: 2rem
         /* 32px */
       ;
-    }
-
-    .button-orange,
-    .button-blue {
-      width: 160px;
     }
   }
 

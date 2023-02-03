@@ -12,65 +12,6 @@ import { ParsedUrlQuery } from "querystring";
 import ProductList from "../../../components/ProductList/ProductList";
 import { db } from "../../../firebase/firebaseApp";
 
-// const products = [
-//   {
-//     title: "AMD Ryzen 5 2600",
-//     description: "Rate it for the first time!",
-//     image:
-//       "https://www.notebookcheck.net/fileadmin/Notebooks/AMD/ryzen5_badge.jpg",
-//     isRatedAlready: false,
-//   },
-//   {
-//     title: "AMD Ryzen 5 2600",
-//     description: "Already rated! Want to change it?",
-//     image:
-//       "https://www.notebookcheck.net/fileadmin/Notebooks/AMD/ryzen5_badge.jpg",
-//     isRatedAlready: true,
-//   },
-//   {
-//     title: "AMD Ryzen 5 2600",
-//     description: "Rate it for the first time!",
-//     image:
-//       "https://www.notebookcheck.net/fileadmin/Notebooks/AMD/ryzen5_badge.jpg",
-//     isRatedAlready: false,
-//   },
-//   {
-//     title: "AMD Ryzen 5 2600",
-//     description: "Already rated! Want to change it?",
-//     image:
-//       "https://www.notebookcheck.net/fileadmin/Notebooks/AMD/ryzen5_badge.jpg",
-//     isRatedAlready: true,
-//   },
-//   {
-//     title: "AMD Ryzen 5 2600",
-//     description: "Rate it for the first time!",
-//     image:
-//       "https://www.notebookcheck.net/fileadmin/Notebooks/AMD/ryzen5_badge.jpg",
-//     isRatedAlready: false,
-//   },
-//   {
-//     title: "AMD Ryzen 5 2600",
-//     description: "Already rated! Want to change it?",
-//     image:
-//       "https://www.notebookcheck.net/fileadmin/Notebooks/AMD/ryzen5_badge.jpg",
-//     isRatedAlready: true,
-//   },
-//   {
-//     title: "AMD Ryzen 5 2600",
-//     description: "Rate it for the first time!",
-//     image:
-//       "https://www.notebookcheck.net/fileadmin/Notebooks/AMD/ryzen5_badge.jpg",
-//     isRatedAlready: false,
-//   },
-//   {
-//     title: "AMD Ryzen 5 2600",
-//     description: "Already rated! Want to change it?",
-//     image:
-//       "https://www.notebookcheck.net/fileadmin/Notebooks/AMD/ryzen5_badge.jpg",
-//     isRatedAlready: true,
-//   },
-// ];
-
 interface Data {
   orgData: DocumentData;
 }
@@ -139,34 +80,6 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
 
   let updatedOrgProducts: any;
 
-  // if (orgData.products) {
-  //   orgProductUsersRated = orgData.products.map((product: any) => {
-  //     return product.usersRated;
-  //   });
-
-  //   if (!orgProductUsersRated) {
-  //     orgProductUsersRated = [];
-  //   } else {
-  //     orgProductUsersRated = orgProductUsersRated.map((usersRated: any) => {
-  //       return usersRated.map((user: any) => {
-  //         return {
-  //           ...user,
-  //           userRatedAt: user.userRatedAt.toString(),
-  //         };
-  //       });
-  //     });
-  //   }
-
-  //   updatedOrgProducts = orgData.products.map((product: any, index: number) => {
-  //     return {
-  //       ...product,
-  //       usersRated: orgProductUsersRated[index],
-  //     };
-  //   });
-  // } else {
-  //   updatedOrgProducts = [];
-  // }
-
   if (!orgData.products) {
     updatedOrgProducts = [];
   } else {
@@ -183,7 +96,7 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
         usersRated: product.usersRated.map((user: any) => {
           return {
             ...user,
-            userRatedAt: user.userRatedAt.toString(),
+            userRatedAt: user.userRatedAt.toDate().toString(),
           };
         }),
       };
@@ -198,26 +111,4 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
       },
     },
   };
-
-  // updatedOrgProducts = orgData.products.map((product: any, index: number) => {
-  //   return {
-  //     ...product,
-  //     usersRated: orgProductUsersRated[index].map((user: any) => {
-  //       return {
-  //         ...user,
-  //         userRatedAt: user.userRatedAt.toString(),
-  //       };
-  //     }),
-  //   };
-  // });
-
-  // return {
-  //   props: {
-  //     orgData: {
-  //       ...orgData,
-  //       products: updatedOrgProducts,
-  //     },
-  //   },
-  //   revalidate: 1,
-  // };
 };

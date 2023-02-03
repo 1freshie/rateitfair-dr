@@ -5,7 +5,8 @@ interface ProductListProps {
   products: {
     id: string;
     title: string;
-    description: string;
+    description?: string;
+    ratesCount: number;
     imageURL: string;
     // isRatedAlready: boolean;
   }[];
@@ -38,7 +39,8 @@ export default function ProductList({ org, products }: ProductListProps) {
           org={org}
           id={product.id}
           title={product.title}
-          description={product.description}
+          // description={product.description}
+          ratesCount={product.ratesCount}
           imageURL={product.imageURL}
           // isRatedAlready={product.isRatedAlready}
         />

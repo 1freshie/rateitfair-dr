@@ -20,6 +20,7 @@ import {
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import React, { useEffect, useState } from "react";
@@ -78,9 +79,9 @@ export default function ProductPage() {
     usersRated: [
       {
         userId: string;
-        rate: number;
-        comment: string;
-        ratedAt: Timestamp;
+        userRate: number;
+        userComment: string;
+        userRatedAt: Timestamp;
       }
     ];
   }>({
@@ -104,18 +105,21 @@ export default function ProductPage() {
     usersRated: [
       {
         userId: "",
-        rate: 0,
-        comment: "",
-        ratedAt: Timestamp.now(),
+        userRate: 0,
+        userComment: "",
+        userRatedAt: Timestamp.now(),
       },
     ],
   });
 
   const [userRole, setUserRole] = useState("User");
+
   const [rateValue, setRateValue] = useState<number | null>(null);
   const [enteredComment, setEnteredComment] = useState("");
-  // const [hasUsersRated, setHasUsersRated] = useState(false);
+
   const [inEditMode, setInEditMode] = useState(true);
+
+  const [usersCommentsCount, setUsersCommentsCount] = useState(0);
 
   useEffect(() => {
     async function getProduct() {
@@ -138,9 +142,11 @@ export default function ProductPage() {
           (product: any) => product.id === productId
         )[0];
 
-        // if (neededProduct.usersRated) {
-        //   setHasUsersRated(true);
-        // }
+        const usersCommentsCount = neededProduct.usersRated.filter(
+          (userRated: any) => userRated.userComment.length > 0
+        ).length;
+
+        setUsersCommentsCount(usersCommentsCount);
 
         setProduct(neededProduct);
       }
@@ -242,17 +248,6 @@ export default function ProductPage() {
     const orgSnapshot = await getDoc(orgDoc);
 
     const orgData = orgSnapshot.data() as DocumentData;
-
-    // const newProducts = orgData.products.filter(
-    //   (product: any) => product.id !== productId
-    // );
-
-    // newProducts.push(updatedProduct);
-
-    // const newOrgData = {
-    //   ...orgData,
-    //   products: newProducts,
-    // };
 
     const newOrgData = {
       ...orgData,
@@ -363,19 +358,6 @@ export default function ProductPage() {
 
       {user && (
         <div className="w-full h-full mt-16 flex flex-1 flex-col lg:flex-row gap-y-11 lg:gap-x-11 justify-between items-center text-center">
-          {/* <div className="w-full h-full flex flex-1 flex-col gap-y-4 lg:gap-y-10 justify-center items-center">
-            <img
-              src={product.imageURL}
-              alt={product.title}
-              className="w-3/5 h-3/5"
-            />
-            <div className="w-full h-full flex flex-col justify-center items-center gap-y-4">
-              <h1 className="heading">{product.title}</h1>
-              <p className="paragraph text-secondary--gray lg:w-4/5">
-                {product.description}
-              </p>
-            </div>
-          </div> */}
           <ProductInfo
             title={product.title}
             description={product.description}
@@ -390,14 +372,13 @@ export default function ProductPage() {
               </div>
               <div className="w-full h-full flex flex-col items-center justify-center gap-y-3">
                 <p className="paragraph">
-                  There are 344 comments on this product...
+                  There are{" "}
+                  <span className="font-medium">{usersCommentsCount}</span>{" "}
+                  comments on this product...
                 </p>
-                <button
-                  className="button-blue duration-300"
-                  onClick={() => setInEditMode(true)}
-                >
-                  View all
-                </button>
+                <Link href={`/products/${orgName}/${productId}/comments`}>
+                  <button className="button-blue duration-300">View all</button>
+                </Link>
               </div>
             </div>
           ) : (
@@ -467,7 +448,9 @@ export default function ProductPage() {
                     <h1 className="heading">Thank you!</h1>
                     <p className="paragraph">
                       You rated this product{" "}
-                      <span className="text-primary--orange">{rateValue}</span>
+                      <span className="text-primary--orange font-medium">
+                        {rateValue}
+                      </span>
                       /10!
                     </p>
                   </div>
