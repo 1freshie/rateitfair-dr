@@ -49,12 +49,10 @@ export async function getStaticPaths() {
 
   const orgsData = orgsDocs.docs.map((org) => org.data());
 
-  const orgsNames = orgsData.map((orgData) =>
-    orgData.name.toLowerCase().replace(/\s/g, "")
-  );
-
-  const paths = orgsNames.map((orgName) => ({
-    params: { orgName },
+  const paths = orgsData.map((orgData) => ({
+    params: {
+      orgName: orgData.name.toLowerCase().replace(/\s/g, ""),
+    },
   }));
 
   return { paths, fallback: false };
