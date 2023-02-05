@@ -542,6 +542,14 @@ export default function ProductPage({ productData, orgId }: Data) {
     return <AuthState />;
   }
 
+  // const test = Timestamp.fromDate(new Date());
+  // console.log("1:");
+  // console.log(test);
+  // console.log("2:");
+  // console.log(test.toDate());
+  // console.log("3:");
+  // console.log(test.toDate().toString());
+
   // console.log(product.rates);
   // console.log(rateValue);
 
@@ -660,8 +668,6 @@ export default function ProductPage({ productData, orgId }: Data) {
     }
 
     // TOOD: Check if the user already rated the product!
-
-    // router.push(`/products/${orgName}/${productId}/success`);
 
     setRateValue(null);
     setEnteredComment("");
@@ -862,6 +868,10 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
   const neededProduct = orgData.products.filter(
     (product: any) => product.id === productId
   )[0];
+
+  if (!neededProduct.usersRated) {
+    neededProduct.usersRated = [];
+  }
 
   return {
     props: {
