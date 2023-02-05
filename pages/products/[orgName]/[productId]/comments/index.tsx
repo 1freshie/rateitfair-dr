@@ -108,13 +108,12 @@ export default function ProductCommentsPage({ usersRated }: Data) {
     return <AuthState />;
   }
 
-  console.log(usersRated);
-
   return (
-    <div className="w-full h-full grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="w-full h-full mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4">
       {usersRated.map((userRated) => (
         <ProductCommentCard
           key={userRated.userId}
+          userId={userRated.userId}
           userComment={userRated.userComment}
           userRate={userRated.userRate}
           userEmail={userRated.userEmail}
@@ -200,9 +199,32 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
     (product: any) => product.id === productId
   )[0];
 
+  const datedUsersRated = product.usersRated.map((user: any) => {
+    return {
+      ...user,
+      userRatedAt: new Date(user.userRatedAt),
+    };
+  });
+
+  const sortedUsersRated = datedUsersRated.sort(
+    (a: any, b: any) => b.userRatedAt.getTime() - a.userRatedAt.getTime()
+  );
+
+  // const sortedUsersRated = product.usersRated.sort(
+  //   (a: any, b: any) => b.userRate - a.userRate
+  // );
+
+  const usersRated = sortedUsersRated.map((user: any) => {
+    return {
+      ...user,
+      userRatedAt: user.userRatedAt.toString(),
+    };
+  });
+
   return {
     props: {
-      usersRated: product.usersRated,
+      // usersRated: product.usersRated,
+      usersRated,
     },
   };
 };
