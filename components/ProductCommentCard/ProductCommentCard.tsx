@@ -8,6 +8,7 @@ import {
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { db } from "../../firebase/firebaseApp";
@@ -54,18 +55,18 @@ export default function ProductCommentCard({
       <div className="w-full p-4 flex flex-col justify-center items-center border-b border-b-secondary--orange rounded-t-[30px]">
         <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-x-3 lg:gap-x-6">
           <div className="w-full flex justify-around items-center gap-x-3 lg:gap-x-6">
-            <img
+            <Image
               src={
                 userProfilePhoto
                   ? userProfilePhoto
                   : "https://via.placeholder.com/40"
               }
+              width={40}
+              height={40}
               alt="Profile Photo"
-              // width={40}
-              // height={40}
-              className="rounded-full object-center object-cover w-8 h-8 lg:w-10 lg:h-10"
+              className="rounded-full object-center object-cover w-auto h-auto"
             />
-            <p className="paragraph text-primary--orange font-medium">
+            <p className="paragraph text-primary--orange font-medium text-center">
               {userEmail}
             </p>
           </div>

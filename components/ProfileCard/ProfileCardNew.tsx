@@ -4,10 +4,11 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 import { faEnvelope, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Image from "next/image";
+import { useState } from "react";
 import { signOutUser } from "../../context/auth-context";
 import { auth } from "../../firebase/firebaseApp";
 import AuthState from "../AuthState/AuthState";
-import { useState } from "react";
 
 interface UserData {
   userData: DocumentData;
@@ -62,16 +63,16 @@ export default function ProfileCard({ userData }: UserData) {
     <div className="h-full w-full flex justify-center">
       <div className="w-full lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-4">
         <div className="flex flex-col justify-center items-center">
-          <img
+          <Image
             src={
               userData.photoURL
                 ? userData.photoURL
-                : "https://via.placeholder.com/110"
+                : "https://via.placeholder.com/256"
             }
             alt="Profile Photo"
-            width={110}
-            height={110}
-            className="rounded-full object-center object-cover"
+            width={256}
+            height={256}
+            className="rounded-full object-center object-cover w-auto h-auto"
           />
           <h1 className="heading mt-3">{userData.username}</h1>
           <p className="paragraph mt-2">{userData.role}</p>

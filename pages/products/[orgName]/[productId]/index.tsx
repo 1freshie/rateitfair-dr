@@ -708,7 +708,7 @@ export default function ProductPage({ productData, orgId }: Data) {
             imageURL={productData.imageURL}
           />
 
-          {userRole != "Admin" && userRole != "User" ? (
+          {userRole !== "Admin" && userRole !== "User" ? (
             <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-[30px]">
               <h1 className="heading">Ratings</h1>
               <div className="w-full h-full my-8">
@@ -745,7 +745,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                         <StarIcon
                           className="w-14 md:w-20 xl:w-24 h-14 md:h-20 xl:h-24 duration-300"
                           fill={
-                            rateValue! >= i && rateValue != null
+                            rateValue! >= i && rateValue !== null
                               ? "#f9ab55"
                               : "none"
                           }
@@ -754,7 +754,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                         <p
                           className={`paragraph duration-300 ${
                             rateValue! >= i &&
-                            rateValue != null &&
+                            rateValue !== null &&
                             "text-primary--blue"
                           }`}
                         >

@@ -29,10 +29,16 @@ export default function AddOrganizationForm({
     if (
       !enteredOrgName ||
       enteredOrgName === "" ||
-      (enteredOrgName!.length < 2 && enteredOrgName!.length > 50)
+      (enteredOrgName!.length < 2 && enteredOrgName!.length > 50) ||
+      enteredOrgName === "Admin" ||
+      enteredOrgName === "admin" ||
+      enteredOrgName === "ADMIN" ||
+      enteredOrgName === "User" ||
+      enteredOrgName === "user" ||
+      enteredOrgName === "USER"
     ) {
       setError(
-        "Please enter an organization name that is greater than 2 characters and less than 50 characters!"
+        "Please enter a valid organization name that is greater than 2 characters and less than 50 characters!"
       );
       return;
     }
@@ -52,8 +58,10 @@ export default function AddOrganizationForm({
 
     const orgsCollection = collection(db, "organizations");
 
+    const newOrgDoc = doc(orgsCollection, newOrgId);
+
     try {
-      await setDoc(doc(orgsCollection, newOrgId), newOrg);
+      await setDoc(newOrgDoc, newOrg);
     } catch (error: any) {
       prompt("Error", error.message);
     }
@@ -80,7 +88,7 @@ export default function AddOrganizationForm({
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 bg-[#000000] bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 overflow-y-auto">
@@ -94,7 +102,7 @@ export default function AddOrganizationForm({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-background--white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
                 <div className="flex flex-col justify-center items-center">
                   <h1 className="heading mt-4 lg:mt-6 text-center">
                     Add an organization
@@ -135,7 +143,7 @@ export default function AddOrganizationForm({
                       </button>
                       <button
                         type="button"
-                        className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--orange hover:bg-primary--orange hover:text-background--white duration-300"
+                        className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--blue  hover:bg-primary--blue hover:text-background--white duration-300"
                         onClick={() => {
                           closeModal();
                           setEnteredOrgName(null);

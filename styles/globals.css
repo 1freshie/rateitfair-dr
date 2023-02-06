@@ -119,6 +119,11 @@
         /* 28px */
       ;
     }
+
+    .button-orange,
+    .button-blue {
+      width: 160px;
+    }
   }
 
   @media screen and (min-width: 1024px) {
