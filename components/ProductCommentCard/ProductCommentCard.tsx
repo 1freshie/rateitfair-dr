@@ -51,7 +51,7 @@ export default function ProductCommentCard({
   }, []);
 
   return (
-    <div className="w-full border border-secondary--orange rounded-[30px]">
+    <div className="w-full h-full border border-secondary--orange rounded-2xl">
       <div className="w-full p-4 flex flex-col justify-center items-center border-b border-b-secondary--orange rounded-t-[30px]">
         <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-x-3 lg:gap-x-6">
           <div className="w-full flex justify-around items-center gap-x-3 lg:gap-x-6">
@@ -76,8 +76,10 @@ export default function ProductCommentCard({
         </div>
         <p className="paragraph text-secondary--gray">{userRateDate}</p>
       </div>
-      <div className="w-full p-4 text-center">
-        <p className="paragraph text-primary--blue italic">{userComment}</p>
+      <div className="w-full h-full p-4 text-center">
+        <p className="paragraph w-full h-auto text-primary--blue italic">
+          {userComment}
+        </p>
       </div>
     </div>
   );

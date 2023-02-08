@@ -61,7 +61,7 @@ export default function ProfileCard({ userData }: UserData) {
 
   return (
     <div className="h-full w-full flex justify-center">
-      <div className="w-full lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-4">
+      <div className="w-full lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-2xl p-4">
         <div className="flex flex-col justify-center items-center">
           <Image
             src={

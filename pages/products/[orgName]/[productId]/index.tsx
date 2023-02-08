@@ -709,7 +709,7 @@ export default function ProductPage({ productData, orgId }: Data) {
           />
 
           {userRole !== "Admin" && userRole !== "User" ? (
-            <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-[30px]">
+            <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-2xl">
               <h1 className="heading">Ratings</h1>
               <div className="w-full h-full my-8">
                 <Bar options={chartOptions} data={chartData} />
@@ -726,7 +726,7 @@ export default function ProductPage({ productData, orgId }: Data) {
               </div>
             </div>
           ) : (
-            <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-[30px]">
+            <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-2xl">
               {inEditMode ? (
                 <>
                   <div className="w-full h-full flex flex-col gap-y-2">
@@ -769,10 +769,10 @@ export default function ProductPage({ productData, orgId }: Data) {
                     className="w-full h-full flex flex-col justify-center items-center gap-y-4"
                   >
                     <p className="paragraph text-primary--blue text-center">
-                      Want the product to be improved?
+                      Want to share an opinion about the product?
                     </p>
                     <textarea
-                      placeholder="Is something wrong with the product? Tell us about any improvements that should be made..."
+                      placeholder="Is something wrong with this product? Tell us about any improvements that should be made..."
                       className="input resize-none h-36 md:h-40 lg:h-44 xl:h-48"
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                         setEnteredComment(e.target.value)

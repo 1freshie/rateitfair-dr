@@ -18,13 +18,18 @@ import { db } from "../../../firebase/firebaseApp";
 interface Data {
   userData: DocumentData;
   orgData?: DocumentData;
+  availableUsers: DocumentData[];
 }
 
 interface Params extends ParsedUrlQuery {
   userId: string;
 }
 
-export default function ProfilePage({ userData, orgData }: Data) {
+export default function ProfilePage({
+  userData,
+  orgData,
+  availableUsers,
+}: Data) {
   const [isOpen, setIsOpen] = useState(false);
 
   function closeModal() {
@@ -47,28 +52,34 @@ export default function ProfilePage({ userData, orgData }: Data) {
   return (
     <>
       <Head>
-        <title>RateItFair - Profile</title>
+        <title>{`RateItFair - ${userData.username}`}</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         <meta name="description" content="Your RateItFair profile" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div
-        className={`relative w-full h-full flex flex-1 flex-col items-center mt-14 lg:mt-24 ${
+        className={`relative w-full h-full flex flex-1 flex-col items-center mt-10 ${
           isOpen && "-z-20"
         }`}
       >
         <ProfileCardNew userData={userData} />
         <RoleActivityButton userRole={userData.role} openModal={openModal} />
-        {userData.role !== "User" && userData.role !== "Admin" && (
-          <AddProductForm
-            orgId={userData.orgId}
+        {userData.role !== "User" &&
+          userData.role !== "Admin" &&
+          userData.orgId.length > 0 && (
+            <AddProductForm
+              orgId={userData.orgId}
+              isOpen={isOpen}
+              closeModal={closeModal}
+            />
+          )}
+        {userData.role === "Admin" && (
+          <AddOrganizationForm
+            availableUsers={availableUsers}
             isOpen={isOpen}
             closeModal={closeModal}
           />
-        )}
-        {userData.role === "Admin" && (
-          <AddOrganizationForm isOpen={isOpen} closeModal={closeModal} />
         )}
         {/* TODO: View rated products list on role === "User" */}
       </div>
@@ -129,6 +140,65 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
     };
   });
 
+  const usersCollection = collection(db, "users");
+
+  const usersDocs = await getDocs(usersCollection);
+
+  const users = usersDocs.docs.map((doc) => doc.data());
+
+  const filteredUsers = users.filter(
+    (user) => user.orgId === "" && user.role !== "Admin"
+  );
+
+  // filter the users and set the ratedProducts object array with property ratedAt as a string
+  const updatedFilteredUsers = filteredUsers.map((user) => {
+    if (user.ratedProducts) {
+      return {
+        ...user,
+        ratedProducts: user.ratedProducts.map((ratedProduct: any) => {
+          return {
+            ...ratedProduct,
+            ratedAt: ratedProduct.ratedAt.toDate().toString(),
+          };
+        }),
+        isAvailable: true,
+      };
+    } else {
+      return {
+        ...user,
+        ratedProducts: [],
+        isAvailable: true,
+      };
+    }
+  });
+
+  // const updatedFilteredUsers: DocumentData[] = filteredUsers.map((user) => {
+  //   if (user.ratedProducts) {
+  //     return {
+  //       ...user,
+  //       ratedProducts: user.ratedProducts.map((ratedProduct: any) => {
+  //         return {
+  //           ...ratedProduct,
+  //           ratedAt: ratedProduct.ratedAt.toDate().toString(),
+  //         };
+  //       }),
+  //     };
+  //   }
+  // });
+
+  // Convert updatedFilteredUsers to DocumentData[]
+  // const newProducts = updatedFilteredUsers.map((user) => {
+  //   return {
+  //     ...user,
+  //     ratedProducts: user.ratedProducts.map((ratedProduct: any) => {
+  //       return {
+  //         ...ratedProduct,
+  //         ratedAt: ratedProduct.ratedAt.toDate().toString(),
+  //       };
+  //     }),
+  //   };
+  // });
+
   // userData.products = newProducts;
 
   // let orgData: DocumentData = {};
@@ -151,6 +221,7 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
         ...userData,
         ratedProducts: updatedRatedProducts,
       },
+      availableUsers: updatedFilteredUsers,
     },
     revalidate: 1,
   };

@@ -68,7 +68,7 @@ export default function ProfileCard({ userData }: { userData: DocumentData }) {
   }
 
   return (
-    <div className="w-[350px] lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-[30px] p-6">
+    <div className="w-[350px] lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-2xl p-6">
       <div className="flex flex-col justify-center items-center">
         <img
           src={userData.photoURL || "https://via.placeholder.com/110"}

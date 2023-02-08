@@ -1,10 +1,21 @@
 import { uuidv4 } from "@firebase/util";
-import { Dialog, Transition } from "@headlessui/react";
-import { collection, doc, setDoc } from "firebase/firestore";
-import React, { Fragment, useRef, useState } from "react";
+import { Combobox, Dialog, Transition } from "@headlessui/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import {
+  collection,
+  doc,
+  DocumentData,
+  getDoc,
+  getDocs,
+  setDoc,
+} from "firebase/firestore";
+import Image from "next/image";
+import { Fragment, useEffect, useRef, useState } from "react";
+
 import { db } from "../../firebase/firebaseApp";
 
 interface AddOrganizationFormProps {
+  availableUsers: DocumentData[];
   isOpen: boolean;
   closeModal: () => void;
 }
@@ -13,15 +24,34 @@ interface AddOrganizationFormProps {
 // and their role to the organization's name
 
 export default function AddOrganizationForm({
+  availableUsers,
   isOpen,
   closeModal,
 }: AddOrganizationFormProps) {
   const [enteredOrgName, setEnteredOrgName] = useState<string | null>(null);
+  // make useState with value the available users and add to that object array property of selected: boolean
+  const [availableUsersForSelection, setAvailableUsersForSelection] =
+    useState(availableUsers);
+  const [selectedUsers, setSelectedUsers] = useState<DocumentData[]>([]);
+  const [selectedUser, setSelectedUser] = useState<DocumentData | null>(null);
+  const [query, setQuery] = useState("");
 
   const [error, setError] = useState<string | null>(null);
 
   // const orgNameInputRef = useRef<HTMLInputElement>(null);
   const cancelButtonRef = useRef(null);
+
+  const filteredUsers =
+    query === ""
+      ? availableUsersForSelection
+      : availableUsersForSelection!.filter((user) =>
+          user.email
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .includes(query.toLowerCase().replace(/\s+/g, ""))
+        );
+
+  console.log(filteredUsers);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -102,7 +132,7 @@ export default function AddOrganizationForm({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-[30px] bg-background--white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-2xl bg-background--white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
                 <div className="flex flex-col justify-center items-center">
                   <h1 className="heading mt-4 lg:mt-6 text-center">
                     Add an organization
@@ -125,10 +155,99 @@ export default function AddOrganizationForm({
                         setEnteredOrgName(e.target.value);
                       }}
                     />
-                    <textarea
+
+                    {/* <textarea
                       placeholder="Select users for this organization..."
                       className="input resize-none h-44 md:h-48 lg:h-52 xl:h-56"
-                    />
+                    /> */}
+
+                    <div className="w-full">
+                      <Combobox value={selectedUser} onChange={setSelectedUser}>
+                        <div className="relative mt-1">
+                          <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-[#FFFFFF] text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FFFFFF] focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-secondary--orange sm:text-sm">
+                            <Combobox.Input
+                              className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-primary--blue focus:ring-0 z-30"
+                              displayValue={(user: DocumentData) =>
+                                user ? user.email : ""
+                              }
+                              onChange={(event) => setQuery(event.target.value)}
+                            />
+                            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                              <ChevronUpDownIcon
+                                className="h-5 w-5 text-secondary--blue"
+                                aria-hidden="true"
+                              />
+                            </Combobox.Button>
+                          </div>
+                          <Transition
+                            as={Fragment}
+                            leave="transition ease-in duration-100"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                            afterLeave={() => setQuery("")}
+                          >
+                            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-[#FFFFFF] py-1 text-base shadow-lg ring-1 ring-[#000000] ring-opacity-5 focus:outline-none sm:text-sm z-30">
+                              {filteredUsers?.length === 0 && query !== "" ? (
+                                <div className="relative cursor-default select-none py-2 px-4 text-primary--blue">
+                                  Nothing found.
+                                </div>
+                              ) : (
+                                filteredUsers?.map((user) => (
+                                  <Combobox.Option
+                                    key={user.id}
+                                    className={({ active }) =>
+                                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                        active
+                                          ? "bg-primary--orange text-background--white"
+                                          : "text-secondary--gray"
+                                      }`
+                                    }
+                                    value={user}
+                                    disabled={!user.isAvailable}
+                                  >
+                                    {({ selected, active }) => (
+                                      <>
+                                        <span
+                                          className={`flex items-center gap-x-2 truncate ${
+                                            selected
+                                              ? "font-medium"
+                                              : "font-normal"
+                                          }`}
+                                        >
+                                          <Image
+                                            src={user.photoURL}
+                                            width={18}
+                                            height={18}
+                                            alt="Profile Photo"
+                                            className="rounded-full w-auto h-auto"
+                                          />
+                                          {`${user.username} (${user.email})`}
+                                        </span>
+                                        {selected ? (
+                                          <span
+                                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                              active
+                                                ? "text-background--white"
+                                                : "text-secondary--orange"
+                                            }`}
+                                          >
+                                            <CheckIcon
+                                              className="h-5 w-5"
+                                              aria-hidden="true"
+                                            />
+                                          </span>
+                                        ) : null}
+                                      </>
+                                    )}
+                                  </Combobox.Option>
+                                ))
+                              )}
+                            </Combobox.Options>
+                          </Transition>
+                        </div>
+                      </Combobox>
+                    </div>
+
                     <div className="mt-4 lg:mt-6 flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
                       <button
                         type="submit"
@@ -143,7 +262,7 @@ export default function AddOrganizationForm({
                       </button>
                       <button
                         type="button"
-                        className="button-orange mt-3 lg:mt-4 bg-background--white text-primary--blue  hover:bg-primary--blue hover:text-background--white duration-300"
+                        className="button-blue mt-3 lg:mt-4 bg-background--white text-primary--blue  hover:bg-primary--blue hover:text-background--white duration-300"
                         onClick={() => {
                           closeModal();
                           setEnteredOrgName(null);

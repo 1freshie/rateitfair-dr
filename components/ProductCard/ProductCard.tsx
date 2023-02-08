@@ -18,7 +18,7 @@ export default function ProductCard({
 }: ProductCardProps) {
   return (
     <Link href={`/products/${org}/${id}`}>
-      <div className="mt-10 flex flex-col items-center justify-around w-60 h-72 md:w-64 md:h-80 lg:w-72 lg:h-96 p-2 cursor-pointer border-2 rounded-3xl duration-300 border-secondary--orange hover:border-primary--orange">
+      <div className="flex flex-col items-center justify-around w-60 h-72 md:w-64 md:h-80 lg:w-72 lg:h-96 p-2 cursor-pointer border-2 rounded-2xl duration-300 border-secondary--orange hover:border-primary--orange">
         <Image
           src={imageURL}
           width={128}

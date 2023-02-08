@@ -5,8 +5,17 @@
 @tailwind utilities;
 
 @layer components {
-  .heading {
+
+  .heading,
+  .paragraph,
+  .small-paragraph,
+  .button-orange,
+  .button-blue,
+  .input {
     font-family: 'Montserrat', sans-serif;
+  }
+
+  .heading {
     font-size: 1.5rem;
     line-height: 2rem;
     font-weight: 600;
@@ -14,21 +23,26 @@
   }
 
   .paragraph {
-    font-family: 'Montserrat', sans-serif;
     font-size: 1rem;
     line-height: 1.5rem;
     font-weight: 400;
     color: #f9ab55;
   }
 
+  .small-paragraph {
+    font-size: 0.75rem;
+    line-height: 1rem;
+    font-weight: 400;
+    color: #909cc2;
+  }
+
   .button-orange,
   .button-blue {
-    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
     font-size: 1rem;
     line-height: 1.5rem;
     color: #f7f5fb;
-    border-radius: 30px;
+    border-radius: 16px;
     padding: 10px 20px;
     text-align: center;
     width: 128px;
@@ -63,14 +77,15 @@
   }
 
   .input {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
-    line-height: 1.5rem;
+    /* font-size: 1rem;
+    line-height: 1.5rem; */
+    font-size: 0.75rem;
+    line-height: 1rem;
     font-weight: 400;
     color: #084887;
     border: 1px solid #909cc2;
     background: #f7f5fb;
-    border-radius: 24px;
+    border-radius: 12px;
     padding: 10px 20px;
     height: 40px;
     width: 100%;
@@ -78,46 +93,80 @@
 
   @media screen and (min-width: 768px) {
     .heading {
-      font-size: 1.875rem
-        /* 30px */
-      ;
-      line-height: 2.25rem
-        /* 36px */
-      ;
+      font-size: 1.875rem;
+      line-height: 2.25rem;
     }
   }
 
   @media screen and (min-width: 1024px) {
     .heading {
-      font-size: 2.25rem
-        /* 36px */
-      ;
-      line-height: 2.5rem
-        /* 40px */
-      ;
+      font-size: 2.25rem;
+      line-height: 2.5rem;
+    }
+  }
+
+  /* @media screen and (min-width: 1280px) {
+    .heading {
+      font-size: 2.5rem;
+      line-height: 1;
+    }
+  } */
+
+  /* @media screen and (min-width: 768px) {
+    .small-paragraph {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .small-paragraph {
+      font-size: 1rem;
+      line-height: 1.5rem;
     }
   }
 
   @media screen and (min-width: 1280px) {
-    .heading {
-      font-size: 2.5rem;
-      /* 40px */
-      line-height: 1;
+    .small-paragraph {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+    }
+  } */
+
+  @media screen and (min-width: 768px) {
+
+    .small-paragraph,
+    .input {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+
+    .small-paragraph,
+    .input {
+      font-size: 1rem;
+      line-height: 1.5rem;
+    }
+  }
+
+  @media screen and (min-width: 1280px) {
+
+    .small-paragraph,
+    .input {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
     }
   }
 
   @media screen and (min-width: 768px) {
 
     .paragraph,
-    .input,
     .button-orange,
     .button-blue {
-      font-size: 1.125rem
-        /* 18px */
-      ;
-      line-height: 1.75rem
-        /* 28px */
-      ;
+      font-size: 1.125rem;
+      line-height: 1.75rem;
     }
 
     .button-orange,
@@ -129,15 +178,10 @@
   @media screen and (min-width: 1024px) {
 
     .paragraph,
-    .input,
     .button-orange,
     .button-blue {
-      font-size: 1.25rem
-        /* 20px */
-      ;
-      line-height: 1.75rem
-        /* 28px */
-      ;
+      font-size: 1.25rem;
+      line-height: 1.75rem;
     }
 
     .button-orange,
@@ -153,15 +197,10 @@
   @media screen and (min-width: 1280px) {
 
     .paragraph,
-    .input,
     .button-orange,
     .button-blue {
-      font-size: 1.5rem
-        /* 24px */
-      ;
-      line-height: 2rem
-        /* 32px */
-      ;
+      font-size: 1.5rem;
+      line-height: 2rem;
     }
   }
 
