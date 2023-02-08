@@ -13,6 +13,7 @@ import Image from "next/image";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 import { db } from "../../firebase/firebaseApp";
+import SelectedUserCard from "../SelectedUserCard/SelectedUserCard";
 
 interface AddOrganizationFormProps {
   availableUsers: DocumentData[];
@@ -32,6 +33,7 @@ export default function AddOrganizationForm({
   // make useState with value the available users and add to that object array property of selected: boolean
   const [availableUsersForSelection, setAvailableUsersForSelection] =
     useState(availableUsers);
+  const [filteredUsers, setFilteredUsers] = useState(availableUsers);
   const [selectedUsers, setSelectedUsers] = useState<DocumentData[]>([]);
   const [selectedUser, setSelectedUser] = useState<DocumentData | null>(null);
   const [query, setQuery] = useState("");
@@ -41,17 +43,70 @@ export default function AddOrganizationForm({
   // const orgNameInputRef = useRef<HTMLInputElement>(null);
   const cancelButtonRef = useRef(null);
 
-  const filteredUsers =
-    query === ""
-      ? availableUsersForSelection
-      : availableUsersForSelection!.filter((user) =>
+  useEffect(() => {
+    if (selectedUser) {
+      setSelectedUsers((prevSelectedUsers) => {
+        const newSelectedUsers = [...prevSelectedUsers, selectedUser];
+        return newSelectedUsers;
+      });
+
+      setAvailableUsersForSelection((prevAvailableUsers) => {
+        const newAvailableUsers = prevAvailableUsers.map((user) => {
+          if (user.id === selectedUser.id) {
+            return { ...user, isAvailable: false };
+          }
+          return user;
+        });
+        // const newAvailableUsers = prevAvailableUsers.filter(
+        //   (user) => user.id !== selectedUser.id
+        // );
+
+        return newAvailableUsers;
+      });
+    }
+  }, [selectedUser]);
+
+  useEffect(() => {
+    setFilteredUsers((prevFilteredUsers) => {
+      let newFilteredUsers = prevFilteredUsers;
+
+      if (query !== "") {
+        newFilteredUsers = prevFilteredUsers.filter((user) =>
           user.email
             .toLowerCase()
             .replace(/\s+/g, "")
             .includes(query.toLowerCase().replace(/\s+/g, ""))
         );
+      } else {
+        newFilteredUsers = availableUsersForSelection;
+      }
+
+      return newFilteredUsers;
+    });
+  }, [query, availableUsersForSelection]);
 
   console.log(filteredUsers);
+
+  function handleUserSelectionRemoval(userId: string) {
+    setSelectedUsers((prevSelectedUsers) => {
+      const newSelectedUsers = prevSelectedUsers.filter(
+        (user) => user.id !== userId
+      );
+      return newSelectedUsers;
+    });
+
+    setAvailableUsersForSelection((prevAvailableUsers) => {
+      const newAvailableUsers = prevAvailableUsers.map((user) => {
+        if (user.id === userId) {
+          return { ...user, isAvailable: true };
+        }
+        return user;
+      });
+      return newAvailableUsers;
+    });
+
+    // setSelectedUser(null);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -161,6 +216,9 @@ export default function AddOrganizationForm({
                       className="input resize-none h-44 md:h-48 lg:h-52 xl:h-56"
                     /> */}
 
+                    <p className="paragraph text-center">
+                      Select users for this organization...
+                    </p>
                     <div className="w-full">
                       <Combobox value={selectedUser} onChange={setSelectedUser}>
                         <div className="relative mt-1">
@@ -200,7 +258,7 @@ export default function AddOrganizationForm({
                                         active
                                           ? "bg-primary--orange text-background--white"
                                           : "text-secondary--gray"
-                                      }`
+                                      } ${user.isAvailable ? "" : "opacity-50"}`
                                     }
                                     value={user}
                                     disabled={!user.isAvailable}
@@ -247,6 +305,19 @@ export default function AddOrganizationForm({
                         </div>
                       </Combobox>
                     </div>
+
+                    {selectedUser && (
+                      <div className="input w-full h-full flex flex-col gap-2">
+                        {selectedUsers.map((user) => (
+                          <SelectedUserCard
+                            userId={user.id}
+                            username={user.username}
+                            userEmail={user.email}
+                            removeSelectedUser={handleUserSelectionRemoval}
+                          />
+                        ))}
+                      </div>
+                    )}
 
                     <div className="mt-4 lg:mt-6 flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
                       <button
