@@ -24,32 +24,6 @@ export default function ProfileCard({ userData }: UserData) {
   const [user, loading, error] = useAuthState(auth);
   const router = useRouter();
 
-  // Needs optimization
-  // useEffect(() => {
-  //   if (user) {
-  //     const userRef = doc(db, "users", user!.uid);
-  //     const userSnap = getDoc(userRef);
-  //     userSnap.then((doc) => {
-  //       if (doc.exists()) {
-  //         setUserRole(doc.data()!.role);
-  //         setUserRatedProductsCount(doc.data()!.ratedProductsCount);
-  //       } else {
-  //         // doc.data() will be undefined in this case
-  //         console.log("No such document!");
-  //       }
-  //     });
-  //   }
-  //   // const getUserInfo = async () => {
-  //   //   const userRef = doc(db, "users", user!.uid);
-  //   //   const userSnap = await getDoc(userRef);
-  //   //   setUserRole(userSnap.data()!.role);
-  //   //   setUserRatedProductsCount(userSnap.data()!.ratedProductsCount);
-  //   // };
-  //   // getUserInfo();
-  // }, [user]);
-
-  // console.log(user?.photoURL);
-
   async function handleSignOut() {
     await signOutUser();
     router.replace("/");

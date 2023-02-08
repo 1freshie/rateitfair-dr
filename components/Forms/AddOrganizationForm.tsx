@@ -9,6 +9,7 @@ import {
   getDocs,
   setDoc,
 } from "firebase/firestore";
+import { validateImage } from "image-validator";
 import Image from "next/image";
 import { Fragment, useEffect, useRef, useState } from "react";
 
@@ -30,7 +31,10 @@ export default function AddOrganizationForm({
   closeModal,
 }: AddOrganizationFormProps) {
   const [enteredOrgName, setEnteredOrgName] = useState<string | null>(null);
-  // make useState with value the available users and add to that object array property of selected: boolean
+  const [enteredOrgLogoURL, setEnteredOrgLogoURL] = useState<string | null>(
+    null
+  );
+
   const [availableUsersForSelection, setAvailableUsersForSelection] =
     useState(availableUsers);
   const [filteredUsers, setFilteredUsers] = useState(availableUsers);
@@ -128,11 +132,21 @@ export default function AddOrganizationForm({
       return;
     }
 
+    const isValidImage = await validateImage(
+      enteredOrgLogoURL === null ? "" : enteredOrgLogoURL
+    );
+
+    if (!isValidImage) {
+      setError("Please enter a valid organization logo URL!");
+      return;
+    }
+
     const newOrgId = uuidv4();
 
     const newOrg = {
       id: newOrgId,
       name: enteredOrgName,
+      logoURL: enteredOrgLogoURL,
       // users: [
       //   {
       //     id: "",
@@ -152,6 +166,7 @@ export default function AddOrganizationForm({
     }
 
     setEnteredOrgName(null);
+    setEnteredOrgLogoURL(null);
 
     setError(null);
   }
@@ -208,6 +223,15 @@ export default function AddOrganizationForm({
                       // ref={orgNameInputRef}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setEnteredOrgName(e.target.value);
+                      }}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Enter an organization logo URL..."
+                      className="input"
+                      // ref={orgNameInputRef}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setEnteredOrgLogoURL(e.target.value);
                       }}
                     />
 
@@ -310,6 +334,7 @@ export default function AddOrganizationForm({
                       <div className="input w-full h-full flex flex-col gap-2">
                         {selectedUsers.map((user) => (
                           <SelectedUserCard
+                            key={user.id}
                             userId={user.id}
                             username={user.username}
                             userEmail={user.email}
@@ -337,6 +362,19 @@ export default function AddOrganizationForm({
                         onClick={() => {
                           closeModal();
                           setEnteredOrgName(null);
+                          setEnteredOrgLogoURL(null);
+                          setSelectedUser(null);
+                          setSelectedUsers([]);
+                          setAvailableUsersForSelection(
+                            (prevAvailableUsers) => {
+                              return prevAvailableUsers.map((user) => {
+                                return {
+                                  ...user,
+                                  isAvailable: true,
+                                };
+                              });
+                            }
+                          );
                           setError(null);
                         }}
                         ref={cancelButtonRef}

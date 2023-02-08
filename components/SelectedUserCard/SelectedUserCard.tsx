@@ -15,7 +15,7 @@ export default function SelectedUserCard({
   removeSelectedUser,
 }: SelectedUserCardProps) {
   return (
-    <div className="flex justify-around items-center border border-primary--blue rounded-xl p-2 gap-x-2">
+    <div className="flex justify-between items-center border border-primary--blue rounded-xl p-2 gap-x-2">
       <p className="text-xs text-primary--blue">{`${username} (${userEmail})`}</p>
       <FontAwesomeIcon
         icon={faXmark}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 interface OrgCardProps {
   orgId: string;
   orgName: string;
+  orgLogoURL: string;
   orgProductsCount: number;
   orgUsersCount: number;
 }
@@ -11,6 +12,7 @@ interface OrgCardProps {
 export default function OrgCard({
   orgId,
   orgName,
+  orgLogoURL,
   orgProductsCount,
   orgUsersCount,
 }: OrgCardProps) {
@@ -23,6 +25,8 @@ export default function OrgCard({
       setConvertedUserOrgName(convertedOrgName);
     }
   }, []);
+
+  // TODO: Add org logo and update the org data with the things in AddOrganizationForm.tsx
 
   return (
     <Link href={`/orgs/${convertedUserOrgName}`}>

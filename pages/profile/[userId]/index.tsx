@@ -25,6 +25,8 @@ interface Params extends ParsedUrlQuery {
   userId: string;
 }
 
+// TODO: ADD CONFIRMATION BUTTON FOR ALL FORMS => ADD ORG AND ADD PRODUCT FORMS MUST NOT BE IN MODAL BUT IN A SEPARATE PAGE (CONFIRM MESSAGE WILL BE MODAL POPUP)
+
 export default function ProfilePage({
   userData,
   orgData,
@@ -151,7 +153,7 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
   );
 
   // filter the users and set the ratedProducts object array with property ratedAt as a string
-  const updatedFilteredUsers = filteredUsers.map((user) => {
+  const updatedFilteredUsers: DocumentData[] = filteredUsers.map((user) => {
     if (user.ratedProducts) {
       return {
         ...user,
@@ -172,44 +174,21 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
     }
   });
 
-  // const updatedFilteredUsers: DocumentData[] = filteredUsers.map((user) => {
-  //   if (user.ratedProducts) {
-  //     return {
-  //       ...user,
-  //       ratedProducts: user.ratedProducts.map((ratedProduct: any) => {
-  //         return {
-  //           ...ratedProduct,
-  //           ratedAt: ratedProduct.ratedAt.toDate().toString(),
-  //         };
-  //       }),
-  //     };
-  //   }
+  // updatedFilteredUsers.push({
+  //   id: "1",
+  //   email: "test@test.com",
+  //   isAvailable: true,
+  //   username: "Test User",
+  //   photoURL: "https://via.placeholder.com/18",
   // });
 
-  // Convert updatedFilteredUsers to DocumentData[]
-  // const newProducts = updatedFilteredUsers.map((user) => {
-  //   return {
-  //     ...user,
-  //     ratedProducts: user.ratedProducts.map((ratedProduct: any) => {
-  //       return {
-  //         ...ratedProduct,
-  //         ratedAt: ratedProduct.ratedAt.toDate().toString(),
-  //       };
-  //     }),
-  //   };
+  // updatedFilteredUsers.push({
+  //   id: "23",
+  //   email: "test23@test.com",
+  //   isAvailable: true,
+  //   username: "Test User 23",
+  //   photoURL: "https://via.placeholder.com/18",
   // });
-
-  // userData.products = newProducts;
-
-  // let orgData: DocumentData = {};
-
-  // if (userData.role !== "User" && userData.role !== "Admin") {
-  //   const orgDoc = doc(db, "organizations", userData.orgId);
-
-  //   const orgSnapshot = await getDoc(orgDoc);
-
-  //   orgData = orgSnapshot.data()!;
-  // }
 
   return {
     props: {

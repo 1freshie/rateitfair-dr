@@ -26,8 +26,10 @@ export default function OrgsPage({ orgs }: Data) {
     <div className="w-full h-full mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {orgs.map((org) => (
         <OrgCard
+          key={org.id}
           orgId={org.id}
           orgName={org.name}
+          orgLogoURL={org.logoURL}
           orgProductsCount={org.products.length}
           orgUsersCount={3}
         />
