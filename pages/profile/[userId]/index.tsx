@@ -9,7 +9,7 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
 import { useState } from "react";
-import ProfileCardNew from "../../../components/Cards/ProfileCardNew";
+import ProfileCard from "../../../components/Cards/ProfileCard";
 import AddOrganizationModal from "../../../components/Modals/AddOrganizationModal";
 import AddProductModal from "../../../components/Modals/AddProductModal";
 import RecentlyRatedProductsModal from "../../../components/Modals/RecentlyRatedProductsModal";
@@ -66,7 +66,7 @@ export default function ProfilePage({
           isOpen && "-z-20"
         }`}
       >
-        <ProfileCardNew userData={userData} />
+        <ProfileCard userData={userData} />
         <RoleActivityButton userRole={userData.role} openModal={openModal} />
         {userData.role !== "User" &&
           userData.role !== "Admin" &&
