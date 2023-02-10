@@ -9,10 +9,10 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
 import { useState } from "react";
+import ProfileCardNew from "../../../components/Cards/ProfileCardNew";
 import AddOrganizationModal from "../../../components/Modals/AddOrganizationModal";
 import AddProductModal from "../../../components/Modals/AddProductModal";
 import RecentlyRatedProductsModal from "../../../components/Modals/RecentlyRatedProductsModal";
-import ProfileCardNew from "../../../components/Cards/ProfileCardNew";
 import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
 import { db } from "../../../firebase/firebaseApp";
 

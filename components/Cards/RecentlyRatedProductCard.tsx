@@ -46,33 +46,43 @@ export default function RecentlyRatedProductCard({
   }, []);
 
   return (
-    <Link href={`/products/${orgSlug}/${productId}`}>
-      <div className="w-full flex flex-col justify-center items-center border border-secondary--orange duration-300 hover:border-primary--orange rounded-2xl">
-        <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4 border-b border-b-secondary--orange rounded-t-2xl">
-          <div className="h-16">
-            <Image
-              src={productImageURL}
-              width={64}
-              height={64}
-              alt="Product Image"
-              className="w-full h-full"
-              priority={true}
-            />
-          </div>
-          <p className="paragraph text-primary--blue text-center">
-            {productTitle}
-          </p>
-          <p className="small-paragraph text-secondary--orange text-center">{`by ${orgName}`}</p>
-          <p className="small-paragraph text-center">{ratedAt}</p>
-        </div>
+    <>
+      {orgSlug && (
+        <Link href={`/products/${orgSlug}/${productId}`}>
+          <div className="w-full flex flex-col justify-center items-center border border-secondary--orange duration-300 hover:border-primary--orange rounded-2xl">
+            <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4 border-b border-b-secondary--orange rounded-t-2xl">
+              <div className="h-24">
+                <Image
+                  src={
+                    productImageURL
+                      ? productImageURL
+                      : "https://via.placeholder.com/96"
+                  }
+                  width={96}
+                  height={96}
+                  alt="Product Image"
+                  className="w-full h-full"
+                  priority={true}
+                />
+              </div>
+              <div className="w-full flex flex-col justify-center items-center gap-y-1">
+                <p className="paragraph text-primary--blue text-center">
+                  {productTitle}
+                </p>
+                <p className="small-paragraph text-secondary--orange text-center">{`by ${orgName}`}</p>
+              </div>
+              <p className="small-paragraph text-center">{ratedAt}</p>
+            </div>
 
-        <div className="w-full h-full p-4 flex flex-col justify-center items-center gap-y-4">
-          <p className="heading text-center">{`${rate}/10`}</p>
-          <p className="paragraph w-full h-auto text-center italic">
-            {comment}
-          </p>
-        </div>
-      </div>
-    </Link>
+            <div className="w-full h-full p-4 flex flex-col justify-center items-center gap-y-4">
+              <p className="heading text-center">{`${rate}/10`}</p>
+              <p className="small-paragraph text-secondary--gray w-full h-auto text-center italic">
+                {comment}
+              </p>
+            </div>
+          </div>
+        </Link>
+      )}
+    </>
   );
 }
