@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import AuthState from "../../../../../components/AuthState/AuthState";
-import ProductCommentCard from "../../../../../components/ProductCommentCard/ProductCommentCard";
+import ProductCommentCard from "../../../../../components/Cards/ProductCommentCard";
 import { auth, db } from "../../../../../firebase/firebaseApp";
 
 interface Data {

@@ -16,7 +16,7 @@ import { useRouter } from "next/router";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 import { db } from "../../firebase/firebaseApp";
-import SelectedUserCard from "../SelectedUserCard/SelectedUserCard";
+import SelectedUserCard from "../Cards/SelectedUserCard";
 
 interface AddOrganizationModalProps {
   availableUsers: DocumentData[];

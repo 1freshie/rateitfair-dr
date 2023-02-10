@@ -9,8 +9,7 @@ import {
 import { GetStaticProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ParsedUrlQuery } from "querystring";
-import OrgCard from "../../components/OrgCard/OrgCard";
+import OrgCard from "../../components/Cards/OrgCard";
 
 import { auth, db } from "../../firebase/firebaseApp";
 
@@ -65,9 +64,6 @@ export const getStaticProps: GetStaticProps<Data> = async (context) => {
         return {
           ...product,
           usersRated: product.usersRated.map((user: any) => {
-            let timestamp = Timestamp.fromDate(new Date());
-            console.log(user.userId);
-            console.log(user.userRatedAt);
             return {
               ...user,
               userRatedAt: user.userRatedAt.toDate().toString(),

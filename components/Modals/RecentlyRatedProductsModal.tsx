@@ -1,6 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useRef } from "react";
+import RecentlyRatedProductCard from "../Cards/RecentlyRatedProductCard";
 
 interface RecentlyRatedProductsModalProps {
   ratedProducts: {
@@ -22,12 +23,14 @@ export default function RecentlyRatedProductsModal({
   isOpen,
   closeModal,
 }: RecentlyRatedProductsModalProps) {
+  const closeButtonRef = useRef(null);
+
   return (
     <Transition.Root show={isOpen} as={Fragment}>
       <Dialog
         as="div"
         className="relative z-20"
-        initialFocus={cancelButtonRef}
+        initialFocus={closeButtonRef}
         onClose={closeModal}
       >
         <Transition.Child
@@ -55,9 +58,20 @@ export default function RecentlyRatedProductsModal({
             >
               <Dialog.Panel className="relative transform overflow-hidden bg-background--white rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
                 <div className="flex flex-col justify-center items-center gap-y-4">
-                  <h1 className="heading text-center">Recently rated produts</h1>
+                  <h1 className="heading text-center">
+                    Recently rated produts
+                  </h1>
                   <div className="w-full flex flex-col justify-center items-center gap-y-2">
-                    {ratedProducts.map((ratedProduct) => ())}
+                    {ratedProducts.map((ratedProduct) => (
+                      <RecentlyRatedProductCard
+                        key={ratedProduct.productId}
+                        orgId={ratedProduct.orgId}
+                        productId={ratedProduct.productId}
+                        comment={ratedProduct.comment}
+                        rate={ratedProduct.productRate}
+                        ratedAt={ratedProduct.productRatedAt}
+                      />
+                    ))}
                   </div>
                 </div>
               </Dialog.Panel>

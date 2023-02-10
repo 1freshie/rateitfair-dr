@@ -12,7 +12,7 @@ import { useState } from "react";
 import AddOrganizationModal from "../../../components/Modals/AddOrganizationModal";
 import AddProductModal from "../../../components/Modals/AddProductModal";
 import RecentlyRatedProductsModal from "../../../components/Modals/RecentlyRatedProductsModal";
-import ProfileCardNew from "../../../components/ProfileCard/ProfileCardNew";
+import ProfileCardNew from "../../../components/Cards/ProfileCardNew";
 import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
 import { db } from "../../../firebase/firebaseApp";
 

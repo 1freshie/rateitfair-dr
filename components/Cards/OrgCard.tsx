@@ -32,7 +32,7 @@ export default function OrgCard({
   return (
     <Link href={`/orgs/${convertedUserOrgName}`}>
       <div className="w-full flex flex-col justify-center items-center border border-secondary--orange duration-300 hover:border-primary--orange rounded-2xl">
-        <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4 border-b border-b-secondary--orange rounded-t-[30px]">
+        <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4 border-b border-b-secondary--orange rounded-t-2xl">
           <div className="h-16">
             <Image
               src={orgLogoURL}
@@ -49,13 +49,17 @@ export default function OrgCard({
         <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4">
           <div className="w-full p-4 flex justify-center items-center gap-x-4">
             <div className="w-full flex flex-col justify-center items-center">
-              <h1 className="small-paragraph text-secondary--orange text-center">Users</h1>
+              <h1 className="small-paragraph text-secondary--orange text-center">
+                Users
+              </h1>
               <p className="paragraph text-secondary--gray font-medium text-center">
                 {orgUsersCount}
               </p>
             </div>
             <div className="w-full flex flex-col justify-center items-center">
-              <h1 className="small-paragraph text-secondary--orange text-center">Products</h1>
+              <h1 className="small-paragraph text-secondary--orange text-center">
+                Products
+              </h1>
               <p className="paragraph text-secondary--gray font-medium text-center">
                 {orgProductsCount}
               </p>
