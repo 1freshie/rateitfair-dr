@@ -245,7 +245,7 @@ export default function ProductPage({ productData, orgId }: Data) {
     labels: chartLabels,
     datasets: [
       {
-        label: "Number of rates",
+        label: "# of rates",
         data: productData.rates,
         // backgroundColor: "rgba(255, 99, 132, 0.2)",
         // borderColor: "rgba(255, 99, 132, 1)",
@@ -280,7 +280,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                 <Bar options={chartOptions} data={chartData} />
               </div>
               <div className="w-full h-full flex flex-col items-center justify-center gap-y-3">
-                <p className="paragraph">
+                <p className="small-paragraph text-secondary--orange">
                   There are{" "}
                   <span className="font-medium">{usersCommentsCount}</span>{" "}
                   comments on this product...
@@ -345,7 +345,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                     />
                     <button
                       type="submit"
-                      className="mt-5 button-orange duration-300"
+                      className="mt-5 button-blue duration-300"
                     >
                       Rate it
                     </button>

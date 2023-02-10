@@ -248,7 +248,7 @@ export default function AddProductModal({
                     <div className="mt-4 lg:mt-6 flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
                       <button
                         type="submit"
-                        className="button-orange duration-300"
+                        className="button-blue duration-300"
                         onClick={() => {
                           if (!error) {
                             closeModal();

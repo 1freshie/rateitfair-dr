@@ -91,7 +91,6 @@ export default function ProfilePage({
             closeModal={closeModal}
           />
         )}
-        {/* TODO: View rated products list on role === "User" */}
       </div>
     </>
   );
@@ -169,7 +168,6 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
     (user) => user.orgId === "" && user.role !== "Admin"
   );
 
-  // filter the users and set the ratedProducts object array with property ratedAt as a string
   const updatedFilteredUsers: DocumentData[] = filteredUsers.map((user) => {
     if (user.ratedProducts) {
       return {

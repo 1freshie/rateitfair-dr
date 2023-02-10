@@ -35,8 +35,8 @@ export default function ProfileCard({ userData }: UserData) {
 
   return (
     <div className="h-full w-full flex justify-center">
-      <div className="w-full lg:w-[500px] flex flex-col justify-center items-center border border-primary--blue rounded-2xl p-4">
-        <div className="flex flex-col justify-center items-center">
+      <div className="w-full lg:w-[500px] flex flex-col justify-center items-center gap-y-6 border border-primary--blue rounded-2xl p-4">
+        <div className="flex flex-col justify-center items-center gap-y-2">
           <div className="w-24 h-24">
             <Image
               src={
@@ -51,24 +51,25 @@ export default function ProfileCard({ userData }: UserData) {
               priority={true}
             />
           </div>
-          <h1 className="heading mt-3">{userData.username}</h1>
-          <p className="paragraph mt-2">{userData.role}</p>
+          <div className="w-full h-full flex flex-col justify-center items-center">
+            <h1 className="heading">{userData.username}</h1>
+            <p className="paragraph">{userData.role}</p>
+          </div>
         </div>
-        <div className="w-full flex flex-col items-center justify-between mt-6">
-          <FontAwesomeIcon icon={faEnvelope} style={iconStyle} />
-          <p className="small-paragraph">{userData.email}</p>
+        <div className="w-full h-full flex flex-col items-center justify-center gap-y-2">
+          <div className="w-full flex flex-col items-center justify-between gap-y-1">
+            <FontAwesomeIcon icon={faEnvelope} style={iconStyle} />
+            <p className="small-paragraph">{userData.email}</p>
+          </div>
+          <div className="w-full flex flex-col items-center justify-between gap-y-1">
+            <FontAwesomeIcon icon={faStar} style={iconStyle} />
+            <p className="small-paragraph">
+              <span className="font-medium">{userData.ratedProductsCount}</span>{" "}
+              rated products
+            </p>
+          </div>
         </div>
-        <div className="w-full mt-2 flex flex-col items-center justify-between">
-          <FontAwesomeIcon icon={faStar} style={iconStyle} />
-          <p className="small-paragraph">
-            <span className="font-medium">{userData.ratedProductsCount}</span>{" "}
-            rated products
-          </p>
-        </div>
-        <button
-          onClick={handleSignOut}
-          className="button-orange mt-5 md:mt-7 duration-300"
-        >
+        <button onClick={handleSignOut} className="button-blue duration-300">
           Sign out
         </button>
       </div>

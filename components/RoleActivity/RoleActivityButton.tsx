@@ -13,7 +13,7 @@ export default function RoleActivityButton({
   return (
     <div
       onClick={openModal}
-      className="w-full lg:w-[500px] p-6 mt-8 flex justify-between items-center font-medium paragraph text-secondary--gray border border-secondary--gray rounded-2xl duration-300 hover:text-primary--blue hover:border-primary--blue cursor-pointer"
+      className="w-full lg:w-[500px] p-6 mt-4 flex justify-between items-center font-medium paragraph text-secondary--gray border border-secondary--gray rounded-2xl duration-300 hover:text-primary--blue hover:border-primary--blue cursor-pointer"
     >
       {userRole === "Admin" && (
         <>
