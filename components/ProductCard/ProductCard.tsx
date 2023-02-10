@@ -26,10 +26,10 @@ export default function ProductCard({
           alt={title}
           className="w-auto h-auto"
         />
-        <h1 className="text-lg md:text-xl lg:text-2xl text-primary--blue font-medium text-center">
+        <h1 className="paragraph text-primary--blue font-medium text-center">
           {title}
         </h1>
-        <p className="paragraph text-secondary--gray text-center">
+        <p className="small-paragraph text-center">
           <span className="font-medium">{ratesCount}</span> users rated this
           product...
         </p>

@@ -10,22 +10,22 @@ import {
 } from "firebase/firestore";
 import { validateImage } from "image-validator";
 import { useRouter } from "next/router";
-import React, { Fragment, useRef, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 
 import { db } from "../../firebase/firebaseApp";
 
-interface AddProductFormProps {
+interface AddProductModalProps {
   orgId: string;
   orgData?: DocumentData;
   isOpen: boolean;
   closeModal: () => void;
 }
 
-export default function AddProductForm({
+export default function AddProductModal({
   orgId,
   isOpen,
   closeModal,
-}: AddProductFormProps) {
+}: AddProductModalProps) {
   const [enteredProductTitle, setEnteredProductTitle] = useState<string | null>(
     null
   );
@@ -178,8 +178,8 @@ export default function AddProductForm({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden bg-background--white rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
-                <div className="flex flex-col justify-center items-center">
-                  <h1 className="heading mt-4 lg:mt-6 text-center">
+                <div className="flex flex-col justify-center items-center gap-y-4">
+                  <h1 className="heading text-center">
                     Add a product
                   </h1>
                   <form
@@ -191,32 +191,60 @@ export default function AddProductForm({
                         {error}
                       </p>
                     )}
-                    <input
-                      type="text"
-                      placeholder="Enter a product title..."
-                      className="input"
-                      // ref={productTitleInputRef}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setEnteredProductTitle(e.target.value)
-                      }
-                    />
-                    <textarea
-                      placeholder="Enter a product description..."
-                      className="input resize-none h-44 md:h-48 lg:h-52 xl:h-56"
-                      // ref={productDescriptionInputRef}
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                        setEnteredProductDescription(e.target.value)
-                      }
-                    />
-                    <input
-                      type="text"
-                      placeholder="Enter a product image URL..."
-                      className="input"
-                      // ref={productImageURLInputRef}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setEnteredProductImageURL(e.target.value)
-                      }
-                    />
+                    <div className="w-full flex flex-col justify-center gap-y-1">
+                      <label
+                        htmlFor="product-title"
+                        className="small-paragraph text-secondary--orange ml-2"
+                      >
+                        Title
+                      </label>
+                      <input
+                        id="product-title"
+                        name="product-title"
+                        type="text"
+                        placeholder="Enter here..."
+                        className="input"
+                        // ref={productTitleInputRef}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setEnteredProductTitle(e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="w-full flex flex-col justify-center gap-y-1">
+                      <label
+                        htmlFor="product-description"
+                        className="small-paragraph text-secondary--orange ml-2"
+                      >
+                        Description
+                      </label>
+                      <textarea
+                        id="product-description"
+                        name="product-description"
+                        placeholder="Enter here..."
+                        className="input resize-none h-44 md:h-48 lg:h-52 xl:h-56"
+                        // ref={productDescriptionInputRef}
+                        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                          setEnteredProductDescription(e.target.value)
+                        }
+                      />
+                    </div>
+                    <div className="w-full flex flex-col justify-center gap-y-1">
+                      <label
+                        htmlFor="product-image-url"
+                        className="small-paragraph text-secondary--orange ml-2"
+                      >
+                        Image URL
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Enter here..."
+                        className="input"
+                        // ref={productImageURLInputRef}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setEnteredProductImageURL(e.target.value)
+                        }
+                      />
+                    </div>
                     <div className="mt-4 lg:mt-6 flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
                       <button
                         type="submit"

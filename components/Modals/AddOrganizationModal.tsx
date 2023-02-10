@@ -8,15 +8,17 @@ import {
   getDoc,
   getDocs,
   setDoc,
+  updateDoc,
 } from "firebase/firestore";
 import { validateImage } from "image-validator";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 import { db } from "../../firebase/firebaseApp";
 import SelectedUserCard from "../SelectedUserCard/SelectedUserCard";
 
-interface AddOrganizationFormProps {
+interface AddOrganizationModalProps {
   availableUsers: DocumentData[];
   isOpen: boolean;
   closeModal: () => void;
@@ -25,11 +27,13 @@ interface AddOrganizationFormProps {
 // TODO: When adding users to an organization, set the users orgId to the orgId of the organization they are being added to
 // and their role to the organization's name
 
-export default function AddOrganizationForm({
+export default function AddOrganizationModal({
   availableUsers,
   isOpen,
   closeModal,
-}: AddOrganizationFormProps) {
+}: AddOrganizationModalProps) {
+  const router = useRouter();
+
   const [enteredOrgName, setEnteredOrgName] = useState<string | null>(null);
   const [enteredOrgLogoURL, setEnteredOrgLogoURL] = useState<string | null>(
     null
@@ -89,7 +93,7 @@ export default function AddOrganizationForm({
     });
   }, [query, availableUsersForSelection]);
 
-  console.log(filteredUsers);
+  console.log(selectedUsers);
 
   function handleUserSelectionRemoval(userId: string) {
     setSelectedUsers((prevSelectedUsers) => {
@@ -147,12 +151,13 @@ export default function AddOrganizationForm({
       id: newOrgId,
       name: enteredOrgName,
       logoURL: enteredOrgLogoURL,
-      // users: [
-      //   {
-      //     id: "",
-      //     email: "",
-      //   },
-      // ],
+      users: selectedUsers.map((user) => {
+        return {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+        };
+      }),
     };
 
     const orgsCollection = collection(db, "organizations");
@@ -165,8 +170,28 @@ export default function AddOrganizationForm({
       prompt("Error", error.message);
     }
 
+    selectedUsers.forEach(async (user) => {
+      const usersCollection = collection(db, "users");
+
+      const userDoc = doc(usersCollection, user.id);
+
+      try {
+        await updateDoc(userDoc, {
+          orgId: newOrgId,
+          role: enteredOrgName,
+        });
+      } catch (error: any) {
+        prompt("Error", error.message);
+      }
+    });
+
+    // closeModal();
+
     setEnteredOrgName(null);
     setEnteredOrgLogoURL(null);
+    setSelectedUsers([]);
+
+    router.push("/orgs");
 
     setError(null);
   }
@@ -203,10 +228,8 @@ export default function AddOrganizationForm({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-2xl bg-background--white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
-                <div className="flex flex-col justify-center items-center">
-                  <h1 className="heading mt-4 lg:mt-6 text-center">
-                    Add an organization
-                  </h1>
+                <div className="flex flex-col justify-center items-center gap-y-4">
+                  <h1 className="heading text-center">Add an organization</h1>
                   <form
                     onSubmit={handleSubmit}
                     className="form bg-white gap-y-3 lg:gap-y-4 mt-4 lg:mt-6 w-full"
@@ -216,31 +239,51 @@ export default function AddOrganizationForm({
                         {error}
                       </p>
                     )}
-                    <input
-                      type="text"
-                      placeholder="Enter an organization name..."
-                      className="input"
-                      // ref={orgNameInputRef}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setEnteredOrgName(e.target.value);
-                      }}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Enter an organization logo URL..."
-                      className="input"
-                      // ref={orgNameInputRef}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setEnteredOrgLogoURL(e.target.value);
-                      }}
-                    />
+                    <div className="w-full flex flex-col justify-center gap-y-1">
+                      <label
+                        htmlFor="org-name"
+                        className="small-paragraph text-secondary--orange ml-2"
+                      >
+                        Name
+                      </label>
+                      <input
+                        id="org-name"
+                        name="org-name"
+                        type="text"
+                        placeholder="Enter here..."
+                        className="input"
+                        // ref={orgNameInputRef}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setEnteredOrgName(e.target.value);
+                        }}
+                      />
+                    </div>
+                    <div className="w-full flex flex-col justify-center gap-y-1">
+                      <label
+                        htmlFor="org-logo-url"
+                        className="small-paragraph text-secondary--orange ml-2"
+                      >
+                        Logo URL
+                      </label>
+                      <input
+                        id="org-logo-url"
+                        name="org-logo-url"
+                        type="text"
+                        placeholder="Enter here..."
+                        className="input"
+                        // ref={orgNameInputRef}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                          setEnteredOrgLogoURL(e.target.value);
+                        }}
+                      />
+                    </div>
 
                     {/* <textarea
                       placeholder="Select users for this organization..."
                       className="input resize-none h-44 md:h-48 lg:h-52 xl:h-56"
                     /> */}
 
-                    <p className="paragraph text-center">
+                    <p className="small-paragraph text-center">
                       Select users for this organization...
                     </p>
                     <div className="w-full">

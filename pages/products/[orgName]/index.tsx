@@ -92,6 +92,7 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
       return {
         ...product,
         usersRated: product.usersRated.map((user: any) => {
+          // console.log(user.userRatedAt);
           return {
             ...user,
             userRatedAt: user.userRatedAt.toDate().toString(),

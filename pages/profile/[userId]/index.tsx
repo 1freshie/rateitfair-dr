@@ -9,8 +9,9 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
 import { useState } from "react";
-import AddOrganizationForm from "../../../components/Forms/AddOrganizationForm";
-import AddProductForm from "../../../components/Forms/AddProductForm";
+import AddOrganizationModal from "../../../components/Modals/AddOrganizationModal";
+import AddProductModal from "../../../components/Modals/AddProductModal";
+import RecentlyRatedProductsModal from "../../../components/Modals/RecentlyRatedProductsModal";
 import ProfileCardNew from "../../../components/ProfileCard/ProfileCardNew";
 import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
 import { db } from "../../../firebase/firebaseApp";
@@ -70,15 +71,22 @@ export default function ProfilePage({
         {userData.role !== "User" &&
           userData.role !== "Admin" &&
           userData.orgId.length > 0 && (
-            <AddProductForm
+            <AddProductModal
               orgId={userData.orgId}
               isOpen={isOpen}
               closeModal={closeModal}
             />
           )}
         {userData.role === "Admin" && (
-          <AddOrganizationForm
+          <AddOrganizationModal
             availableUsers={availableUsers}
+            isOpen={isOpen}
+            closeModal={closeModal}
+          />
+        )}
+        {userData.role === "User" && !userData.orgId && (
+          <RecentlyRatedProductsModal
+            ratedProducts={userData.ratedProducts}
             isOpen={isOpen}
             closeModal={closeModal}
           />
@@ -120,15 +128,6 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
 
   let userRatedProducts;
 
-  // const userRatedProducts = userData.ratedProducts;
-
-  // const updatedRatedProducts = userRatedProducts.map((ratedProduct: any) => {
-  //   return {
-  //     ...ratedProduct,
-  //     ratedAt: ratedProduct.ratedAt.toString(),
-  //   };
-  // });
-
   if (userData.ratedProducts) {
     userRatedProducts = userData.ratedProducts;
   } else {
@@ -138,7 +137,25 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
   const updatedRatedProducts = userRatedProducts.map((ratedProduct: any) => {
     return {
       ...ratedProduct,
-      ratedAt: ratedProduct.ratedAt.toString(),
+      ratedAt: ratedProduct.ratedAt.toDate().toString(),
+    };
+  });
+
+  const datedRatedProducts = updatedRatedProducts.map((ratedProduct: any) => {
+    return {
+      ...ratedProduct,
+      ratedAt: new Date(ratedProduct.ratedAt),
+    };
+  });
+
+  const sortedRatedProducts = datedRatedProducts.sort(
+    (a: any, b: any) => b.ratedAt.getTime() - a.ratedAt.getTime()
+  );
+
+  const ratedProducts = sortedRatedProducts.map((ratedProduct: any) => {
+    return {
+      ...ratedProduct,
+      ratedAt: ratedProduct.ratedAt.toLocaleString(),
     };
   });
 
@@ -192,13 +209,9 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
 
   return {
     props: {
-      // userData: {
-      //   ...userData,
-      //   // createdAt: userData.createdAt.toString(),
-      // },
       userData: {
         ...userData,
-        ratedProducts: updatedRatedProducts,
+        ratedProducts: ratedProducts,
       },
       availableUsers: updatedFilteredUsers,
     },

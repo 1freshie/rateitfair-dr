@@ -4,6 +4,7 @@ import {
   DocumentData,
   getDoc,
   getDocs,
+  Timestamp,
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
 import Link from "next/link";
@@ -14,24 +15,24 @@ import OrgCard from "../../components/OrgCard/OrgCard";
 import { auth, db } from "../../firebase/firebaseApp";
 
 interface Data {
-  orgs: DocumentData[];
+  orgsData: DocumentData[];
 }
 
 // interface Params extends ParsedUrlQuery {
 //   orgName: string;
 // }
 
-export default function OrgsPage({ orgs }: Data) {
+export default function OrgsPage({ orgsData }: Data) {
   return (
     <div className="w-full h-full mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-      {orgs.map((org) => (
+      {orgsData.map((orgData) => (
         <OrgCard
-          key={org.id}
-          orgId={org.id}
-          orgName={org.name}
-          orgLogoURL={org.logoURL}
-          orgProductsCount={org.products.length}
-          orgUsersCount={3}
+          key={orgData.id}
+          orgId={orgData.id}
+          orgName={orgData.name}
+          orgLogoURL={orgData.logoURL}
+          orgProductsCount={orgData.products.length}
+          orgUsersCount={orgData.users ? orgData.users.length : 0}
         />
       ))}
     </div>
@@ -64,6 +65,9 @@ export const getStaticProps: GetStaticProps<Data> = async (context) => {
         return {
           ...product,
           usersRated: product.usersRated.map((user: any) => {
+            let timestamp = Timestamp.fromDate(new Date());
+            console.log(user.userId);
+            console.log(user.userRatedAt);
             return {
               ...user,
               userRatedAt: user.userRatedAt.toDate().toString(),
@@ -76,7 +80,7 @@ export const getStaticProps: GetStaticProps<Data> = async (context) => {
 
   return {
     props: {
-      orgs: updatedOrgsData,
+      orgsData: updatedOrgsData,
     },
   };
 };

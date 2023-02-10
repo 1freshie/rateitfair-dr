@@ -19,10 +19,11 @@ export default function ProductInfo({
         height={256}
         alt={title}
         className="w-auto h-auto"
+        priority={true}
       />
       <div className="w-full h-full flex flex-col justify-center items-center gap-y-4">
         <h1 className="heading">{title}</h1>
-        <p className="paragraph text-secondary--gray lg:w-4/5">{description}</p>
+        <p className="small-paragraph lg:w-4/5">{description}</p>
       </div>
     </div>
   );

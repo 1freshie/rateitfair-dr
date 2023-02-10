@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -31,24 +32,35 @@ export default function OrgCard({
   return (
     <Link href={`/orgs/${convertedUserOrgName}`}>
       <div className="w-full flex flex-col justify-center items-center border border-secondary--orange duration-300 hover:border-primary--orange rounded-2xl">
-        <div className="w-full p-4 flex justify-center items-center border-b border-b-secondary--orange rounded-t-[30px]">
+        <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4 border-b border-b-secondary--orange rounded-t-[30px]">
+          <div className="h-16">
+            <Image
+              src={orgLogoURL}
+              width={64}
+              height={64}
+              alt="Org Logo"
+              className="w-full h-full"
+              priority={true}
+            />
+          </div>
           <h1 className="heading text-center">{orgName}</h1>
         </div>
-        <div className="w-full p-4 flex justify-center items-center gap-x-8">
-          <div className="w-full p-4 flex flex-col justify-center items-center">
-            <h1 className="paragraph text-center">Users</h1>
-            <p className="paragraph text-secondary--gray font-medium text-center">
-              {orgUsersCount}
-            </p>
+
+        <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4">
+          <div className="w-full p-4 flex justify-center items-center gap-x-4">
+            <div className="w-full flex flex-col justify-center items-center">
+              <h1 className="small-paragraph text-secondary--orange text-center">Users</h1>
+              <p className="paragraph text-secondary--gray font-medium text-center">
+                {orgUsersCount}
+              </p>
+            </div>
+            <div className="w-full flex flex-col justify-center items-center">
+              <h1 className="small-paragraph text-secondary--orange text-center">Products</h1>
+              <p className="paragraph text-secondary--gray font-medium text-center">
+                {orgProductsCount}
+              </p>
+            </div>
           </div>
-          <div className="w-full p-4 flex flex-col justify-center items-center">
-            <h1 className="paragraph text-center">Products</h1>
-            <p className="paragraph text-secondary--gray font-medium text-center">
-              {orgProductsCount}
-            </p>
-          </div>
-        </div>
-        <div className="w-full p-4 flex justify-center items-center">
           <button className="duration-300 button-orange">To org</button>
         </div>
       </div>

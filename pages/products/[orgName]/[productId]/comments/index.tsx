@@ -215,9 +215,10 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
   // );
 
   const usersRated = sortedUsersRated.map((user: any) => {
+    console.log(user.userRatedAt);
     return {
       ...user,
-      userRatedAt: user.userRatedAt.toString(),
+      userRatedAt: user.userRatedAt.toLocaleString(),
     };
   });
 

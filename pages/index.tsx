@@ -21,7 +21,7 @@ export default function HomePage() {
           </h1>
           <p className="paragraph">
             We have a large list of your favourite companies' products. Rate the
-            ones you used and share your opinion! Be a part of them improving!
+            ones you have experience with and share your opinion! Be a part of them improving!
           </p>
         </div>
         <div className="mt-9 md:mt-0 flex flex-row items-center justify-evenly w-full md:w-1/2">
