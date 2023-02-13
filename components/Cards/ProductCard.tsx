@@ -50,9 +50,6 @@ export default function ProductCard({
 
   const cancelButtonRef = useRef(null);
 
-  // Should the product be removed from the user data as well?
-  // If so, we need to get the user data and remove the product from the user's products array
-
   async function handleDeleteProduct(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
@@ -154,6 +151,8 @@ export default function ProductCard({
                           <p className="small-paragraph text-center">
                             Are you sure you want to delete this product{" "}
                             <span className="text-primary--blue">{title}</span>?
+                            <br />
+                            This action cannot be undone!
                           </p>
                           <div className="flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
                             <button
