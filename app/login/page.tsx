@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
 import { auth } from '../../firebase/firebaseApp';
-import LoadingSpinner from '../../components/LoadingSpinner/LoadingSpinner';
+import LoadingSpinner from '../../components/LoadingState/LoadingSpinner';
 import SignInWithFacebook from '../../components/SignIn/SignInWithFacebook';
 import SignInWithGoogle from '../../components/SignIn/SignInWithGoogle';
 

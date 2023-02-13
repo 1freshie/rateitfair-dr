@@ -24,6 +24,7 @@ export default function ProductList({
 
   function deleteProduct(id: string) {
     const newProductList = productList.filter((product) => product.id !== id);
+    
     setProductList(newProductList);
   }
 

@@ -17,7 +17,7 @@ import { Fragment, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebase/firebaseApp";
 import AuthState from "../AuthState/AuthState";
-import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
+import LoadingSpinner from "../LoadingState/LoadingSpinner";
 import SelectedUserCard from "./SelectedUserCard";
 
 interface ProductCardProps {
@@ -149,10 +149,15 @@ export default function ProductCard({
                         <div className="w-full h-full flex flex-col items-center justify-center gap-y-4">
                           <p className="paragraph text-error--red">Warning</p>
                           <p className="small-paragraph text-center">
-                            Are you sure you want to delete this product{" "}
+                            Are you sure you want to entirely delete this
+                            product{" "}
                             <span className="text-primary--blue">{title}</span>?
                             <br />
-                            This action cannot be undone!
+                            This includes all the rates and comments.
+                            <br />
+                            <span className="text-secondary--orange">
+                              This action cannot be undone!
+                            </span>
                           </p>
                           <div className="flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
                             <button

@@ -3,14 +3,14 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "../../firebase/firebaseApp";
-import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
+import LoadingSpinner from "../LoadingState/LoadingSpinner";
 
 export default function AuthState() {
   const [user, loading, error] = useAuthState(auth);
 
   if (loading) {
     return (
-      <div className="flex h-96 flex-1 justify-center items-center">
+      <div className="self-center flex flex-1 justify-center items-center">
         <LoadingSpinner />
       </div>
     );
@@ -18,7 +18,7 @@ export default function AuthState() {
 
   if (error) {
     return (
-      <div className="flex h-96 flex-1 justify-center items-center">
+      <div className="self-center flex flex-1 justify-center items-center">
         <p className="paragraph text-center text-error--red">{error.message}</p>
       </div>
     );

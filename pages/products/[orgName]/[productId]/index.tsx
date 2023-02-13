@@ -27,7 +27,7 @@ import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useAuthState } from "react-firebase-hooks/auth";
 import AuthState from "../../../../components/AuthState/AuthState";
-import LoadingSpinner from "../../../../components/LoadingSpinner/LoadingSpinner";
+import LoadingSpinner from "../../../../components/LoadingState/LoadingSpinner";
 import ProductInfo from "../../../../components/ProductInfo/ProductInfo";
 
 import { auth, db } from "../../../../firebase/firebaseApp";
