@@ -48,7 +48,7 @@ export default function RecentlyRatedProductCard({
   return (
     <>
       {orgSlug && (
-        <Link href={`/products/${orgSlug}/${productId}`}>
+        <Link href={`/products/${orgSlug}/${productId}`} className="w-full">
           <div className="w-full flex flex-col justify-center items-center border border-secondary--orange duration-300 hover:border-primary--orange rounded-2xl">
             <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4 border-b border-b-secondary--orange rounded-t-2xl">
               <div className="h-24">
@@ -65,7 +65,7 @@ export default function RecentlyRatedProductCard({
                   priority={true}
                 />
               </div>
-              <div className="w-full flex flex-col justify-center items-center gap-y-1">
+              <div className="w-5/6 flex flex-col justify-center items-center+">
                 <p className="paragraph text-primary--blue text-center">
                   {productTitle}
                 </p>
@@ -75,8 +75,10 @@ export default function RecentlyRatedProductCard({
             </div>
 
             <div className="w-full h-full p-4 flex flex-col justify-center items-center gap-y-4">
-              <p className="heading text-center">{`${rate}/10`}</p>
-              <p className="small-paragraph text-secondary--gray w-full h-auto text-center italic">
+              <p className="paragraph text-secondary--gray text-center">
+                <span className="heading font-medium">{rate}</span>/10
+              </p>
+              <p className="w-5/6 h-auto small-paragraph text-secondary--gray  text-center italic">
                 {comment}
               </p>
             </div>

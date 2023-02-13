@@ -12,7 +12,7 @@ export default function ProductInfo({
   imageURL,
 }: ProductProps) {
   return (
-    <div className="w-full h-full flex flex-1 flex-col gap-y-4 lg:gap-y-10 justify-center items-center">
+    <div className="w-full h-full flex flex-1 flex-col gap-y-4 lg:gap-y-5 justify-center items-center">
       <Image
         src={imageURL}
         width={256}

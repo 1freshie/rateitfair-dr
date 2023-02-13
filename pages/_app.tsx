@@ -1,15 +1,16 @@
 import type { AppProps } from "next/app";
 
 import Layout from "../components/Layout/Layout";
+import NavbarNew from "../components/Navbar/NavbarNew";
 import "../styles/globals.css";
 
-function MyApp({ Component, pageProps }: AppProps) {
+export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <div className="min-h-screen flex flex-col py-5 px-7 md:py-10 md:px-14 bg-background--white font-Montserrat">
+      <NavbarNew />
+      <div className="flex flex-1">
+        <Component {...pageProps} />
+      </div>
+    </div>
   );
 }
-
-export default MyApp;
-

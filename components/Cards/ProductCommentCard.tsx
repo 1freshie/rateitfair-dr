@@ -55,25 +55,32 @@ export default function ProductCommentCard({
   return (
     <div className="w-full h-full border border-secondary--orange rounded-2xl">
       <div className="w-full p-4 flex flex-col justify-center items-center border-b border-b-secondary--orange rounded-t-2xl">
-        <div className="w-full flex flex-col lg:flex-row justify-between items-center gap-y-3 lg:gap-x-6">
-          <div className="w-full flex justify-around items-center gap-x-3">
-            <Image
-              src={
-                userProfilePhoto
-                  ? userProfilePhoto
-                  : "https://via.placeholder.com/40"
-              }
-              width={40}
-              height={40}
-              alt="Profile Photo"
-              className="rounded-full object-center object-cover w-auto h-auto"
-              priority={true}
-            />
-            <p className="paragraph text-primary--orange font-medium text-center">
+        <div className="w-full flex flex-col lg:flex-row justify-between items-center">
+          <div className="w-full flex justify-center lg:justify-start items-center gap-x-4">
+            <div className="w-8 h-8">
+              <Image
+                src={
+                  userProfilePhoto
+                    ? userProfilePhoto
+                    : "https://via.placeholder.com/32"
+                }
+                width={32}
+                height={32}
+                alt="Profile Photo"
+                className="rounded-full object-center object-cover w-full h-full"
+                priority={true}
+              />
+            </div>
+            <p className="small-paragraph text-primary--orange font-medium text-center">
               {userEmail}
             </p>
           </div>
-          <p className="heading">{`${userRate}/10`}</p>
+          <p className="small-paragraph text-secondary--gray">
+            <span className="paragraph text-primary--blue font-medium">
+              {userRate}
+            </span>
+            /10
+          </p>
         </div>
         <p className="small-paragraph">{userRatedAt}</p>
       </div>

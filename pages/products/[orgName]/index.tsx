@@ -8,9 +8,13 @@ import {
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
+import { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import AuthState from "../../../components/AuthState/AuthState";
+import LoadingSpinner from "../../../components/LoadingSpinner/LoadingSpinner";
 
 import ProductList from "../../../components/ProductList/ProductList";
-import { db } from "../../../firebase/firebaseApp";
+import { auth, db } from "../../../firebase/firebaseApp";
 
 interface Data {
   orgData: DocumentData;
@@ -21,7 +25,47 @@ interface Params extends ParsedUrlQuery {
 }
 
 export default function ProductsPage({ orgData }: Data) {
-  // console.log(orgData.products);
+  const [user, loading, error] = useAuthState(auth);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAdminOrOrg, setIsAdminOrOrg] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+    async function getUserInfo() {
+      if (user) {
+        const userDoc = doc(db, "users", user.uid);
+
+        const userSnapshot = await getDoc(userDoc);
+
+        const currUserData = userSnapshot.data() as DocumentData;
+
+        if (
+          currUserData.role === "Admin" ||
+          (currUserData.role === orgData.name &&
+            currUserData.orgId === orgData.id)
+        ) {
+          setIsAdminOrOrg(true);
+        }
+      }
+    }
+
+    getUserInfo();
+    setIsLoading(false);
+  }, [user]);
+
+  if (loading || error) {
+    return <AuthState />;
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex h-96 flex-1 justify-center items-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
     <>
       <Head>
@@ -36,8 +80,10 @@ export default function ProductsPage({ orgData }: Data) {
 
       <div className="w-full h-full mt-10">
         <ProductList
-          org={orgData.name.toLowerCase().replace(/\s/g, "")}
+          orgId={orgData.id}
+          orgSlug={orgData.name.toLowerCase().replace(/\s/g, "")}
           products={orgData.products}
+          isAdminOrOrg={isAdminOrOrg}
         />
       </div>
     </>

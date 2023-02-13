@@ -1,6 +1,4 @@
-'use client';
-
-const LoadingSpinner: React.FC = () => {
+export default function LoadingSpinner() {
   return (
     <svg
       className="animate-spin -ml-1 mr-3 h-12 w-12 text-white"
@@ -23,6 +21,4 @@ const LoadingSpinner: React.FC = () => {
       ></path>
     </svg>
   );
-};
-
-export default LoadingSpinner;
+}

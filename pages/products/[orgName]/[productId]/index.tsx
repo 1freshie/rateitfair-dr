@@ -66,9 +66,11 @@ export default function ProductPage({ productData, orgId }: Data) {
   const router = useRouter();
   const { orgName, productId } = router.query;
 
+  const [isLoading, setIsLoading] = useState(false);
+
   // const [product, setProduct] = useState(productData);
 
-  const [userRole, setUserRole] = useState("User");
+  const [userRole, setUserRole] = useState("");
 
   const [rateValue, setRateValue] = useState<number | null>(null);
   const [enteredComment, setEnteredComment] = useState("");
@@ -82,6 +84,7 @@ export default function ProductPage({ productData, orgId }: Data) {
   );
 
   useEffect(() => {
+    setIsLoading(true);
     async function checkIfUserRated() {
       if (user) {
         const userDoc = doc(db, "users", user!.uid);
@@ -113,10 +116,19 @@ export default function ProductPage({ productData, orgId }: Data) {
     }
 
     checkIfUserRated();
+    setIsLoading(false);
   }, [inEditMode, user]);
 
   if (loading || error) {
     return <AuthState />;
+  }
+
+  if (isLoading || !userRole) {
+    return (
+      <div className="flex h-24 lg:h-96 flex-1 justify-center items-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   async function handleRateSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -126,6 +138,8 @@ export default function ProductPage({ productData, orgId }: Data) {
       prompt("Error", "Please select a rate from 0 to 10!");
       return;
     }
+
+    setIsLoading(true);
 
     const newRates = productData.rates;
     newRates[rateValue] += 1;
@@ -234,6 +248,7 @@ export default function ProductPage({ productData, orgId }: Data) {
 
     // TOOD: Check if the user already rated the product!
 
+    setIsLoading(false);
     setRateValue(null);
     setEnteredComment("");
     setInEditMode(false);
@@ -266,7 +281,7 @@ export default function ProductPage({ productData, orgId }: Data) {
       </Head>
 
       {user && (
-        <div className="w-full h-full mt-16 flex flex-1 flex-col lg:flex-row gap-y-11 lg:gap-x-11 justify-between items-center text-center">
+        <div className="w-full h-full self-center flex flex-1 flex-col lg:flex-row gap-y-11 lg:gap-x-11 justify-between items-center text-center">
           <ProductInfo
             title={productData.title}
             description={productData.description}
@@ -285,9 +300,13 @@ export default function ProductPage({ productData, orgId }: Data) {
                   <span className="font-medium">{usersCommentsCount}</span>{" "}
                   comments on this product...
                 </p>
-                <Link href={`/products/${orgName}/${productId}/comments`}>
-                  <button className="button-blue duration-300">View all</button>
-                </Link>
+                {usersCommentsCount > 0 && (
+                  <Link href={`/products/${orgName}/${productId}/comments`}>
+                    <button className="button-blue duration-300">
+                      View all
+                    </button>
+                  </Link>
+                )}
               </div>
             </div>
           ) : (

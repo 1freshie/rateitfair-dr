@@ -62,8 +62,8 @@ export default function ProfilePage({
       </Head>
 
       <div
-        className={`relative w-full h-full flex flex-1 flex-col items-center mt-10 ${
-          isOpen && "-z-20"
+        className={`relative w-full h-full self-center flex flex-1 flex-col justify-center items-center ${
+          isOpen ? "-z-20" : "z-0"
         }`}
       >
         <ProfileCard userData={userData} />
