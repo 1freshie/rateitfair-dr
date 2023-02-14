@@ -5,7 +5,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "../firebase/firebaseApp";
+import { auth, db } from "../firebaseApp";
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();

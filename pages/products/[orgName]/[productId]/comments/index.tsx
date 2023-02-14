@@ -16,7 +16,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 
 import AuthState from "../../../../../components/AuthState/AuthState";
 import ProductCommentCard from "../../../../../components/Cards/ProductCommentCard";
-import { auth, db } from "../../../../../firebase/firebaseApp";
+import { auth, db } from "../../../../../firebaseApp";
 
 interface Data {
   usersRated: {

@@ -30,7 +30,7 @@ import AuthState from "../../../../components/AuthState/AuthState";
 import LoadingSpinner from "../../../../components/LoadingState/LoadingSpinner";
 import ProductInfo from "../../../../components/ProductInfo/ProductInfo";
 
-import { auth, db } from "../../../../firebase/firebaseApp";
+import { auth, db } from "../../../../firebaseApp";
 
 interface Data {
   productData: DocumentData;

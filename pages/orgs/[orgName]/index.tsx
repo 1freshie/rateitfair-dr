@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 
-import { auth, db } from "../../../firebase/firebaseApp";
+import { auth, db } from "../../../firebaseApp";
 
 interface Data {
   orgData: DocumentData;
@@ -21,7 +21,9 @@ interface Params extends ParsedUrlQuery {
 }
 
 export default function OrgPage({ orgData }: Data) {
-  return <div>OrgPage</div>;
+  return (
+    <div className="self-center justify-self-center flex flex-1 justify-center items-center"></div>
+  );
 }
 
 export async function getStaticPaths() {

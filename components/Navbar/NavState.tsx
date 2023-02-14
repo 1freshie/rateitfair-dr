@@ -11,7 +11,7 @@ import Link from "next/link";
 import { Fragment, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import { auth, db } from "../../firebase/firebaseApp";
+import { auth, db } from "../../firebaseApp";
 import AuthState from "../AuthState/AuthState";
 
 export default function NavState() {

@@ -1,5 +1,5 @@
 import { collection, getDocs } from "firebase/firestore";
-import { db } from "../firebase/firebaseApp";
+import { db } from "../firebaseApp";
 
 import Navbar from "../components/Navbar/Navbar";
 import "../styles/globals.css";

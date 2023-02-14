@@ -16,22 +16,42 @@ export default function LoginPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="h-full flex flex-col items-center justify-center">
-        <header className="mt-16 text-center">
+      <div className="self-center justify-self-center flex-1 flex flex-col items-center justify-center gap-y-8">
+        <header className="text-center">
           <h1 className="heading">Welcome back!</h1>
-          <p className="paragraph mt-2 md:mt-3">Login to continue...</p>
+          <p className="paragraph">Login to continue...</p>
         </header>
-        <form className="form mt-8 md:mt-10 gap-y-3 max-w-xs md:max-w-sm lg:max-w-md">
-          <input
-            type="email"
-            placeholder="Enter your email..."
-            className="input"
-          />
-          <input
-            type="password"
-            placeholder="Enter your password..."
-            className="input"
-          />
+        <form className="form gap-y-3 max-w-xs md:max-w-sm lg:max-w-md">
+          <div className="w-full flex flex-col justify-center gap-y-1">
+            <label
+              htmlFor="email"
+              className="small-paragraph text-secondary--orange ml-2"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter here..."
+              className="input"
+            />
+          </div>
+          <div className="w-full flex flex-col justify-center gap-y-1">
+            <label
+              htmlFor="password"
+              className="small-paragraph text-secondary--orange ml-2"
+            >
+              Password
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Enter here..."
+              className="input"
+            />
+          </div>
           <button
             type="submit"
             className="button-orange mt-3 md:mt-5 duration-300"
@@ -39,25 +59,27 @@ export default function LoginPage() {
             Login
           </button>
         </form>
-        <div className="form mt-4 md:mt-6 gap-y-3 max-w-xs md:max-w-sm lg:max-w-md">
-          <p className="paragraph text-secondary--gray">Or continue with...</p>
+        <div className="form gap-y-3 max-w-xs md:max-w-sm lg:max-w-md">
+          <p className="small-paragraph">Or continue with...</p>
           <div className="flex flex-row justify-between w-full gap-x-6">
             <SignInWithFacebook />
             <SignInWithGoogle />
           </div>
         </div>
-        <Link
-          href="#"
-          className="paragraph mt-5 duration-300 hover:text-primary--orange"
-        >
-          Forgot your password? Click here.
-        </Link>
-        <Link
-          href="/signup"
-          className="paragraph duration-300 hover:text-primary--orange"
-        >
-          Don't have an account? Click here.
-        </Link>
+        <div className="w-full flex flex-col justify-center items-center gap-y-1">
+          <Link
+            href="#"
+            className="small-paragraph text-secondary--orange duration-300 hover:text-primary--orange"
+          >
+            Forgot your password? Click here.
+          </Link>
+          <Link
+            href="/signup"
+            className="small-paragraph text-secondary--orange duration-300 hover:text-primary--orange"
+          >
+            Don't have an account? Click here.
+          </Link>
+        </div>
       </div>
     </>
   );

@@ -2,7 +2,7 @@ import { doc, DocumentData, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { db } from "../../firebase/firebaseApp";
+import { db } from "../../firebaseApp";
 
 interface RecentlyRatedProductCardProps {
   orgId: string;

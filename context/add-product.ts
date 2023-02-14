@@ -1,6 +1,6 @@
 import { uuidv4 } from "@firebase/util";
 import { collection, doc, DocumentData, setDoc } from "firebase/firestore";
-import { db } from "../firebase/firebaseApp";
+import { db } from "../firebaseApp";
 
 export async function addProduct(
   orgData: DocumentData | undefined,

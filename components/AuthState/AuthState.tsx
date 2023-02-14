@@ -2,7 +2,7 @@
 
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import { auth } from "../../firebase/firebaseApp";
+import { auth } from "../../firebaseApp";
 import LoadingSpinner from "../LoadingState/LoadingSpinner";
 
 export default function AuthState() {

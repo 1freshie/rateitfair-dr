@@ -16,7 +16,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import OrgCard from "../../components/Cards/OrgCard";
 import LoadingState from "../../components/LoadingState/LoadingState";
 
-import { auth, db } from "../../firebase/firebaseApp";
+import { auth, db } from "../../firebaseApp";
 
 interface Data {
   orgsData: DocumentData[];
@@ -40,22 +40,6 @@ export default function OrgsPage({ orgsData }: Data) {
     const orgSnapshot = await getDoc(orgDoc);
 
     const currOrgData = orgSnapshot.data() as DocumentData;
-
-    // const userDoc = doc(db, "users", user!.uid);
-
-    // const userSnapshot = await getDoc(userDoc);
-
-    // const currUserData = userSnapshot.data() as DocumentData;
-
-    // if (
-    //   currUserData.role === currOrgData.name &&
-    //   currUserData.orgId === orgId
-    // ) {
-    //   await updateDoc(userDoc, {
-    //     role: "User",
-    //     orgId: "",
-    //   });
-    // }    <-- This is not working (TODO: Should map the users array in the org and update the role and orgId of the user)
 
     const usersDocs = await getDocs(collection(db, "users"));
 

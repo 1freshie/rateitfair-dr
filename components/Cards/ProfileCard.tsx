@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import { useState } from "react";
 import { signOutUser } from "../../context/auth-context";
-import { auth } from "../../firebase/firebaseApp";
+import { auth } from "../../firebaseApp";
 import AuthState from "../AuthState/AuthState";
 
 interface UserData {

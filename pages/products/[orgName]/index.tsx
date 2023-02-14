@@ -14,7 +14,7 @@ import AuthState from "../../../components/AuthState/AuthState";
 import LoadingSpinner from "../../../components/LoadingState/LoadingSpinner";
 
 import ProductList from "../../../components/ProductList/ProductList";
-import { auth, db } from "../../../firebase/firebaseApp";
+import { auth, db } from "../../../firebaseApp";
 
 interface Data {
   orgData: DocumentData;

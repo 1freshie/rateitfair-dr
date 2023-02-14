@@ -15,7 +15,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useRef, useState } from "react";
 
-import { db } from "../../firebase/firebaseApp";
+import { db } from "../../firebaseApp";
 import SelectedUserCard from "../Cards/SelectedUserCard";
 
 interface AddOrganizationModalProps {

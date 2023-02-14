@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import ProfileCard from "../../components/ProfileCard/ProfileCard";
-import { db } from "../../firebase/firebaseApp";
+import { db } from "../../firebaseApp";
 
 export const dynamic = "auto",
   dynamicParams = true,

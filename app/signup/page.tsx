@@ -6,7 +6,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import LoadingSpinner from '../../components/LoadingState/LoadingSpinner';
 import SignInWithFacebook from '../../components/SignIn/SignInWithFacebook';
 import SignInWithGoogle from '../../components/SignIn/SignInWithGoogle';
-import { auth } from '../../firebase/firebaseApp';
+import { auth } from '../../firebaseApp';
 
 const SignUpPage = () => {
   // const [user, loading, error] = useAuthState(auth);

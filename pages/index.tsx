@@ -1,4 +1,8 @@
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import Head from "next/head";
+
 import StarRow from "../components/StarRow/StarRow";
 
 export default function HomePage() {

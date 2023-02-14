@@ -2,7 +2,7 @@
 
 import { collection, getDocs } from "firebase/firestore";
 import Link from "next/link";
-import { db } from "../../firebase/firebaseApp";
+import { db } from "../../firebaseApp";
 
 import NavState from "./NavState";
 

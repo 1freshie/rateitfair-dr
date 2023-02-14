@@ -1,5 +1,5 @@
 import { collection, doc, setDoc } from "firebase/firestore";
-import { db } from "../firebase/firebaseApp";
+import { db } from "../firebaseApp";
 
 export async function updateProducts(orgId: string, products: any) {
   const orgsCollection = collection(db, "organizations");

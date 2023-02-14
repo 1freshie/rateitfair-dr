@@ -14,7 +14,7 @@ import AddOrganizationModal from "../../../components/Modals/AddOrganizationModa
 import AddProductModal from "../../../components/Modals/AddProductModal";
 import RecentlyRatedProductsModal from "../../../components/Modals/RecentlyRatedProductsModal";
 import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
-import { db } from "../../../firebase/firebaseApp";
+import { db } from "../../../firebaseApp";
 
 interface Data {
   userData: DocumentData;
@@ -26,7 +26,7 @@ interface Params extends ParsedUrlQuery {
   userId: string;
 }
 
-// TODO: ADD CONFIRMATION BUTTON FOR ALL FORMS => ADD ORG AND ADD PRODUCT FORMS MUST NOT BE IN MODAL BUT IN A SEPARATE PAGE (CONFIRM MESSAGE WILL BE MODAL POPUP)
+// TODO: ADD CONFIRMATION BUTTON FOR ALL FORMS
 
 export default function ProfilePage({
   userData,
@@ -45,7 +45,7 @@ export default function ProfilePage({
 
   if (!userData)
     return (
-      <div className="flex h-96 flex-1 justify-center items-center">
+      <div className="self-center flex flex-1 justify-center items-center">
         <p className="paragraph text-center text-error--red">
           Error | Something went wrong.
         </p>

@@ -12,7 +12,7 @@ import { validateImage } from "image-validator";
 import { useRouter } from "next/router";
 import { Fragment, useRef, useState } from "react";
 
-import { db } from "../../firebase/firebaseApp";
+import { db } from "../../firebaseApp";
 
 interface AddProductModalProps {
   orgId: string;

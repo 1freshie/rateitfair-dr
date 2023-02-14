@@ -12,7 +12,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import { auth, db } from "../../firebase/firebaseApp";
+import { auth, db } from "../../firebaseApp";
 
 interface ProductCommentCardProps {
   userId: string;
