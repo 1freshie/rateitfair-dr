@@ -17,7 +17,7 @@ import { Fragment, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebaseApp";
 import AuthState from "../AuthState/AuthState";
-import LoadingSpinner from "../LoadingState/LoadingSpinner";
+import LoadingSpinner from "../States/LoadingSpinner";
 import SelectedUserCard from "./SelectedUserCard";
 
 interface ProductCardProps {

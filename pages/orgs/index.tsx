@@ -14,7 +14,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import OrgCard from "../../components/Cards/OrgCard";
-import LoadingState from "../../components/LoadingState/LoadingState";
+import LoadingState from "../../components/States/LoadingState";
 
 import { auth, db } from "../../firebaseApp";
 

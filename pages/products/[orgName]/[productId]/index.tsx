@@ -27,9 +27,10 @@ import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useAuthState } from "react-firebase-hooks/auth";
 import AuthState from "../../../../components/AuthState/AuthState";
-import LoadingSpinner from "../../../../components/LoadingState/LoadingSpinner";
 import ProductInfo from "../../../../components/ProductInfo/ProductInfo";
+import LoadingSpinner from "../../../../components/States/LoadingSpinner";
 
+import ErrorState from "../../../../components/States/ErrorState";
 import { auth, db } from "../../../../firebaseApp";
 
 interface Data {
@@ -67,6 +68,7 @@ export default function ProductPage({ productData, orgId }: Data) {
   const { orgName, productId } = router.query;
 
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   // const [product, setProduct] = useState(productData);
 
@@ -135,7 +137,8 @@ export default function ProductPage({ productData, orgId }: Data) {
     e.preventDefault();
 
     if (rateValue === null) {
-      prompt("Error", "Please select a rate from 0 to 10!");
+      // prompt("Error", "Please select a rate from 0 to 10!");
+      setErrorMessage("Please select a rate from 0 to 10!");
       return;
     }
 
@@ -191,7 +194,8 @@ export default function ProductPage({ productData, orgId }: Data) {
     try {
       await updateDoc(orgDoc, newOrgData);
     } catch (err: any) {
-      prompt("Error", err.message);
+      // prompt("Error", err.message);
+      setErrorMessage(err.message);
     }
 
     const userDoc = doc(db, "users", user!.uid);
@@ -219,7 +223,8 @@ export default function ProductPage({ productData, orgId }: Data) {
           ratedProductsCount: userRatedProductsCount + 1,
         });
       } catch (err: any) {
-        prompt("Error", err.message);
+        // prompt("Error", err.message);
+        setErrorMessage(err.message);
       }
     } else {
       const newRatedProducts = userData.ratedProducts;
@@ -242,13 +247,15 @@ export default function ProductPage({ productData, orgId }: Data) {
       try {
         await updateDoc(userDoc, newUserData);
       } catch (err: any) {
-        prompt("Error", err.message);
+        // prompt("Error", err.message);
+        setErrorMessage(err.message);
       }
     }
 
-    // TOOD: Check if the user already rated the product!
+    // TODO: Check if the user already rated the product!
 
     setIsLoading(false);
+    setErrorMessage("");
     setRateValue(null);
     setEnteredComment("");
     setInEditMode(false);
@@ -290,6 +297,8 @@ export default function ProductPage({ productData, orgId }: Data) {
 
           {userRole !== "Admin" && userRole !== "User" ? (
             <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-2xl">
+              {errorMessage && <ErrorState error={errorMessage} />}
+
               <h1 className="heading">Ratings</h1>
               <div className="w-full h-full my-8">
                 <Bar options={chartOptions} data={chartData} />
@@ -311,6 +320,8 @@ export default function ProductPage({ productData, orgId }: Data) {
             </div>
           ) : (
             <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-2xl">
+              {errorMessage && <ErrorState error={errorMessage} />}
+
               {inEditMode ? (
                 <>
                   <div className="w-full h-full flex flex-col gap-y-2">
