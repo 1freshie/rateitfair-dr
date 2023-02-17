@@ -195,14 +195,21 @@ export default function ProductCard({
           alt={title}
           className="w-auto h-auto"
         />
-        <h1 className="w-5/6 paragraph text-primary--blue font-medium text-center">
+        <h1 className="paragraph w-11/12 text-primary--blue font-medium text-center">
           {title}
         </h1>
-        <p className="w-5/6 small-paragraph text-center">
-          <span className="font-medium">{ratesCount}</span> users rated this
-          product...
-        </p>
-        <button className="duration-300 button-orange">Rate It</button>
+        <div className="w-full flex flex-col justify-center items-center text-center">
+          <p className="small-paragraph text-secondary--orange">
+            <span className="font-medium">7</span>/10
+          </p>
+          <p className="small-paragraph">
+            {"("}
+            <span className="font-medium">{ratesCount}</span> total rates{")"}
+          </p>
+        </div>
+        <button className="duration-300 button-orange">
+          {isAdminOrOrg ? "View" : "Rate it"}
+        </button>
       </div>
     </Link>
   );
