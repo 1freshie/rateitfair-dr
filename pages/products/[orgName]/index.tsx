@@ -11,7 +11,7 @@ import { ParsedUrlQuery } from "querystring";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import AuthState from "../../../components/AuthState/AuthState";
-import LoadingSpinner from "../../../components/States/LoadingSpinner";
+import LoadingSpinner from "../../../components/states/LoadingSpinner";
 
 import ProductList from "../../../components/ProductList/ProductList";
 import { auth, db } from "../../../firebaseApp";

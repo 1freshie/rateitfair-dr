@@ -5,10 +5,11 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { faEnvelope, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useState } from "react";
-import { signOutUser } from "../../context/auth-context";
+import { useSignOut } from "react-firebase-hooks/auth";
+
 import { auth } from "../../firebaseApp";
-import AuthState from "../AuthState/AuthState";
+import ErrorState from "../states/ErrorState";
+import LoadingState from "../states/LoadingState";
 
 interface UserData {
   userData: DocumentData;
@@ -22,15 +23,33 @@ const iconStyle = {
 
 export default function ProfileCard({ userData }: UserData) {
   const [user, loading, error] = useAuthState(auth);
+  const [signOut, loadingSignOut, errorSignOut] = useSignOut(auth);
+
   const router = useRouter();
 
   async function handleSignOut() {
-    await signOutUser();
-    router.replace("/");
+    const success = await signOut();
+
+    if (!success) {
+      return <ErrorState error="Something went wrong!" />;
+    }
+
+    router.replace("/login");
   }
 
-  if (loading || error) {
-    return <AuthState />;
+  // if (loading || error) {
+  //   return <AuthState />;
+  // }
+  if (loading || loadingSignOut) {
+    return <LoadingState />;
+  }
+
+  if (error) {
+    return <ErrorState error={error.message} />;
+  }
+
+  if (errorSignOut) {
+    return <ErrorState error={errorSignOut.message} />;
   }
 
   return (

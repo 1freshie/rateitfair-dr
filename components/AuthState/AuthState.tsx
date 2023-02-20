@@ -3,7 +3,7 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "../../firebaseApp";
-import LoadingSpinner from "../States/LoadingSpinner";
+import LoadingSpinner from "../states/LoadingSpinner";
 
 export default function AuthState() {
   const [user, loading, error] = useAuthState(auth);

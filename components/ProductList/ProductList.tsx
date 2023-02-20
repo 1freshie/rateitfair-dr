@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ProductCard from "../Cards/ProductCard";
+import ProductCard from "../cards/ProductCard";
 
 interface ProductListProps {
   orgId: string;
@@ -24,7 +24,7 @@ export default function ProductList({
 
   function deleteProduct(id: string) {
     const newProductList = productList.filter((product) => product.id !== id);
-    
+
     setProductList(newProductList);
   }
 

@@ -5,16 +5,13 @@ import {
   DocumentData,
   getDoc,
   getDocs,
-  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
-import Link from "next/link";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import OrgCard from "../../components/Cards/OrgCard";
-import LoadingState from "../../components/States/LoadingState";
+import OrgCard from "../../components/cards/OrgCard";
+import LoadingState from "../../components/states/LoadingState";
 
 import { auth, db } from "../../firebaseApp";
 

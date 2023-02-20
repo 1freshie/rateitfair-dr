@@ -1,13 +1,11 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Combobox, Dialog, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { Dialog, Transition } from "@headlessui/react";
 import {
   collection,
   doc,
   DocumentData,
   getDoc,
-  query,
   updateDoc,
 } from "firebase/firestore";
 import Image from "next/image";
@@ -17,8 +15,7 @@ import { Fragment, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebaseApp";
 import AuthState from "../AuthState/AuthState";
-import LoadingSpinner from "../States/LoadingSpinner";
-import SelectedUserCard from "./SelectedUserCard";
+import LoadingSpinner from "../states/LoadingSpinner";
 
 interface ProductCardProps {
   orgId: string;
