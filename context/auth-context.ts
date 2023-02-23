@@ -37,7 +37,6 @@ export async function signInWithGoogle() {
           //   ratedAt: new Date(),
           // },
         // ],
-        ratedProductsCount: 0,
         // createdAt: new Date(),
       });
     } catch (error: any) {

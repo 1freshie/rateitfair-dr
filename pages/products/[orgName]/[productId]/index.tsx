@@ -1,3 +1,4 @@
+import { Dialog, Transition } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/24/solid";
 import {
   BarElement,
@@ -22,15 +23,17 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { title } from "process";
 import { ParsedUrlQuery } from "querystring";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useAuthState } from "react-firebase-hooks/auth";
 import AuthState from "../../../../components/AuthState/AuthState";
+import TextArea from "../../../../components/inputs/TextArea";
 import ProductInfo from "../../../../components/ProductInfo/ProductInfo";
-import LoadingSpinner from "../../../../components/states/LoadingSpinner";
 
 import ErrorState from "../../../../components/states/ErrorState";
+import LoadingState from "../../../../components/states/LoadingState";
 import { auth, db } from "../../../../firebaseApp";
 
 interface Data {
@@ -77,7 +80,8 @@ export default function ProductPage({ productData, orgId }: Data) {
   const [rateValue, setRateValue] = useState<number | null>(null);
   const [enteredComment, setEnteredComment] = useState("");
 
-  const [inEditMode, setInEditMode] = useState(true);
+  const [confirmEditing, setConfirmEditing] = useState(false);
+  const [inEditMode, setInEditMode] = useState(false);
 
   const [usersCommentsCount, setUsersCommentsCount] = useState<number>(
     productData.usersRated.filter(
@@ -85,11 +89,13 @@ export default function ProductPage({ productData, orgId }: Data) {
     ).length
   );
 
+  const cancelButtonRef = useRef(null);
+
   useEffect(() => {
     setIsLoading(true);
     async function checkIfUserRated() {
       if (user) {
-        const userDoc = doc(db, "users", user!.uid);
+        const userDoc = doc(db, "users", user.uid);
 
         const userSnapshot = await getDoc(userDoc);
 
@@ -100,37 +106,35 @@ export default function ProductPage({ productData, orgId }: Data) {
         if (userData.ratedProducts) {
           const userRatedProducts = userData.ratedProducts;
 
-          const userRatedProduct = userRatedProducts.filter(
+          const userRatedProduct = userRatedProducts.find(
             (ratedProduct: any) => ratedProduct.productId === productData.id
-          )[0];
+          );
 
           if (userRatedProduct) {
             setRateValue(userRatedProduct.rate);
             setEnteredComment(userRatedProduct.comment);
-            setInEditMode(userRatedProduct.editMode);
+            // setInEditMode(userRatedProduct.editMode);
           } else {
             setRateValue(null);
             setEnteredComment("");
             setInEditMode(true);
+            // setInEditMode(true);
           }
         }
       }
     }
 
     checkIfUserRated();
+
     setIsLoading(false);
-  }, [inEditMode, user]);
+  }, [user, inEditMode]);
 
   if (loading || error) {
     return <AuthState />;
   }
 
   if (isLoading || !userRole) {
-    return (
-      <div className="flex h-24 lg:h-96 flex-1 justify-center items-center">
-        <LoadingSpinner />
-      </div>
-    );
+    return <LoadingState />;
   }
 
   async function handleRateSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -144,28 +148,68 @@ export default function ProductPage({ productData, orgId }: Data) {
 
     setIsLoading(true);
 
-    const newRates = productData.rates;
+    let newRates = productData.rates;
     newRates[rateValue] += 1;
 
-    const newRatesCount = productData.ratesCount + 1;
+    let newRatesCount = productData.ratesCount;
 
     let newUsersRated: any[];
 
     if (productData.usersRated) {
       newUsersRated = productData.usersRated;
+      console.log(newUsersRated);
     } else {
       newUsersRated = [];
     }
 
+    let userRated = newUsersRated.find(
+      (userRated: any) => userRated.userId === user!.uid
+    );
+
     const userRatedAt = Timestamp.fromDate(new Date());
 
-    newUsersRated.push({
-      userId: user!.uid,
-      userEmail: user!.email,
-      userRate: rateValue,
-      userComment: enteredComment,
-      userRatedAt: userRatedAt,
-    });
+    if (userRated) {
+      console.log("im here");
+      newRates[userRated.userRate] -= 1;
+
+      userRated = {
+        ...userRated,
+        userRate: rateValue,
+        userComment: enteredComment,
+        userRatedAt: userRatedAt,
+      };
+
+      console.log(userRated);
+
+      newUsersRated = newUsersRated.map((currUserRated: any) => {
+        if (currUserRated.userId === user!.uid) {
+          return userRated;
+        }
+        return currUserRated;
+      });
+
+      console.log(newUsersRated);
+    } else {
+      newUsersRated.push({
+        userId: user!.uid,
+        userEmail: user!.email,
+        userRate: rateValue,
+        userComment: enteredComment,
+        userRatedAt: userRatedAt,
+      });
+
+      newRatesCount += 1;
+    }
+
+    // console.log(newUsersRated);
+
+    // newUsersRated.push({
+    //   userId: user!.uid,
+    //   userEmail: user!.email,
+    //   userRate: rateValue,
+    //   userComment: enteredComment,
+    //   userRatedAt: userRatedAt,
+    // });
 
     const updatedProduct = {
       ...productData,
@@ -204,8 +248,6 @@ export default function ProductPage({ productData, orgId }: Data) {
 
     const userData = userSnapshot.data() as DocumentData;
 
-    const userRatedProductsCount = userData.ratedProductsCount;
-
     if (!userData.ratedProducts) {
       try {
         await updateDoc(userDoc, {
@@ -216,32 +258,58 @@ export default function ProductPage({ productData, orgId }: Data) {
               productId: productData.id,
               comment: enteredComment,
               rate: rateValue,
-              editMode: false,
               ratedAt: userRatedAt,
             },
           ],
-          ratedProductsCount: userRatedProductsCount + 1,
         });
       } catch (err: any) {
         // prompt("Error", err.message);
         setErrorMessage(err.message);
       }
     } else {
-      const newRatedProducts = userData.ratedProducts;
+      let newRatedProducts = userData.ratedProducts;
 
-      newRatedProducts.push({
-        orgId: orgData.id,
-        productId: productData.id,
-        comment: enteredComment,
-        rate: rateValue,
-        editMode: false,
-        ratedAt: userRatedAt,
-      });
+      let userRatedProduct = newRatedProducts.find(
+        (ratedProduct: any) => ratedProduct.productId === productData.id
+      );
+
+      if (userRatedProduct) {
+        userRatedProduct = {
+          ...userRatedProduct,
+          comment: enteredComment,
+          rate: rateValue,
+          ratedAt: userRatedAt,
+        };
+
+        newRatedProducts = newRatedProducts.map((ratedProduct: any) => {
+          if (ratedProduct.productId === productData.id) {
+            return userRatedProduct;
+          } else {
+            return ratedProduct;
+          }
+        });
+      } else {
+        newRatedProducts.push({
+          orgId: orgData.id,
+          productId: productData.id,
+          comment: enteredComment,
+          rate: rateValue,
+          ratedAt: userRatedAt,
+        });
+      }
+
+      // newRatedProducts.push({
+      //   orgId: orgData.id,
+      //   productId: productData.id,
+      //   comment: enteredComment,
+      //   rate: rateValue,
+      //   // editMode: false,
+      //   ratedAt: userRatedAt,
+      // });
 
       const newUserData = {
         ...userData,
         ratedProducts: newRatedProducts,
-        ratedProductsCount: userRatedProductsCount + 1,
       };
 
       try {
@@ -258,7 +326,12 @@ export default function ProductPage({ productData, orgId }: Data) {
     setErrorMessage("");
     setRateValue(null);
     setEnteredComment("");
+    setConfirmEditing(false);
     setInEditMode(false);
+  }
+
+  function handleCommentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setEnteredComment(e.target.value);
   }
 
   const chartLabels = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
@@ -366,12 +439,15 @@ export default function ProductPage({ productData, orgId }: Data) {
                     <p className="small-paragraph text-primary--blue text-center">
                       Want to share an opinion about the product?
                     </p>
-                    <textarea
-                      placeholder="Is something wrong with this product? Tell us about any improvements that should be made..."
-                      className="input resize-none h-36 md:h-40 lg:h-44 xl:h-48"
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                        setEnteredComment(e.target.value)
+                    <TextArea
+                      label=""
+                      id="comment-area"
+                      name="comment-area"
+                      value={enteredComment}
+                      placeholder={
+                        "Is something wrong with this product? Tell us about any improvements that should be made..."
                       }
+                      onChange={handleCommentChange}
                     />
                     <button
                       type="submit"
@@ -398,9 +474,9 @@ export default function ProductPage({ productData, orgId }: Data) {
                       <p className="paragraph text-primary--blue">
                         You also commented on it:
                       </p>
-                      <p className="small-paragraph text-center italic">
+                      <em className="small-paragraph text-center italic">
                         {enteredComment}
-                      </p>
+                      </em>
                     </div>
                   )}
 
@@ -410,11 +486,84 @@ export default function ProductPage({ productData, orgId }: Data) {
                     </p>
                     <button
                       className="button-blue duration-300"
-                      onClick={() => setInEditMode(true)}
+                      onClick={() => setConfirmEditing(true)}
                     >
-                      Change it
+                      Edit rate
                     </button>
                   </div>
+
+                  <Transition.Root show={confirmEditing} as={Fragment}>
+                    <Dialog
+                      as="div"
+                      className="relative z-20"
+                      initialFocus={cancelButtonRef}
+                      onClose={() => setConfirmEditing(false)}
+                    >
+                      <Transition.Child
+                        as={Fragment}
+                        enter="ease-out duration-300"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="ease-in duration-200"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                      >
+                        <div className="fixed inset-0 bg-[#000000] bg-opacity-75 transition-opacity" />
+                      </Transition.Child>
+
+                      <div className="fixed inset-0 z-10 overflow-y-auto">
+                        <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                          <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                            enterTo="opacity-100 translate-y-0 sm:scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+                            leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                          >
+                            <Dialog.Panel className="relative transform overflow-hidden rounded-2xl bg-background--white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg px-4 pt-5 pb-4 sm:p-6 sm:pb-5">
+                              <div className="w-full h-full flex flex-col items-center justify-center gap-y-4">
+                                <p className="paragraph text-error--red">
+                                  Warning
+                                </p>
+                                <p className="small-paragraph text-center">
+                                  Are you sure you want to edit your rate for{" "}
+                                  <span className="text-primary--blue">
+                                    {productData.title}
+                                  </span>
+                                  ?
+                                  <br />
+                                  This includes the rate value and the comment.
+                                  <br />
+                                </p>
+                                <div className="flex flex-col lg:flex-row-reverse justify-center items-center lg:items-end w-full lg:gap-x-3">
+                                  <button
+                                    className="button-blue duration-300"
+                                    onClick={() => setInEditMode(true)}
+                                  >
+                                    Edit rate
+                                  </button>
+                                  <button
+                                    className="button-blue mt-3 lg:mt-4 bg-background--white text-primary--blue  hover:bg-primary--blue hover:text-background--white duration-300"
+                                    onClick={(
+                                      e: React.MouseEvent<HTMLButtonElement>
+                                    ) => {
+                                      e.preventDefault();
+                                      setConfirmEditing(false);
+                                    }}
+                                    ref={cancelButtonRef}
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              </div>
+                            </Dialog.Panel>
+                          </Transition.Child>
+                        </div>
+                      </div>
+                    </Dialog>
+                  </Transition.Root>
                 </>
               )}
             </div>
@@ -475,6 +624,7 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
       productData: {
         ...neededProduct,
         usersRated: neededProduct.usersRated.map((user: any) => {
+          console.log(user.userRatedAt);
           return {
             ...user,
             userRatedAt: user.userRatedAt.toDate().toString(),

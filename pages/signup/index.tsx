@@ -1,13 +1,15 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { ref } from "firebase/storage";
+import { doc, setDoc } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
 import { validateImage } from "image-validator";
 import { url } from "inspector";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { title } from "process";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
+import { useDocument } from "react-firebase-hooks/firestore";
 import { useUploadFile } from "react-firebase-hooks/storage";
 import FileInput from "../../components/inputs/FileInput";
 import Input from "../../components/inputs/Input";
@@ -16,7 +18,7 @@ import SignInWithFacebook from "../../components/signInMethods/SignInWithFaceboo
 import SignInWithGoogle from "../../components/signInMethods/SignInWithGoogle";
 import ErrorState from "../../components/states/ErrorState";
 import LoadingState from "../../components/states/LoadingState";
-import { auth, storage } from "../../firebaseApp";
+import { auth, db, storage } from "../../firebaseApp";
 
 export default function SignUpPage() {
   const [createUserWithEmailAndPassword, user, loading, error] =
@@ -31,6 +33,7 @@ export default function SignUpPage() {
   // const storageRef = ref(storage, `users/${user?.user.uid}/profilePhoto/`);
   const [file, setFile] = useState<File>();
   const [filePreviewURL, setFilePreviewURL] = useState("");
+  const [fileDownloadURL, setFileDownloadURL] = useState("");
 
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
@@ -55,7 +58,6 @@ export default function SignUpPage() {
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files ? e.target.files[0] : undefined;
-    // console.log(file?.size)
     if (file === undefined) return;
 
     if (file.size > 10000000) {
@@ -78,18 +80,13 @@ export default function SignUpPage() {
   }
 
   async function handleFileUpload() {
-    let uploadResult;
+    if (!user) return;
+    if (!file) return;
 
-    if (user) {
-      if (file) {
-        uploadResult = await uploadFile(
-          ref(storage, `users/${user.user.uid}/profilePhoto/`),
-          file
-        );
-      }
-    }
-
-    console.log(uploadResult);
+    const fileRef = ref(storage, `users/${user.user.uid}/profilePhoto/`);
+    await uploadFile(fileRef, file);
+    const downloadURL = await getDownloadURL(fileRef);
+    setFileDownloadURL(downloadURL);
   }
 
   if (loading || uploadLoading) {
@@ -100,7 +97,7 @@ export default function SignUpPage() {
   //   return <ErrorState error={error.name} code={error.code} />;
   // }
 
-  function handleSubmitSignUp(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmitSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (enteredEmail === "") {
@@ -127,10 +124,27 @@ export default function SignUpPage() {
       return;
     }
 
-    if (!error) {
-      createUserWithEmailAndPassword(enteredEmail, enteredPassword);
+    await createUserWithEmailAndPassword(enteredEmail, enteredPassword);
 
-      handleFileUpload();
+    if (!error) {
+      await handleFileUpload();
+
+      if (user) {
+        const userDoc = doc(db, "users", user.user.uid);
+
+        try {
+          await setDoc(userDoc, {
+            id: user.user.uid,
+            username: enteredEmail,
+            email: enteredEmail,
+            photoURL: fileDownloadURL,
+            role: "User",
+            orgId: "",
+          });
+        } catch (error: any) {
+          setErrorMessage(error.message);
+        }
+      }
 
       setIsOpen(true);
     }
@@ -153,7 +167,7 @@ export default function SignUpPage() {
 
       <div className="relative self-center justify-self-center flex-1 flex flex-col items-center justify-center gap-y-8">
         <header className="text-center">
-          <h1 className="heading">Here for a first time?</h1>
+          <h1 className="heading">Here for the first time?</h1>
           <p className="paragraph">Create your new account!</p>
         </header>
         <form
@@ -185,7 +199,7 @@ export default function SignUpPage() {
             name="email"
             type="email"
             value={enteredEmail}
-            placeholder="user@email.com"
+            placeholder="your@email.com"
             onChange={handleEmailChange}
           />
           <Input

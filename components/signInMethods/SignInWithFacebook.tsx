@@ -12,8 +12,8 @@ export default function SignInWithFacebook() {
 
   const router = useRouter();
 
-  function handleSignInWithFacebook() {
-    signInWithFacebook();
+  async function handleSignInWithFacebook() {
+    await signInWithFacebook();
     router.push("/");
   }
 

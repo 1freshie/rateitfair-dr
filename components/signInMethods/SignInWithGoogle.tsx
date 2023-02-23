@@ -16,8 +16,8 @@ export default function SignInWithGoogle() {
 
   const router = useRouter();
 
-  function handleSignInWithGoogle() {
-    signInWithGoogle();
+  async function handleSignInWithGoogle() {
+    await signInWithGoogle();
     router.push("/");
   }
 
@@ -41,7 +41,6 @@ export default function SignInWithGoogle() {
           photoURL: userGoogle.user.photoURL,
           role: "User",
           orgId: "",
-          ratedProductsCount: 0,
         });
       } catch (error: any) {
         prompt("Error", error.message);

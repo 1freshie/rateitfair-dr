@@ -35,7 +35,7 @@ export default function LoginPage() {
   //   return <ErrorState error={error.code} code={error.code} />;
   // }
 
-  function handleSubmitLogin(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmitLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (enteredEmail === "") {
@@ -48,7 +48,7 @@ export default function LoginPage() {
       return;
     }
 
-    signInWithEmailAndPassword(enteredEmail, enteredPassword);
+    await signInWithEmailAndPassword(enteredEmail, enteredPassword);
 
     setEnteredEmail("");
     setEnteredPassword("");

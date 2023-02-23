@@ -78,9 +78,9 @@ export default function RecentlyRatedProductCard({
               <p className="paragraph text-secondary--gray text-center">
                 <span className="heading font-medium">{rate}</span>/10
               </p>
-              <p className="w-5/6 h-auto small-paragraph text-secondary--gray  text-center italic">
+              <em className="w-5/6 h-auto small-paragraph text-secondary--gray  text-center italic">
                 {comment}
-              </p>
+              </em>
             </div>
           </div>
         </Link>

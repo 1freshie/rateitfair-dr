@@ -4,7 +4,7 @@ import NavState from "./NavState";
 
 export default function NavbarNew() {
   return (
-    <nav className="sticky top-0 h-24 md:h-16 w-full bg-background--white flex flex-col gap-y-3 md:gap-y-0 md:flex-row justify-center md:justify-between items-center tracking-wide">
+    <nav className="sticky z-20 top-0 h-24 md:h-16 w-full bg-background--white flex flex-col gap-y-3 md:gap-y-0 md:flex-row justify-center md:justify-between items-center tracking-wide">
       <Link
         href="/"
         className="font-extrabold text-3xl lg:text-5xl text-primary--orange select-none duration-300 hover:text-secondary--orange"

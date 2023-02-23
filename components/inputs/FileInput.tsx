@@ -20,7 +20,7 @@ export default function FileInput({
 }: FileInputProps) {
   return (
     <div className="w-full flex flex-col justify-center gap-y-1">
-      <p className="ml-2 small-paragraph text-secondary--orange">Profile Photo</p>
+      <p className="ml-2 small-paragraph text-secondary--orange">{label}</p>
       <div className="flex items-center justify-center w-full small-paragraph">
         <label
           htmlFor="dropzone-file"
