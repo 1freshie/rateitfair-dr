@@ -166,9 +166,10 @@ export default function AddProductModal({
     }
 
     setIsLoading(false);
-    
+
     setEnteredProductTitle("");
     setEnteredProductDescription("");
+    setFile(undefined);
     // setEnteredProductImageURL("");
 
     router.push(`/products/${orgData.name.toLowerCase().replace(/\s/g, "")}`);

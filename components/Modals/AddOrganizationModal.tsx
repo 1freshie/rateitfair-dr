@@ -5,18 +5,20 @@ import {
   collection,
   doc,
   DocumentData,
-  getDoc,
-  getDocs,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
 import { validateImage } from "image-validator";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
+import { useUploadFile } from "react-firebase-hooks/storage";
 
-import { db } from "../../firebaseApp";
+import { db, storage } from "../../firebaseApp";
 import SelectedUserCard from "../cards/SelectedUserCard";
+import FileInput from "../inputs/FileInput";
+import Input from "../inputs/Input";
 
 interface AddOrganizationModalProps {
   availableUsers: DocumentData[];
@@ -34,10 +36,13 @@ export default function AddOrganizationModal({
 }: AddOrganizationModalProps) {
   const router = useRouter();
 
-  const [enteredOrgName, setEnteredOrgName] = useState<string | null>(null);
-  const [enteredOrgLogoURL, setEnteredOrgLogoURL] = useState<string | null>(
-    null
-  );
+  const [enteredOrgName, setEnteredOrgName] = useState("");
+
+  const [uploadFile, uploadLoading, uploadSnapshot, uploadError] =
+    useUploadFile();
+  const [file, setFile] = useState<File>();
+  const [filePreviewURL, setFilePreviewURL] = useState("");
+  const [fileDownloadURL, setFileDownloadURL] = useState("");
 
   const [availableUsersForSelection, setAvailableUsersForSelection] =
     useState(availableUsers);
@@ -46,9 +51,9 @@ export default function AddOrganizationModal({
   const [selectedUser, setSelectedUser] = useState<DocumentData | null>(null);
   const [query, setQuery] = useState("");
 
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // const orgNameInputRef = useRef<HTMLInputElement>(null);
   const cancelButtonRef = useRef(null);
 
   useEffect(() => {
@@ -116,6 +121,43 @@ export default function AddOrganizationModal({
     // setSelectedUser(null);
   }
 
+  function handleOrgNameChange(e: ChangeEvent<HTMLInputElement>) {
+    setEnteredOrgName(e.target.value);
+  }
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files ? e.target.files[0] : undefined;
+    // console.log(file?.size)
+    if (file === undefined) return;
+
+    if (file.size > 10000000) {
+      setError("File size is too large.");
+      return;
+    }
+
+    const isValidImage = await validateImage(file);
+
+    if (!isValidImage) {
+      setError("File is not an image.");
+      return;
+    }
+
+    setFile(file);
+
+    if (file) {
+      setFilePreviewURL(URL.createObjectURL(file));
+    }
+  }
+
+  async function handleFileUpload(path: string) {
+    if (!file) return;
+
+    const fileRef = ref(storage, path);
+    await uploadFile(fileRef, file);
+    const downloadURL = await getDownloadURL(fileRef);
+    setFileDownloadURL(downloadURL);
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -136,21 +178,16 @@ export default function AddOrganizationModal({
       return;
     }
 
-    const isValidImage = await validateImage(
-      enteredOrgLogoURL === null ? "" : enteredOrgLogoURL
-    );
-
-    if (!isValidImage) {
-      setError("Please enter a valid organization logo URL!");
-      return;
-    }
+    setIsLoading(true);
 
     const newOrgId = uuidv4();
+
+    await handleFileUpload(`organizations/${newOrgId}/logo`);
 
     const newOrg = {
       id: newOrgId,
       name: enteredOrgName,
-      logoURL: enteredOrgLogoURL,
+      logoURL: fileDownloadURL,
       users: selectedUsers.map((user) => {
         return {
           id: user.id,
@@ -187,13 +224,13 @@ export default function AddOrganizationModal({
 
     // closeModal();
 
-    setEnteredOrgName(null);
-    setEnteredOrgLogoURL(null);
+    setEnteredOrgName("");
+    setFile(undefined);
     setSelectedUsers([]);
 
     router.push("/orgs");
 
-    setError(null);
+    setError("");
   }
 
   return (
@@ -239,44 +276,22 @@ export default function AddOrganizationModal({
                         {error}
                       </p>
                     )}
-                    <div className="w-full flex flex-col justify-center gap-y-1">
-                      <label
-                        htmlFor="org-name"
-                        className="small-paragraph text-secondary--orange ml-2"
-                      >
-                        Name
-                      </label>
-                      <input
-                        id="org-name"
-                        name="org-name"
-                        type="text"
-                        placeholder="Enter here..."
-                        className="input"
-                        // ref={orgNameInputRef}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setEnteredOrgName(e.target.value);
-                        }}
-                      />
-                    </div>
-                    <div className="w-full flex flex-col justify-center gap-y-1">
-                      <label
-                        htmlFor="org-logo-url"
-                        className="small-paragraph text-secondary--orange ml-2"
-                      >
-                        Logo URL
-                      </label>
-                      <input
-                        id="org-logo-url"
-                        name="org-logo-url"
-                        type="text"
-                        placeholder="Enter here..."
-                        className="input"
-                        // ref={orgNameInputRef}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                          setEnteredOrgLogoURL(e.target.value);
-                        }}
-                      />
-                    </div>
+                    <Input
+                      label="Organization Name"
+                      id="org-name"
+                      name="org-name"
+                      type="text"
+                      value={enteredOrgName}
+                      placeholder="e.g. Company 1"
+                      onChange={handleOrgNameChange}
+                    />
+                    <FileInput
+                      label="Organization Logo"
+                      onChange={handleFileChange}
+                      id="org-logo"
+                      name="org-logo"
+                      filePreviewURL={filePreviewURL}
+                    />
 
                     {/* <textarea
                       placeholder="Select users for this organization..."
@@ -404,8 +419,9 @@ export default function AddOrganizationModal({
                         className="button-blue mt-3 lg:mt-4 bg-background--white text-primary--blue  hover:bg-primary--blue hover:text-background--white duration-300"
                         onClick={() => {
                           closeModal();
-                          setEnteredOrgName(null);
-                          setEnteredOrgLogoURL(null);
+                          setEnteredOrgName("");
+                          setFile(undefined);
+                          setFilePreviewURL("");
                           setSelectedUser(null);
                           setSelectedUsers([]);
                           setAvailableUsersForSelection(
@@ -418,7 +434,7 @@ export default function AddOrganizationModal({
                               });
                             }
                           );
-                          setError(null);
+                          setError("");
                         }}
                         ref={cancelButtonRef}
                       >

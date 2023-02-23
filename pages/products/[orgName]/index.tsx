@@ -14,6 +14,8 @@ import AuthState from "../../../components/AuthState/AuthState";
 import LoadingSpinner from "../../../components/states/LoadingSpinner";
 
 import ProductList from "../../../components/ProductList/ProductList";
+import ErrorState from "../../../components/states/ErrorState";
+import LoadingState from "../../../components/states/LoadingState";
 import { auth, db } from "../../../firebaseApp";
 
 interface Data {
@@ -54,16 +56,12 @@ export default function ProductsPage({ orgData }: Data) {
     setIsLoading(false);
   }, [user]);
 
-  if (loading || error) {
-    return <AuthState />;
+  if (error) {
+    return <ErrorState error={error.message} />;
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex h-96 flex-1 justify-center items-center">
-        <LoadingSpinner />
-      </div>
-    );
+  if (loading || isLoading) {
+    return <LoadingState />;
   }
 
   return (

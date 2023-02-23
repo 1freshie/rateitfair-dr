@@ -23,15 +23,14 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { title } from "process";
 import { ParsedUrlQuery } from "querystring";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useAuthState } from "react-firebase-hooks/auth";
+
 import AuthState from "../../../../components/AuthState/AuthState";
 import TextArea from "../../../../components/inputs/TextArea";
 import ProductInfo from "../../../../components/ProductInfo/ProductInfo";
-
 import ErrorState from "../../../../components/states/ErrorState";
 import LoadingState from "../../../../components/states/LoadingState";
 import { auth, db } from "../../../../firebaseApp";
@@ -461,13 +460,20 @@ export default function ProductPage({ productData, orgId }: Data) {
                 <>
                   <div className="w-full h-full flex flex-col gap-y-2">
                     <h1 className="heading">Thank you!</h1>
-                    <p className="paragraph">
-                      You rated this product{" "}
-                      <span className="text-primary--orange font-medium">
-                        {rateValue}
-                      </span>
-                      /10!
-                    </p>
+                    <div className="flex justify-center items-center gap-x-1">
+                      <p className="paragraph">
+                        You rated this product{" "}
+                        <span className="text-primary--orange font-medium">
+                          {rateValue}
+                        </span>
+                        /10
+                      </p>
+                      <StarIcon
+                        fill="none"
+                        stroke="currentColor"
+                        className="w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6 text-secondary--orange"
+                      />
+                    </div>
                   </div>
                   {enteredComment.length > 0 && (
                     <div className="w-full h-full my-10 flex flex-col gap-y-2">

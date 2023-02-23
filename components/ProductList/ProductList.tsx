@@ -9,6 +9,19 @@ interface ProductListProps {
     id: string;
     title: string;
     description?: string;
+    rates: {
+      0: number;
+      1: number;
+      2: number;
+      3: number;
+      4: number;
+      5: number;
+      6: number;
+      7: number;
+      8: number;
+      9: number;
+      10: number;
+    };
     ratesCount: number;
     imageURL: string;
   }[];
@@ -37,6 +50,7 @@ export default function ProductList({
           orgSlug={orgSlug}
           id={product.id}
           title={product.title}
+          rates={product.rates}
           // description={product.description}
           ratesCount={product.ratesCount}
           imageURL={product.imageURL}

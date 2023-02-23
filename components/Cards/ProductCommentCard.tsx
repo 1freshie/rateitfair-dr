@@ -1,12 +1,8 @@
+import { StarIcon } from "@heroicons/react/24/solid";
 import {
-  collection,
   doc,
   DocumentData,
-  DocumentReference,
   getDoc,
-  getDocs,
-  Timestamp,
-  updateDoc,
 } from "firebase/firestore";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -53,7 +49,7 @@ export default function ProductCommentCard({
   }, [user]);
 
   return (
-    <div className="w-full h-full border border-secondary--orange rounded-2xl">
+    <article className="w-full h-full border border-secondary--orange rounded-2xl">
       <div className="w-full p-4 flex flex-col justify-center items-center border-b border-b-secondary--orange rounded-t-2xl">
         <div className="w-full flex flex-col lg:flex-row justify-between items-center">
           <div className="w-full flex justify-center lg:justify-start items-center gap-x-4">
@@ -71,24 +67,31 @@ export default function ProductCommentCard({
                 priority={true}
               />
             </div>
-            <p className="small-paragraph text-primary--orange font-medium text-center">
+            <p className="small-paragraph text-primary--blue font-medium text-center">
               {userEmail}
             </p>
           </div>
-          <p className="small-paragraph text-secondary--gray">
-            <span className="paragraph text-primary--blue font-medium">
-              {userRate}
-            </span>
-            /10
-          </p>
+          <div className="flex justify-center items-center gap-x-1">
+            <p className="paragraph">
+              <span className="text-primary--orange font-medium">
+                {userRate}
+              </span>
+              /10
+            </p>
+            <StarIcon
+              fill="none"
+              stroke="currentColor"
+              className="w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6 text-secondary--orange"
+            />
+          </div>
         </div>
         <p className="small-paragraph">{userRatedAt}</p>
       </div>
       <div className="w-full h-full p-4 text-center">
-        <p className="paragraph w-full h-auto text-primary--blue italic">
+        <em className="paragraph w-full h-auto text-secondary--gray italic">
           {userComment}
-        </p>
+        </em>
       </div>
-    </div>
+    </article>
   );
 }

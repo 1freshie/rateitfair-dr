@@ -1,3 +1,4 @@
+import { StarIcon } from "@heroicons/react/24/solid";
 import { doc, DocumentData, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
@@ -75,9 +76,17 @@ export default function RecentlyRatedProductCard({
             </div>
 
             <div className="w-full h-full p-4 flex flex-col justify-center items-center gap-y-4">
-              <p className="paragraph text-secondary--gray text-center">
-                <span className="heading font-medium">{rate}</span>/10
-              </p>
+              <div className="flex justify-center items-center gap-x-1">
+                <p className="paragraph text-center">
+                  <span className="text-primary--orange font-medium">{rate}</span>/10
+                </p>
+                <StarIcon
+                  fill="none"
+                  stroke="currentColor"
+                  className="w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6 text-secondary--orange"
+                />
+              </div>
+
               <em className="w-5/6 h-auto small-paragraph text-secondary--gray  text-center italic">
                 {comment}
               </em>

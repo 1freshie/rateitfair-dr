@@ -1,6 +1,7 @@
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dialog, Transition } from "@headlessui/react";
+import { StarIcon } from "@heroicons/react/24/solid";
 import {
   collection,
   doc,
@@ -11,17 +12,32 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Fragment, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, db } from "../../firebaseApp";
 import AuthState from "../AuthState/AuthState";
+import ErrorState from "../states/ErrorState";
 import LoadingSpinner from "../states/LoadingSpinner";
+import LoadingState from "../states/LoadingState";
 
 interface ProductCardProps {
   orgId: string;
   orgSlug: string;
   id: string;
   title: string;
+  rates: {
+    0: number;
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+    6: number;
+    7: number;
+    8: number;
+    9: number;
+    10: number;
+  };
   ratesCount: number;
   imageURL: string;
   isAdminOrOrg: boolean;
@@ -33,6 +49,7 @@ export default function ProductCard({
   orgSlug,
   id,
   title,
+  rates,
   ratesCount,
   imageURL,
   isAdminOrOrg,
@@ -42,10 +59,35 @@ export default function ProductCard({
 
   const router = useRouter();
 
+  const [averageRate, setAverageRate] = useState(0);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const cancelButtonRef = useRef(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    function getAverageRate() {
+      let sum = 0;
+      let count = 0;
+
+      for (const [key, value] of Object.entries(rates)) {
+        if (value > 0) {
+          sum += Number(key) * value;
+          count += value;
+        }
+      }
+
+      let average = count > 0 ? sum / count : 0;
+
+      setAverageRate(Math.round(average * 10) / 10);
+    }
+
+    getAverageRate();
+
+    setIsLoading(false);
+  }, [user]);
 
   async function handleDeleteProduct(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -87,16 +129,12 @@ export default function ProductCard({
     // router.reload();
   }
 
-  if (loading || error) {
-    return <AuthState />;
+  if (error) {
+    return <ErrorState error={error.message} />;
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex h-96 flex-1 justify-center items-center">
-        <LoadingSpinner />
-      </div>
-    );
+  if (loading || isLoading) {
+    return <LoadingState />;
   }
 
   return (
@@ -197,11 +235,22 @@ export default function ProductCard({
         </h1>
         <div className="w-full flex flex-col justify-center items-center text-center">
           <p className="small-paragraph text-secondary--orange">
-            <span className="font-medium">7</span>/10
+            An average of
           </p>
+          <div className="flex justify-center items-center text-center gap-x-1">
+            <p className="small-paragraph text-secondary--orange">
+              <span className="font-medium">{averageRate}</span>/10
+            </p>
+            <StarIcon
+              fill="none"
+              stroke="#f9ab55"
+              className="w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6 text-primary--orange"
+            />
+          </div>
           <p className="small-paragraph">
             {"("}
-            <span className="font-medium">{ratesCount}</span> total rates{")"}
+            <span className="font-medium">{ratesCount}</span> total rates so
+            far...)
           </p>
         </div>
         <button className="duration-300 button-orange">

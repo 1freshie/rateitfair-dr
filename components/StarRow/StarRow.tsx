@@ -1,11 +1,9 @@
-'use client';
-
-import { StarIcon } from '@heroicons/react/24/solid';
-import { useEffect, useState } from 'react';
+import { StarIcon } from "@heroicons/react/24/solid";
+import { useEffect, useState } from "react";
 
 interface StarRowProps {
   stars: number;
-};
+}
 
 export default function StarRow({ stars }: StarRowProps) {
   const [toFill, setToFill] = useState<boolean[]>([]);
@@ -47,12 +45,12 @@ export default function StarRow({ stars }: StarRowProps) {
     <>
       {toFill.map((value: boolean, index: number) => (
         <StarIcon
-          fill={value ? '#f9ab55' : 'none'}
-          stroke="#f9ab55"
           key={index}
+          fill={value ? "#f9ab55" : "none"}
+          stroke="#f9ab55"
           className="w-24 md:w-28 lg:w-32 xl:w-36 h-24 md:h-28 lg:h-32 xl:h-36"
         />
       ))}
     </>
   );
-};
+}
