@@ -27,12 +27,10 @@ export default function FileInput({
           className="flex flex-col items-center justify-center w-full h-36 lg:h-44 border-2 border-secondary--gray border-dashed rounded-2xl cursor-pointer bg-background--white"
         >
           {filePreviewURL ? (
-            <div className="flex flex-1 justify-center items-center">
+            <div className="flex flex-1 justify-center items-center w-32 h-32">
               <img
                 src={filePreviewURL}
                 alt="Preview"
-                width={128}
-                height={128}
                 className="w-auto h-auto"
               />
             </div>

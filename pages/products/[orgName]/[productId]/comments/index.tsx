@@ -9,6 +9,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ import ProductCommentCard from "../../../../../components/cards/ProductCommentCa
 import { auth, db } from "../../../../../firebaseApp";
 
 interface Data {
+  productTitle: string;
   usersRated: {
     userId: string;
     userRate: number;
@@ -33,7 +35,7 @@ interface Params extends ParsedUrlQuery {
   productId: string;
 }
 
-export default function ProductCommentsPage({ usersRated }: Data) {
+export default function ProductCommentsPage({ productTitle, usersRated }: Data) {
   const [user, loading, error] = useAuthState(auth);
 
   const router = useRouter();
@@ -45,18 +47,30 @@ export default function ProductCommentsPage({ usersRated }: Data) {
   }
 
   return (
-    <div className="w-full h-full mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {usersRated.map((userRated) => (
-        <ProductCommentCard
-          key={userRated.userId}
-          userId={userRated.userId}
-          userComment={userRated.userComment}
-          userRate={userRated.userRate}
-          userEmail={userRated.userEmail}
-          userRatedAt={userRated.userRatedAt}
+    <>
+      <Head>
+        <title>{`RateItFair - ${productTitle} Comments`}</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta
+          name="description"
+          content="Organizations that use RateItFair to get feedback on their products."
         />
-      ))}
-    </div>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      
+      <div className="w-full h-full mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {usersRated.map((userRated) => (
+          <ProductCommentCard
+            key={userRated.userId}
+            userId={userRated.userId}
+            userComment={userRated.userComment}
+            userRate={userRated.userRate}
+            userEmail={userRated.userEmail}
+            userRatedAt={userRated.userRatedAt}
+          />
+        ))}
+      </div>
+    </>
   );
 }
 
@@ -161,6 +175,7 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
   return {
     props: {
       // usersRated: product.usersRated,
+      productTitle: product.title,
       usersRated,
     },
   };

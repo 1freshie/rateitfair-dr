@@ -80,7 +80,7 @@ export default function ProductPage({ productData, orgId }: Data) {
   const [enteredComment, setEnteredComment] = useState("");
 
   const [confirmEditing, setConfirmEditing] = useState(false);
-  const [inEditMode, setInEditMode] = useState(false);
+  const [inEditMode, setInEditMode] = useState(true);
 
   const [usersCommentsCount, setUsersCommentsCount] = useState<number>(
     productData.usersRated.filter(
@@ -92,6 +92,7 @@ export default function ProductPage({ productData, orgId }: Data) {
 
   useEffect(() => {
     setIsLoading(true);
+
     async function checkIfUserRated() {
       if (user) {
         const userDoc = doc(db, "users", user.uid);
@@ -112,6 +113,7 @@ export default function ProductPage({ productData, orgId }: Data) {
           if (userRatedProduct) {
             setRateValue(userRatedProduct.rate);
             setEnteredComment(userRatedProduct.comment);
+            setInEditMode(false);
             // setInEditMode(userRatedProduct.editMode);
           } else {
             setRateValue(null);

@@ -12,7 +12,6 @@ import { Fragment, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth, db } from "../../firebaseApp";
-import AuthState from "../AuthState/AuthState";
 
 export default function NavState() {
   const [user, loading, error] = useAuthState(auth);
@@ -26,6 +25,7 @@ export default function NavState() {
 
   useEffect(() => {
     setIsLoading(true);
+
     async function getOrgs() {
       const orgsCollection = collection(db, "organizations");
 
@@ -37,11 +37,13 @@ export default function NavState() {
     }
 
     getOrgs();
+
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
     setIsLoading(true);
+
     async function getUserData() {
       if (user) {
         const userDoc = doc(db, "users", user.uid);
@@ -50,20 +52,23 @@ export default function NavState() {
 
         const currUserData = userDocSnapshot.data() as DocumentData;
 
-        setUserData(currUserData);
+        if (currUserData) {
+          setUserData(currUserData);
 
-        if (
-          currUserData.role !== "User" &&
-          currUserData.role !== "Admin" &&
-          currUserData.orgId.length > 0
-        ) {
-          setOrgName(currUserData.role);
-          setOrgSlug(currUserData.role.toLowerCase().replace(/\s/g, ""));
+          if (
+            currUserData.role !== "User" &&
+            currUserData.role !== "Admin" &&
+            currUserData.orgId.length > 0
+          ) {
+            setOrgName(currUserData.role);
+            setOrgSlug(currUserData.role.toLowerCase().replace(/\s/g, ""));
+          }
         }
       }
     }
 
     getUserData();
+
     setIsLoading(false);
   }, [user]);
 

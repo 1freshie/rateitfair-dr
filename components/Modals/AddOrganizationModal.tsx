@@ -355,7 +355,11 @@ export default function AddOrganizationModal({
                                           }`}
                                         >
                                           <Image
-                                            src={user.photoURL}
+                                            src={
+                                              user.photoURL
+                                                ? user.photoURL
+                                                : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                                            }
                                             width={18}
                                             height={18}
                                             alt="Profile Photo"
@@ -388,7 +392,7 @@ export default function AddOrganizationModal({
                       </Combobox>
                     </div>
 
-                    {selectedUser && (
+                    {selectedUser && selectedUsers.length > 0 && (
                       <div className="input w-full h-full flex flex-col gap-2">
                         {selectedUsers.map((user) => (
                           <SelectedUserCard

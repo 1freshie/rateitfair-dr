@@ -8,9 +8,12 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
+import Head from "next/head";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import OrgCard from "../../components/cards/OrgCard";
+import ErrorState from "../../components/states/ErrorState";
 import LoadingState from "../../components/states/LoadingState";
 
 import { auth, db } from "../../firebaseApp";
@@ -24,10 +27,13 @@ interface Data {
 // }
 
 export default function OrgsPage({ orgsData }: Data) {
-  // const [user, loading, error] = useAuthState(auth);
+  const [user, loading, error] = useAuthState(auth);
+
+  const router = useRouter();
 
   const [orgList, setOrgList] = useState(orgsData);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   async function handleDeleteOrg(orgId: string) {
     setIsLoading(true);
@@ -57,39 +63,73 @@ export default function OrgsPage({ orgsData }: Data) {
     updatedUsersData.forEach(async (userData) => {
       const userDoc = doc(db, "users", userData.id);
 
-      await updateDoc(userDoc, {
-        role: userData.role,
-        orgId: userData.orgId,
-      });
+      try {
+        await updateDoc(userDoc, {
+          role: userData.role,
+          orgId: userData.orgId,
+        });
+      } catch (error: any) {
+        setErrorMessage(error.message);
+      }
     });
 
-    await deleteDoc(orgDoc);
+    try {
+      await deleteDoc(orgDoc);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
 
     const updatedOrgList = orgList.filter((org) => org.id !== orgId);
 
     setOrgList(updatedOrgList);
 
     setIsLoading(false);
+    setErrorMessage("");
   }
 
-  if (isLoading) {
+  if (loading || isLoading) {
     return <LoadingState />;
   }
 
+  if (error) {
+    return <ErrorState error={error.message} />;
+  }
+
+  if (!user) {
+    router.push("/login");
+  }
+
   return (
-    <div className="w-full h-full mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-      {orgList.map((orgData) => (
-        <OrgCard
-          key={orgData.id}
-          orgId={orgData.id}
-          orgName={orgData.name}
-          orgLogoURL={orgData.logoURL}
-          orgProductsCount={orgData.products.length}
-          orgUsersCount={orgData.users ? orgData.users.length : 0}
-          deleteOrg={handleDeleteOrg}
+    <>
+      <Head>
+        <title>RateItFair - Orgs</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta
+          name="description"
+          content="Organizations that use RateItFair to get feedback on their products."
         />
-      ))}
-    </div>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      {errorMessage && (
+        <p className="self-center text-center flex flex-1 justify-center items-center text-error--red">
+          {errorMessage}
+        </p>
+      )}
+      <div className="w-full h-full mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        {orgList.map((orgData) => (
+          <OrgCard
+            key={orgData.id}
+            orgId={orgData.id}
+            orgName={orgData.name}
+            orgLogoURL={orgData.logoURL}
+            orgProductsCount={orgData.products.length}
+            orgUsersCount={orgData.users ? orgData.users.length : 0}
+            deleteOrg={handleDeleteOrg}
+          />
+        ))}
+      </div>
+    </>
   );
 }
 

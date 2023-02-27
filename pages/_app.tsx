@@ -1,4 +1,5 @@
 import type { AppProps } from "next/app";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -29,9 +30,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
     );
   }
 
-  if (!user) {
-    router.push("/login");
-  }
+  // if (!user) {
+  //   router.replace("/login");
+  // }
 
   return (
     <div className="min-h-screen flex flex-col py-5 px-7 md:py-10 md:px-14 bg-background--white font-Montserrat">
@@ -45,6 +46,14 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         ) : (
           <Component {...pageProps} />
         )} */}
+
+        {/* div className="self-center flex flex-1 flex-col justify-center items-center gap-y-2">
+             <p>Please sign in to continue.</p>
+             <Link href="/login" className="button-blue">Login</Link>
+             <p>No account yet? Sign up now!</p>
+             <Link href="/signup" className="button-orange">Sign up</Link>
+           </div> */}
+        
         <Component {...pageProps} />
       </div>
     </div>

@@ -61,18 +61,24 @@ export default function RecentlyRatedProductsModal({
                   <h1 className="heading text-center">
                     Recently rated produts
                   </h1>
-                  <div className="w-full flex flex-col justify-center items-center gap-y-4">
-                    {ratedProducts.map((ratedProduct) => (
-                      <RecentlyRatedProductCard
-                        key={ratedProduct.productId}
-                        orgId={ratedProduct.orgId}
-                        productId={ratedProduct.productId}
-                        comment={ratedProduct.comment}
-                        rate={ratedProduct.rate}
-                        ratedAt={ratedProduct.ratedAt}
-                      />
-                    ))}
-                  </div>
+                  {ratedProducts.length > 0 ? (
+                    <div className="w-full flex flex-col justify-center items-center gap-y-4">
+                      {ratedProducts.map((ratedProduct) => (
+                        <RecentlyRatedProductCard
+                          key={ratedProduct.productId}
+                          orgId={ratedProduct.orgId}
+                          productId={ratedProduct.productId}
+                          comment={ratedProduct.comment}
+                          rate={ratedProduct.rate}
+                          ratedAt={ratedProduct.ratedAt}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <em className="small-paragraph text-center">
+                      No rated products yet...
+                    </em>
+                  )}
                   <button
                     className="button-blue duration-300"
                     onClick={closeModal}

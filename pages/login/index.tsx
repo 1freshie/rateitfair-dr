@@ -1,7 +1,11 @@
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import { useSignInWithEmailAndPassword } from "react-firebase-hooks/auth";
+import {
+  useAuthState,
+  useSignInWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
 import Input from "../../components/inputs/Input";
 
 import SignInWithFacebook from "../../components/signInMethods/SignInWithFacebook";
@@ -11,8 +15,11 @@ import LoadingState from "../../components/states/LoadingState";
 import { auth } from "../../firebaseApp";
 
 export default function LoginPage() {
-  const [signInWithEmailAndPassword, user, loading, error] =
+  const [user, loading, error] = useAuthState(auth);
+  const [signInWithEmailAndPassword, signInUser, signInLoading, signInError] =
     useSignInWithEmailAndPassword(auth);
+
+  const router = useRouter();
 
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
@@ -27,13 +34,19 @@ export default function LoginPage() {
     setEnteredPassword(e.target.value);
   }
 
-  if (loading) {
+  if (loading || signInLoading) {
     return <LoadingState />;
   }
 
-  // if (error) {
-  //   return <ErrorState error={error.code} code={error.code} />;
-  // }
+  if (error) {
+    return <ErrorState error={error.message} />;
+  }
+
+  if (user) {
+    router.push(`/profile/${user.uid}`);
+
+    return <LoadingState />;
+  }
 
   async function handleSubmitLogin(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,7 +61,16 @@ export default function LoginPage() {
       return;
     }
 
-    await signInWithEmailAndPassword(enteredEmail, enteredPassword);
+    const newUser = await signInWithEmailAndPassword(
+      enteredEmail,
+      enteredPassword
+    );
+
+    if (!newUser) {
+      return <ErrorState error="Something went wrong!" />;
+    }
+
+    router.push("/");
 
     setEnteredEmail("");
     setEnteredPassword("");
@@ -82,7 +104,7 @@ export default function LoginPage() {
               {errorMessage}
             </p>
           )}
-          {error && (
+          {signInError && (
             <p className="small-paragraph text-error--red text-center">
               Incorrect email or password!
               <br />
@@ -122,12 +144,12 @@ export default function LoginPage() {
           </div>
         </div>
         <div className="w-full flex flex-col justify-center items-center gap-y-1">
-          <Link
+          {/* <Link
             href="#"
             className="small-paragraph text-secondary--orange duration-300 hover:text-primary--orange"
           >
             Forgot your password? Click here.
-          </Link>
+          </Link> */}
           <Link
             href="/signup"
             className="small-paragraph text-secondary--orange duration-300 hover:text-primary--orange"

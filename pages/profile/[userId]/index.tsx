@@ -7,15 +7,18 @@ import {
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 import ProfileCard from "../../../components/cards/ProfileCard";
 import AddOrganizationModal from "../../../components/modals/AddOrganizationModal";
 import AddProductModal from "../../../components/modals/AddProductModal";
 import RecentlyRatedProductsModal from "../../../components/modals/RecentlyRatedProductsModal";
 import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
-import { db } from "../../../firebaseApp";
+import ErrorState from "../../../components/states/ErrorState";
+import { auth, db } from "../../../firebaseApp";
 
 interface Data {
   userData: DocumentData;
@@ -34,7 +37,15 @@ export default function ProfilePage({
   orgData,
   availableUsers,
 }: Data) {
+  const [user, loading, error] = useAuthState(auth);
+
+  const router = useRouter();
+
   const [isOpen, setIsOpen] = useState(false);
+
+  if (!user) {
+    router.push("/login");
+  }
 
   function closeModal() {
     setIsOpen(false);
@@ -44,14 +55,7 @@ export default function ProfilePage({
     setIsOpen(true);
   }
 
-  if (!userData)
-    return (
-      <div className="self-center flex flex-1 justify-center items-center">
-        <p className="paragraph text-center text-error--red">
-          Error | Something went wrong.
-        </p>
-      </div>
-    );
+  if (!userData) return <ErrorState error="Something went wrong!" />;
 
   return (
     <>

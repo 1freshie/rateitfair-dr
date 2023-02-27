@@ -6,9 +6,13 @@ import {
   getDocs,
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
+import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
+import { useAuthState } from "react-firebase-hooks/auth";
+import ErrorState from "../../../components/states/ErrorState";
+import LoadingState from "../../../components/states/LoadingState";
 
 import { auth, db } from "../../../firebaseApp";
 
@@ -21,8 +25,35 @@ interface Params extends ParsedUrlQuery {
 }
 
 export default function OrgPage({ orgData }: Data) {
+  const [user, loading, error] = useAuthState(auth);
+
+  const router = useRouter();
+
+  if (loading) {
+    return <LoadingState />;
+  }
+
+  if (error) {
+    return <ErrorState error={error.message} />;
+  }
+
+  if (!user) {
+    router.push("/login");
+  }
+
   return (
-    <div className="self-center justify-self-center flex flex-1 justify-center items-center"></div>
+    <>
+      <Head>
+        <title>{`RateItFair - ${orgData.name}`}</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta name="description" content={`About ${orgData.name}`} />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <div className="self-center justify-self-center flex flex-1 justify-center items-center">
+        {/* ... */}
+      </div>
+    </>
   );
 }
 

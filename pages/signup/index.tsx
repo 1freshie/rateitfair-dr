@@ -1,48 +1,89 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { doc, setDoc } from "firebase/firestore";
-import { getDownloadURL, ref } from "firebase/storage";
+import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { validateImage } from "image-validator";
-import { url } from "inspector";
+import { GetStaticProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { title } from "process";
-import { Fragment, useEffect, useRef, useState } from "react";
-import { useCreateUserWithEmailAndPassword } from "react-firebase-hooks/auth";
-import { useDocument } from "react-firebase-hooks/firestore";
+import { Fragment, useRef, useState } from "react";
+import {
+  useAuthState,
+  useCreateUserWithEmailAndPassword,
+} from "react-firebase-hooks/auth";
 import { useUploadFile } from "react-firebase-hooks/storage";
+
 import FileInput from "../../components/inputs/FileInput";
 import Input from "../../components/inputs/Input";
-
 import SignInWithFacebook from "../../components/signInMethods/SignInWithFacebook";
 import SignInWithGoogle from "../../components/signInMethods/SignInWithGoogle";
 import ErrorState from "../../components/states/ErrorState";
 import LoadingState from "../../components/states/LoadingState";
 import { auth, db, storage } from "../../firebaseApp";
 
-export default function SignUpPage() {
-  const [createUserWithEmailAndPassword, user, loading, error] =
-    useCreateUserWithEmailAndPassword(auth, {
-      sendEmailVerification: true,
-    });
+interface SignUpData {
+  takenUsernames: string[];
+}
+
+export default function SignUpPage({ takenUsernames }: SignUpData) {
+  const [user, loading, error] = useAuthState(auth);
+  const [
+    createUserWithEmailAndPassword,
+    createUser,
+    createUserLoading,
+    createUserError,
+  ] = useCreateUserWithEmailAndPassword(auth, {
+    sendEmailVerification: true,
+  });
 
   const router = useRouter();
 
-  const [uploadFile, uploadLoading, uploadSnapshot, uploadError] =
-    useUploadFile();
-  // const storageRef = ref(storage, `users/${user?.user.uid}/profilePhoto/`);
+  // const [uploadFile, uploadLoading, uploadSnapshot, uploadError] =
+  //   useUploadFile();
   const [file, setFile] = useState<File>();
   const [filePreviewURL, setFilePreviewURL] = useState("");
   const [fileDownloadURL, setFileDownloadURL] = useState("");
+  const [uploadLoading, setUploadLoading] = useState(0);
 
+  const [enteredUsername, setEnteredUsername] = useState("");
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPassword, setEnteredPassword] = useState("");
   const [enteredConfirmPassword, setEnteredConfirmPassword] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
   const closeButtonRef = useRef(null);
+
+  if (loading || createUserLoading || isLoading) {
+    return <LoadingState />;
+  }
+
+  // if (user) {
+  //   router.push("/");
+  // }
+
+  // if (uploadLoading > 0) {
+  //   return (
+  //     <div className="self-center flex flex-1 flex-col justify-center items-center gap-y-4">
+  //       <LoadingState />
+  //       <p className="small-paragraph text-center">
+  //         Uploading profile photo... (
+  //         <span className="font-medium">{uploadLoading}</span>%)
+  //       </p>
+  //     </div>
+  //   );
+  // }
+
+  function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setEnteredUsername(e.target.value);
+  }
 
   function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
     setEnteredEmail(e.target.value);
@@ -79,26 +120,79 @@ export default function SignUpPage() {
     }
   }
 
-  async function handleFileUpload() {
-    if (!user) return;
-    if (!file) return;
+  // async function handleFileUpload() {
+  //   if (!file) {
+  //     console.log("No file selected.");
+  //     return;
+  //   }
 
-    const fileRef = ref(storage, `users/${user.user.uid}/profilePhoto/`);
-    await uploadFile(fileRef, file);
-    const downloadURL = await getDownloadURL(fileRef);
-    setFileDownloadURL(downloadURL);
-  }
+  //   // setIsLoading(true);
 
-  if (loading || uploadLoading) {
-    return <LoadingState />;
-  }
+  //   const storageRef = ref(
+  //     storage,
+  //     `users/${createUser!.user.uid}/profilePhoto/`
+  //   );
+  //   console.log("path: " + storageRef.fullPath);
 
-  // if (error) {
-  //   return <ErrorState error={error.name} code={error.code} />;
+  //   // await uploadFile(storageRef, file);
+
+  //   // const downloadURL = await getDownloadURL(storageRef);
+  //   // console.log(downloadURL);
+  //   // setFileDownloadURL(downloadURL);
+  //   const uploadTask = uploadBytesResumable(storageRef, file);
+
+  //   uploadTask.on(
+  //     "state_changed",
+  //     (snapshot) => {
+  //       const progress =
+  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+  //       // console.log("Upload is " + progress + "% done");
+  //       setUploadLoading(progress);
+  //       switch (snapshot.state) {
+  //         case "paused":
+  //           console.log("Upload is paused");
+  //           break;
+  //         case "running":
+  //           console.log("Upload is running");
+  //           break;
+  //       }
+  //     },
+  //     (error) => {
+  //       setErrorMessage(error.message);
+  //     },
+  //     () => {
+  //       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+  //         console.log("File available at", downloadURL);
+  //         setFileDownloadURL(downloadURL);
+  //       });
+  //     }
+  //   );
+
+  //   // setIsLoading(false);
   // }
 
   async function handleSubmitSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (enteredUsername === "") {
+      setErrorMessage("Please enter your username.");
+      return;
+    }
+
+    if (!enteredUsername.match(/^[a-zA-Z0-9]+$/)) {
+      setErrorMessage("Username can only contain letters and numbers.");
+      return;
+    }
+
+    if (enteredUsername.length < 3) {
+      setErrorMessage("Username must be at least 3 characters long.");
+      return;
+    }
+
+    if (takenUsernames.includes(enteredUsername)) {
+      setErrorMessage("Username is already taken.");
+      return;
+    }
 
     if (enteredEmail === "") {
       setErrorMessage("Please enter your email.");
@@ -112,6 +206,8 @@ export default function SignUpPage() {
 
     if (enteredPassword !== enteredConfirmPassword) {
       setErrorMessage("Passwords do not match.");
+      setEnteredPassword("");
+      setEnteredConfirmPassword("");
       return;
     }
 
@@ -121,33 +217,97 @@ export default function SignUpPage() {
       setErrorMessage(
         "Password must contain at least 8 characters, 1 uppercase letter, 1 lowercase letter and 1 number."
       );
+      setEnteredPassword("");
+      setEnteredConfirmPassword("");
       return;
     }
 
-    await createUserWithEmailAndPassword(enteredEmail, enteredPassword);
+    setIsLoading(true);
 
-    if (!error) {
-      await handleFileUpload();
+    const newUser = await createUserWithEmailAndPassword(
+      enteredEmail,
+      enteredPassword
+    );
 
-      if (user) {
-        const userDoc = doc(db, "users", user.user.uid);
+    if (!newUser) return;
 
-        try {
-          await setDoc(userDoc, {
-            id: user.user.uid,
-            username: enteredEmail,
-            email: enteredEmail,
-            photoURL: fileDownloadURL,
-            role: "User",
-            orgId: "",
-          });
-        } catch (error: any) {
+    if (file) {
+      console.log("uploading file...");
+      const storageRef = ref(
+        storage,
+        `users/${newUser.user.uid}/profilePhoto/`
+      );
+
+      // const result = await uploadFile(storageRef, file);
+
+      // const downloadURL = await getDownloadURL(storageRef);
+      // console.log(downloadURL);
+      // setFileDownloadURL(downloadURL);
+
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          // console.log("Upload is " + progress + "% done");
+          setUploadLoading(progress);
+
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+          }
+        },
+        (error) => {
           setErrorMessage(error.message);
-        }
-      }
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            console.log("File available at", downloadURL);
+            setFileDownloadURL(downloadURL);
 
-      setIsOpen(true);
+            const userDoc = doc(db, "users", newUser.user.uid);
+
+            try {
+              setDoc(userDoc, {
+                id: newUser.user.uid,
+                username: enteredUsername,
+                email: enteredEmail,
+                photoURL: downloadURL,
+                role: "User",
+                orgId: "",
+              });
+            } catch (error: any) {
+              setErrorMessage(error.message);
+            }
+          });
+        }
+      );
+    } else {
+      const userDoc = doc(db, "users", newUser.user.uid);
+
+      try {
+        await setDoc(userDoc, {
+          id: newUser.user.uid,
+          username: enteredUsername,
+          email: enteredEmail,
+          photoURL: "",
+          role: "User",
+          orgId: "",
+        });
+      } catch (error: any) {
+        setErrorMessage(error.message);
+      }
     }
+
+    setIsLoading(false);
+
+    setIsOpen(true);
 
     setEnteredEmail("");
     setEnteredPassword("");
@@ -181,25 +341,39 @@ export default function SignUpPage() {
           )}
           {error && (
             <p className="small-paragraph text-error--red text-center">
-              {error.code}
-              <br />
               {error.message}
             </p>
           )}
-          {uploadError && (
+          {createUserError && (
+            <p className="small-paragraph text-error--red text-center">
+              {createUserError.code}
+              <br />
+              {createUserError.message}
+            </p>
+          )}
+          {/* {uploadError && (
             <p className="small-paragraph text-error--red text-center">
               {uploadError.code}
               <br />
               {uploadError.message}
             </p>
-          )}
+          )} */}
+          <Input
+            label="Username"
+            id="username"
+            name="username"
+            type="text"
+            value={enteredUsername}
+            placeholder="e.g. johnDoe"
+            onChange={handleUsernameChange}
+          />
           <Input
             label="Email"
             id="email"
             name="email"
             type="email"
             value={enteredEmail}
-            placeholder="your@email.com"
+            placeholder="e.g. your@email.com"
             onChange={handleEmailChange}
           />
           <Input
@@ -255,7 +429,9 @@ export default function SignUpPage() {
           initialFocus={closeButtonRef}
           onClose={() => {
             setIsOpen(false);
-            router.push("/login");
+            router.push("/").then(() => {
+              window.location.reload();
+            });
           }}
         >
           <Transition.Child
@@ -295,7 +471,9 @@ export default function SignUpPage() {
                         className="button-blue duration-300"
                         onClick={() => {
                           setIsOpen(false);
-                          router.push("/login");
+                          router.push("/").then(() => {
+                            window.location.reload();
+                          });
                         }}
                         ref={closeButtonRef}
                       >
@@ -312,3 +490,16 @@ export default function SignUpPage() {
     </>
   );
 }
+
+export const getStaticProps: GetStaticProps<SignUpData> = async (context) => {
+  const usersDocs = await getDocs(collection(db, "users"));
+
+  const takenUsernames = usersDocs.docs.map((doc) => doc.data().username);
+
+  return {
+    props: {
+      takenUsernames,
+    },
+    revalidate: 1,
+  };
+};
