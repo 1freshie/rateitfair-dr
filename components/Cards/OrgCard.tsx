@@ -40,6 +40,8 @@ export default function OrgCard({
     e.preventDefault();
 
     deleteOrg(orgId);
+
+    // TODO: DELETE ORG FROM STORAGE
   }
 
   return (
@@ -133,7 +135,7 @@ export default function OrgCard({
               priority={true}
             />
           </div>
-          <h1 className="heading text-center">{orgName}</h1>
+          <h1 className="paragraph w-full text-primary--blue text-center font-medium">{orgName}</h1>
         </div>
 
         <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4">

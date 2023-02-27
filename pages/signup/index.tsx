@@ -3,7 +3,6 @@ import { collection, doc, getDocs, setDoc } from "firebase/firestore";
 import {
   getDownloadURL,
   ref,
-  uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
 import { validateImage } from "image-validator";
@@ -16,13 +15,11 @@ import {
   useAuthState,
   useCreateUserWithEmailAndPassword,
 } from "react-firebase-hooks/auth";
-import { useUploadFile } from "react-firebase-hooks/storage";
 
 import FileInput from "../../components/inputs/FileInput";
 import Input from "../../components/inputs/Input";
 import SignInWithFacebook from "../../components/signInMethods/SignInWithFacebook";
 import SignInWithGoogle from "../../components/signInMethods/SignInWithGoogle";
-import ErrorState from "../../components/states/ErrorState";
 import LoadingState from "../../components/states/LoadingState";
 import { auth, db, storage } from "../../firebaseApp";
 
@@ -47,8 +44,6 @@ export default function SignUpPage({ takenUsernames }: SignUpData) {
   //   useUploadFile();
   const [file, setFile] = useState<File>();
   const [filePreviewURL, setFilePreviewURL] = useState("");
-  const [fileDownloadURL, setFileDownloadURL] = useState("");
-  const [uploadLoading, setUploadLoading] = useState(0);
 
   const [enteredUsername, setEnteredUsername] = useState("");
   const [enteredEmail, setEnteredEmail] = useState("");
@@ -231,10 +226,9 @@ export default function SignUpPage({ takenUsernames }: SignUpData) {
       uploadTask.on(
         "state_changed",
         (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          // const progress =
+          //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           // console.log("Upload is " + progress + "% done");
-          setUploadLoading(progress);
 
           switch (snapshot.state) {
             case "paused":
@@ -251,7 +245,7 @@ export default function SignUpPage({ takenUsernames }: SignUpData) {
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             console.log("File available at", downloadURL);
-            setFileDownloadURL(downloadURL);
+            // setFileDownloadURL(downloadURL);
 
             const userDoc = doc(db, "users", newUser.user.uid);
 

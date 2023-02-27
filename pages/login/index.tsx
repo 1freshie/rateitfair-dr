@@ -61,12 +61,12 @@ export default function LoginPage() {
       return;
     }
 
-    const newUser = await signInWithEmailAndPassword(
+    const currentUser = await signInWithEmailAndPassword(
       enteredEmail,
       enteredPassword
     );
 
-    if (!newUser) {
+    if (!currentUser) {
       return <ErrorState error="Something went wrong!" />;
     }
 
@@ -117,7 +117,7 @@ export default function LoginPage() {
             name="email"
             type="email"
             value={enteredEmail}
-            placeholder="user@email.com"
+            placeholder="e.g. user@email.com"
             onChange={handleEmailChange}
           />
           <Input

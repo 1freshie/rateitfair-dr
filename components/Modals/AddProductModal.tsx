@@ -6,9 +6,10 @@ import {
   doc,
   DocumentData,
   getDoc,
+  setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { getDownloadURL, ref } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { validateImage } from "image-validator";
 import { useRouter } from "next/router";
 import { Fragment, useRef, useState } from "react";
@@ -41,7 +42,6 @@ export default function AddProductModal({
   // const storageRef = ref(storage, `users/${user?.user.uid}/profilePhoto/`);
   const [file, setFile] = useState<File>();
   const [filePreviewURL, setFilePreviewURL] = useState("");
-  const [fileDownloadURL, setFileDownloadURL] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -82,14 +82,14 @@ export default function AddProductModal({
     }
   }
 
-  async function handleFileUpload(path: string) {
-    if (!file) return;
+  // async function handleFileUpload(path: string) {
+  //   if (!file) return;
 
-    const fileRef = ref(storage, path);
-    await uploadFile(fileRef, file);
-    const downloadURL = await getDownloadURL(fileRef);
-    setFileDownloadURL(downloadURL);
-  }
+  //   const fileRef = ref(storage, path);
+  //   await uploadFile(fileRef, file);
+  //   const downloadURL = await getDownloadURL(fileRef);
+  //   setFileDownloadURL(downloadURL);
+  // }
 
   if (uploadLoading || isLoading) return <LoadingState />;
 
@@ -118,17 +118,20 @@ export default function AddProductModal({
       return;
     }
 
+    if (!file) {
+      setErrorMessage("Please select a file.");
+      return;
+    }
+
     setIsLoading(true);
 
     const newProductId = uuidv4();
 
-    await handleFileUpload(`organizations/${orgId}/products/${newProductId}`);
-
-    const newProduct = {
+    let newProduct = {
       id: newProductId,
       title: enteredProductTitle,
       description: enteredProductDescription,
-      imageURL: fileDownloadURL,
+      imageURL: "",
       rates: {
         0: 0,
         1: 0,
@@ -145,35 +148,75 @@ export default function AddProductModal({
       ratesCount: 0,
     };
 
-    const orgsCollection = collection(db, "organizations");
-    const orgDoc = doc(orgsCollection, orgId);
+    // await handleFileUpload(`organizations/${orgId}/products/${newProductId}`);
 
-    const orgSnapshot = await getDoc(orgDoc);
+    const storageRef = ref(
+      storage,
+      `organizations/${orgId}/products/${newProductId}`
+    );
 
-    if (!orgSnapshot.exists()) {
-      setErrorMessage("Organization doesn't exist!");
-      return;
-    }
+    const uploadTask = uploadBytesResumable(storageRef, file);
 
-    const orgData = orgSnapshot.data();
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // const progress =
+        //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // console.log("Upload is " + progress + "% done");
 
-    try {
-      await updateDoc(orgDoc, {
-        products: arrayUnion(newProduct),
-      });
-    } catch (err: any) {
-      setErrorMessage(err.message);
-    }
+        switch (snapshot.state) {
+          case "paused":
+            console.log("Upload is paused");
+            break;
+          case "running":
+            console.log("Upload is running");
+            break;
+        }
+      },
+      (error) => {
+        setErrorMessage(error.message);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref)
+          .then((downloadURL) => {
+            console.log("File available at", downloadURL);
+
+            newProduct = {
+              ...newProduct,
+              imageURL: downloadURL,
+            };
+          })
+          .then(() => {
+            const orgDoc = doc(db, "organizations", orgId);
+
+            getDoc(orgDoc)
+              .then((orgSnapshot) => {
+                if (!orgSnapshot.exists()) {
+                  setErrorMessage("Organization doesn't exist!");
+                  return;
+                }
+
+                updateDoc(orgDoc, {
+                  products: arrayUnion(newProduct),
+                });
+
+                const orgData = orgSnapshot.data();
+
+                router.push(
+                  `/products/${orgData.name.toLowerCase().replace(/\s/g, "")}`
+                );
+              })
+              .catch((error: any) => {
+                setErrorMessage(error.message);
+              })
+          });
+      }
+    );
 
     setIsLoading(false);
-
     setEnteredProductTitle("");
     setEnteredProductDescription("");
     setFile(undefined);
-    // setEnteredProductImageURL("");
-
-    router.push(`/products/${orgData.name.toLowerCase().replace(/\s/g, "")}`);
-
     setErrorMessage("");
   }
 

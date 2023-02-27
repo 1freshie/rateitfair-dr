@@ -2,13 +2,15 @@ import { uuidv4 } from "@firebase/util";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import {
+  arrayUnion,
   collection,
   doc,
   DocumentData,
+  getDoc,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { getDownloadURL, ref } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { validateImage } from "image-validator";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -149,14 +151,14 @@ export default function AddOrganizationModal({
     }
   }
 
-  async function handleFileUpload(path: string) {
-    if (!file) return;
+  // async function handleFileUpload(path: string) {
+  //   if (!file) return;
 
-    const fileRef = ref(storage, path);
-    await uploadFile(fileRef, file);
-    const downloadURL = await getDownloadURL(fileRef);
-    setFileDownloadURL(downloadURL);
-  }
+  //   const fileRef = ref(storage, path);
+  //   await uploadFile(fileRef, file);
+  //   const downloadURL = await getDownloadURL(fileRef);
+  //   setFileDownloadURL(downloadURL);
+  // }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -178,16 +180,24 @@ export default function AddOrganizationModal({
       return;
     }
 
+    // if (selectedUsers.length === 0) {
+    //   setError("Please select at least one user to add to the organization!");
+    //   return;
+    // }
+
+    if (!file) {
+      setError("Please select a logo for the organization!");
+      return;
+    }
+
     setIsLoading(true);
 
     const newOrgId = uuidv4();
 
-    await handleFileUpload(`organizations/${newOrgId}/logo`);
-
-    const newOrg = {
+    let newOrg = {
       id: newOrgId,
       name: enteredOrgName,
-      logoURL: fileDownloadURL,
+      logoURL: "",
       users: selectedUsers.map((user) => {
         return {
           id: user.id,
@@ -197,39 +207,111 @@ export default function AddOrganizationModal({
       }),
     };
 
-    const orgsCollection = collection(db, "organizations");
+    // await handleFileUpload(`organizations/${newOrgId}/logo`);
 
-    const newOrgDoc = doc(orgsCollection, newOrgId);
+    const storageRef = ref(storage, `organizations/${newOrgId}/logo`);
 
-    try {
-      await setDoc(newOrgDoc, newOrg);
-    } catch (error: any) {
-      prompt("Error", error.message);
-    }
+    const uploadTask = uploadBytesResumable(storageRef, file);
 
-    selectedUsers.forEach(async (user) => {
-      const usersCollection = collection(db, "users");
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // const progress =
+        //   (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        // console.log("Upload is " + progress + "% done");
 
-      const userDoc = doc(usersCollection, user.id);
+        switch (snapshot.state) {
+          case "paused":
+            console.log("Upload is paused");
+            break;
+          case "running":
+            console.log("Upload is running");
+            break;
+        }
+      },
+      (error) => {
+        setError(error.message);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref)
+          .then((downloadURL) => {
+            console.log("File available at", downloadURL);
 
-      try {
-        await updateDoc(userDoc, {
-          orgId: newOrgId,
-          role: enteredOrgName,
-        });
-      } catch (error: any) {
-        prompt("Error", error.message);
+            newOrg = {
+              ...newOrg,
+              logoURL: downloadURL,
+            };
+          })
+          .then(() => {
+            const newOrgDoc = doc(db, "organizations", newOrgId);
+
+            setDoc(newOrgDoc, newOrg)
+              .then(() => {
+                selectedUsers.forEach((user) => {
+                  const userDoc = doc(db, "users", user.id);
+
+                  updateDoc(userDoc, {
+                    orgId: newOrgId,
+                    role: enteredOrgName,
+                  });
+                });
+
+                router.push("/orgs");
+              })
+              .catch((error: any) => {
+                setError(error.message);
+              });
+          })
+          .catch((error: any) => {
+            setError(error.message);
+          });
       }
-    });
+    );
+
+    // const newOrg = {
+    //   id: newOrgId,
+    //   name: enteredOrgName,
+    //   logoURL: fileDownloadURL,
+    //   users: selectedUsers.map((user) => {
+    //     return {
+    //       id: user.id,
+    //       username: user.username,
+    //       email: user.email,
+    //     };
+    //   }),
+    // };
+
+    // const orgsCollection = collection(db, "organizations");
+
+    // const newOrgDoc = doc(orgsCollection, newOrgId);
+
+    // try {
+    //   await setDoc(newOrgDoc, newOrg);
+    // } catch (error: any) {
+    //   prompt("Error", error.message);
+    // }
+
+    // selectedUsers.forEach(async (user) => {
+    //   const usersCollection = collection(db, "users");
+
+    //   const userDoc = doc(usersCollection, user.id);
+
+    //   try {
+    //     await updateDoc(userDoc, {
+    //       orgId: newOrgId,
+    //       role: enteredOrgName,
+    //     });
+    //   } catch (error: any) {
+    //     prompt("Error", error.message);
+    //   }
+    // });
 
     // closeModal();
 
+    setIsLoading(false);
     setEnteredOrgName("");
     setFile(undefined);
     setSelectedUsers([]);
-
-    router.push("/orgs");
-
     setError("");
   }
 

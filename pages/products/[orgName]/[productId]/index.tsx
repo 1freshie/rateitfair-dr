@@ -412,7 +412,8 @@ export default function ProductPage({ productData, orgId }: Data) {
                         onClick={() => setRateValue(i)}
                       >
                         <StarIcon
-                          className="w-14 md:w-20 xl:w-24 h-14 md:h-20 xl:h-24 duration-300"
+                          // className="w-14 md:w-20 xl:w-24 h-14 md:h-20 xl:h-24 duration-300"
+                          className="w-12 lg:w-16 h-12 lg:h-16 duration-300"
                           fill={
                             rateValue! >= i && rateValue !== null
                               ? "#f9ab55"

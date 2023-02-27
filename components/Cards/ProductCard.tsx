@@ -127,6 +127,8 @@ export default function ProductCard({
     setIsLoading(false);
     setShowConfirmation(false);
     // router.reload();
+
+    // TODO: DELETE PRODUCT FROM STORAGE
   }
 
   if (error) {
