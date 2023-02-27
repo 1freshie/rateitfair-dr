@@ -1,30 +1,44 @@
 import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { FacebookAuthProvider, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useSignInWithFacebook } from "react-firebase-hooks/auth";
-import { auth } from "../../firebaseApp";
-import ErrorState from "../states/ErrorState";
-import LoadingState from "../states/LoadingState";
+import { auth, db } from "../../firebaseApp";
 
 export default function SignInWithFacebook() {
-  const [signInWithFacebook, userFacebook, loadingFacebook, errorFacebook] =
-    useSignInWithFacebook(auth);
+  // const [signInWithFacebook, userFacebook, loadingFacebook, errorFacebook] =
+  //   useSignInWithFacebook(auth);
 
   const router = useRouter();
 
+  const facebookProvider = new FacebookAuthProvider();
+
   async function handleSignInWithFacebook() {
-    await signInWithFacebook();
+    const signInResult = await signInWithPopup(auth, facebookProvider);
+
+    const { uid, displayName, email, photoURL } = signInResult.user;
+
+    const userDoc = doc(db, "users", uid);
+
+    const userSnapshot = await getDoc(userDoc);
+
+    if (!userSnapshot.exists()) {
+
+      try {
+        await setDoc(userDoc, {
+          id: uid,
+          username: displayName,
+          email: email,
+          photoURL: photoURL,
+          role: "User",
+          orgId: "",
+          ratedProductsCount: 0,
+        });
+      } catch (error: any) {
+        prompt("Error", error.message);
+      }
+    }
     router.push("/");
-  }
-
-  if (loadingFacebook) {
-    return <LoadingState />;
-  }
-
-  if (errorFacebook) {
-    return (
-      <ErrorState error={errorFacebook.message} code={errorFacebook.code} />
-    );
   }
 
   return (

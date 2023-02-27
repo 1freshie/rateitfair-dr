@@ -1,64 +1,120 @@
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { doc, setDoc } from "firebase/firestore";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useSignInWithGoogle } from "react-firebase-hooks/auth";
-import { useDocument } from "react-firebase-hooks/firestore";
 
 import { auth, db } from "../../firebaseApp";
 import ErrorState from "../states/ErrorState";
-import LoadingState from "../states/LoadingState";
+
+// const result = await signInWithPopup(auth, facebookProvider);
+// const { uid, displayName, email, photoURL } = result.user;
+
+// const usersCollection = collection(db, "users");
+
+// const userDoc = doc(usersCollection, uid);
+
+// const userSnapshot = await getDoc(userDoc);
+
+// if (!userSnapshot.exists()) {
+//   try {
+//     await setDoc(userDoc, {
+//       id: uid,
+//       username: displayName,
+//       email: email,
+//       photoURL: photoURL,
+//       role: "User",
+//       orgId: "",
+//       // ratedProducts: [
+//       // {
+//       //   productId: "",
+//       //   rating: 0,
+//       //   comment: "",
+//       //   ratedAt: new Date(),
+//       // },
+//       // ],
+//       ratedProductsCount: 0,
+//       // createdAt: new Date(),
+//     });
+//   } catch (error: any) {
+//     prompt("Error", error.message);
+//   }
+// }
 
 export default function SignInWithGoogle() {
-  const [signInWithGoogle, userGoogle, loadingGoogle, errorGoogle] =
-    useSignInWithGoogle(auth);
+  // const [signInWithGoogle, userGoogle, loadingGoogle, errorGoogle] =
+  //   useSignInWithGoogle(auth);
 
   const router = useRouter();
 
+  const googleProvider = new GoogleAuthProvider();
+
   async function handleSignInWithGoogle() {
-    await signInWithGoogle();
+    const signInResult = await signInWithPopup(auth, googleProvider);
+
+    const { uid, displayName, email, photoURL } = signInResult.user;
+
+    const userDoc = doc(db, "users", uid);
+
+    const userSnapshot = await getDoc(userDoc);
+
+    if (!userSnapshot.exists()) {
+      try {
+        await setDoc(userDoc, {
+          id: uid,
+          username: displayName,
+          email: email,
+          photoURL: photoURL,
+          role: "User",
+          orgId: "",
+          ratedProductsCount: 0,
+        });
+      } catch (error: any) {
+        return <ErrorState error={error.message} />;
+      }
+    }
+
     router.push("/");
   }
 
-  const userDoc = userGoogle && doc(db, "users", userGoogle.user.uid);
+  // const userDoc = userGoogle && doc(db, "users", userGoogle.user.uid);
 
-  const [userSnapshot, loadingUserDoc, errorUserDoc] = useDocument(userDoc);
+  // const [userSnapshot, loadingUserDoc, errorUserDoc] = useDocument(userDoc);
 
-  useEffect(() => {
-    if (
-      userGoogle &&
-      userDoc &&
-      userSnapshot &&
-      !userSnapshot.exists() &&
-      !loadingUserDoc
-    ) {
-      try {
-        setDoc(userDoc, {
-          id: userGoogle.user.uid,
-          username: userGoogle.user.displayName,
-          email: userGoogle.user.email,
-          photoURL: userGoogle.user.photoURL,
-          role: "User",
-          orgId: "",
-        });
-      } catch (error: any) {
-        prompt("Error", error.message);
-      }
-    }
-  }, [userGoogle, userDoc, userSnapshot, loadingUserDoc]);
+  // useEffect(() => {
+  //   if (
+  //     userGoogle &&
+  //     userDoc &&
+  //     userSnapshot &&
+  //     !userSnapshot.exists() &&
+  //     !loadingUserDoc
+  //   ) {
+  //     try {
+  //       setDoc(userDoc, {
+  //         id: userGoogle.user.uid,
+  //         username: userGoogle.user.displayName,
+  //         email: userGoogle.user.email,
+  //         photoURL: userGoogle.user.photoURL,
+  //         role: "User",
+  //         orgId: "",
+  //       });
+  //     } catch (error: any) {
+  //       prompt("Error", error.message);
+  //     }
+  //   }
+  // }, [userGoogle, userDoc, userSnapshot, loadingUserDoc]);
 
-  if (loadingGoogle || loadingUserDoc) {
-    return <LoadingState />;
-  }
+  // if (loadingGoogle || loadingUserDoc) {
+  //   return <LoadingState />;
+  // }
 
-  if (errorGoogle) {
-    return <ErrorState error={errorGoogle.message} code={errorGoogle.code} />;
-  }
+  // if (errorGoogle) {
+  //   return <ErrorState error={errorGoogle.message} code={errorGoogle.code} />;
+  // }
 
-  if (errorUserDoc) {
-    return <ErrorState error={errorUserDoc.message} code={errorUserDoc.code} />;
-  }
+  // if (errorUserDoc) {
+  //   return <ErrorState error={errorUserDoc.message} code={errorUserDoc.code} />;
+  // }
 
   return (
     <button

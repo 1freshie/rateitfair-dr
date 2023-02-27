@@ -69,18 +69,6 @@ export default function SignUpPage({ takenUsernames }: SignUpData) {
   //   router.push("/");
   // }
 
-  // if (uploadLoading > 0) {
-  //   return (
-  //     <div className="self-center flex flex-1 flex-col justify-center items-center gap-y-4">
-  //       <LoadingState />
-  //       <p className="small-paragraph text-center">
-  //         Uploading profile photo... (
-  //         <span className="font-medium">{uploadLoading}</span>%)
-  //       </p>
-  //     </div>
-  //   );
-  // }
-
   function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
     setEnteredUsername(e.target.value);
   }
@@ -237,12 +225,6 @@ export default function SignUpPage({ takenUsernames }: SignUpData) {
         storage,
         `users/${newUser.user.uid}/profilePhoto/`
       );
-
-      // const result = await uploadFile(storageRef, file);
-
-      // const downloadURL = await getDownloadURL(storageRef);
-      // console.log(downloadURL);
-      // setFileDownloadURL(downloadURL);
 
       const uploadTask = uploadBytesResumable(storageRef, file);
 
