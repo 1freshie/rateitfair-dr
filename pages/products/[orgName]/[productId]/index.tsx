@@ -28,7 +28,6 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import AuthState from "../../../../components/AuthState/AuthState";
 import TextArea from "../../../../components/inputs/TextArea";
 import ProductInfo from "../../../../components/ProductInfo/ProductInfo";
 import ErrorState from "../../../../components/states/ErrorState";
@@ -139,12 +138,12 @@ export default function ProductPage({ productData, orgId }: Data) {
     }
   }, []);
 
-  if (loading || error) {
-    return <AuthState />;
+  if (loading || isLoading || !userRole) {
+    return <LoadingState />;
   }
 
-  if (isLoading || !userRole) {
-    return <LoadingState />;
+  if (error) {
+    return <ErrorState error={error.message} />;
   }
 
   async function handleRateSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -387,7 +386,9 @@ export default function ProductPage({ productData, orgId }: Data) {
                 {showBar ? (
                   <Bar options={chartOptions} data={chartData} />
                 ) : (
-                  <em className="paragraph text-secondary--gray">Still no rates yet...</em>
+                  <em className="paragraph text-secondary--gray">
+                    Still no rates yet...
+                  </em>
                 )}
               </div>
               <div className="w-full h-full flex flex-col items-center justify-center gap-y-3">

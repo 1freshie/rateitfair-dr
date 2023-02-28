@@ -1,5 +1,4 @@
 import { NextPageContext } from "next";
-import Link from "next/link";
 
 interface ErrorProps {
   statusCode?: number;
