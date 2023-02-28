@@ -2,22 +2,14 @@ import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dialog, Transition } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/24/solid";
-import {
-  collection,
-  doc,
-  DocumentData,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth, db } from "../../firebaseApp";
-import AuthState from "../AuthState/AuthState";
+
+import { auth } from "../../firebaseApp";
 import ErrorState from "../states/ErrorState";
-import LoadingSpinner from "../states/LoadingSpinner";
 import LoadingState from "../states/LoadingState";
 
 interface ProductCardProps {
@@ -60,6 +52,7 @@ export default function ProductCard({
   const router = useRouter();
 
   const [averageRate, setAverageRate] = useState(0);
+
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -92,43 +85,9 @@ export default function ProductCard({
   async function handleDeleteProduct(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
 
-    setIsLoading(true);
-
-    const orgRef = doc(collection(db, "organizations"), orgId);
-
-    const orgDoc = await getDoc(orgRef);
-
-    const orgData = orgDoc.data() as DocumentData;
-
-    const products = orgData.products.filter(
-      (product: DocumentData) => product.id !== id
-    );
-
-    await updateDoc(orgRef, {
-      products,
-    });
-
-    const userRef = doc(collection(db, "users"), user!.uid);
-
-    const userDoc = await getDoc(userRef);
-
-    const userData = userDoc.data() as DocumentData;
-
-    const ratedProducts = userData.ratedProducts.filter(
-      (product: DocumentData) => product.productId !== id
-    );
-
-    await updateDoc(userRef, {
-      ratedProducts,
-    });
-
     deleteProduct(id);
 
-    setIsLoading(false);
     setShowConfirmation(false);
-    // router.reload();
-
-    // TODO: DELETE PRODUCT FROM STORAGE
   }
 
   if (error) {

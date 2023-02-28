@@ -152,7 +152,7 @@ export default function AddProductModal({
 
     const storageRef = ref(
       storage,
-      `organizations/${orgId}/products/${newProductId}`
+      `organizations/${orgId}/products/${newProductId}/productImage`
     );
 
     const uploadTask = uploadBytesResumable(storageRef, file);

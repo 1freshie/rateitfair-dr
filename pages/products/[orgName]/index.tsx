@@ -4,19 +4,19 @@ import {
   DocumentData,
   getDoc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import { ParsedUrlQuery } from "querystring";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import AuthState from "../../../components/AuthState/AuthState";
-import LoadingSpinner from "../../../components/states/LoadingSpinner";
 
-import ProductList from "../../../components/ProductList/ProductList";
+import ProductCard from "../../../components/cards/ProductCard";
 import ErrorState from "../../../components/states/ErrorState";
 import LoadingState from "../../../components/states/LoadingState";
-import { auth, db } from "../../../firebaseApp";
+import { auth, db, storage } from "../../../firebaseApp";
 
 interface Data {
   orgData: DocumentData;
@@ -28,6 +28,8 @@ interface Params extends ParsedUrlQuery {
 
 export default function ProductsPage({ orgData }: Data) {
   const [user, loading, error] = useAuthState(auth);
+
+  const [productList, setProductList] = useState(orgData.products);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isAdminOrOrg, setIsAdminOrOrg] = useState(false);
@@ -56,6 +58,58 @@ export default function ProductsPage({ orgData }: Data) {
     setIsLoading(false);
   }, [user]);
 
+  async function handleDeleteProduct(productId: string) {
+    setIsLoading(true);
+
+    const orgRef = doc(collection(db, "organizations"), orgData.id);
+
+    const products = orgData.products.filter(
+      (product: DocumentData) => product.id !== productId
+    );
+
+    try {
+      await updateDoc(orgRef, {
+        products,
+      });
+    } catch (error: any) {
+      return <ErrorState error={error.message} />;
+    }
+
+    const userRef = doc(collection(db, "users"), user!.uid);
+
+    const userDoc = await getDoc(userRef);
+
+    const userData = userDoc.data() as DocumentData;
+
+    const ratedProducts = userData.ratedProducts.filter(
+      (product: DocumentData) => product.productId !== productId
+    );
+
+    try {
+      await updateDoc(userRef, {
+        ratedProducts,
+      });
+    } catch (error: any) {
+      return <ErrorState error={error.message} />;
+    }
+
+    const storageRef = ref(
+      storage,
+      `organizations/${orgData.id}/products/${productId}/productImage`
+    );
+
+    try {
+      await deleteObject(storageRef);
+    } catch (error: any) {
+      return <ErrorState error={error.message} />;
+    }
+
+    setProductList(products);
+
+    setIsLoading(false);
+    // router.reload();
+  }
+
   if (error) {
     return <ErrorState error={error.message} />;
   }
@@ -77,12 +131,23 @@ export default function ProductsPage({ orgData }: Data) {
       </Head>
 
       <div className="w-full h-full mt-10">
-        <ProductList
-          orgId={orgData.id}
-          orgSlug={orgData.name.toLowerCase().replace(/\s/g, "")}
-          products={orgData.products}
-          isAdminOrOrg={isAdminOrOrg}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center items-center">
+          {productList.map((product: any, index: number) => (
+            <ProductCard
+              key={index}
+              orgId={orgData.id}
+              orgSlug={orgData.name.toLowerCase().replace(/\s/g, "")}
+              id={product.id}
+              title={product.title}
+              rates={product.rates}
+              // description={product.description}
+              ratesCount={product.ratesCount}
+              imageURL={product.imageURL}
+              isAdminOrOrg={isAdminOrOrg}
+              deleteProduct={handleDeleteProduct}
+            />
+          ))}
+        </div>
       </div>
     </>
   );

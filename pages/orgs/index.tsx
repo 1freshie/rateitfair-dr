@@ -7,6 +7,7 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -16,7 +17,7 @@ import OrgCard from "../../components/cards/OrgCard";
 import ErrorState from "../../components/states/ErrorState";
 import LoadingState from "../../components/states/LoadingState";
 
-import { auth, db } from "../../firebaseApp";
+import { auth, db, storage } from "../../firebaseApp";
 
 interface Data {
   orgsData: DocumentData[];
@@ -32,6 +33,7 @@ export default function OrgsPage({ orgsData }: Data) {
   const router = useRouter();
 
   const [orgList, setOrgList] = useState(orgsData);
+
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -75,6 +77,14 @@ export default function OrgsPage({ orgsData }: Data) {
 
     try {
       await deleteDoc(orgDoc);
+    } catch (error: any) {
+      setErrorMessage(error.message);
+    }
+
+    const storageRef = ref(storage, `organizations/${orgId}/logo`);
+
+    try {
+      await deleteObject(storageRef);
     } catch (error: any) {
       setErrorMessage(error.message);
     }

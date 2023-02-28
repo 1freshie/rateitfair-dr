@@ -41,6 +41,8 @@ export default function OrgCard({
 
     deleteOrg(orgId);
 
+    setShowConfirmation(false);
+
     // TODO: DELETE ORG FROM STORAGE
   }
 

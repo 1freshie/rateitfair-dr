@@ -79,6 +79,7 @@ export default function ProductPage({ productData, orgId }: Data) {
   const [rateValue, setRateValue] = useState<number | null>(null);
   const [enteredComment, setEnteredComment] = useState("");
 
+  const [showBar, setShowBar] = useState(false);
   const [confirmEditing, setConfirmEditing] = useState(false);
   const [inEditMode, setInEditMode] = useState(true);
 
@@ -129,6 +130,14 @@ export default function ProductPage({ productData, orgId }: Data) {
 
     setIsLoading(false);
   }, [user, inEditMode]);
+
+  useEffect(() => {
+    for (const key in productData.rates) {
+      if (productData.rates[key] !== 0) {
+        setShowBar(true);
+      }
+    }
+  }, []);
 
   if (loading || error) {
     return <AuthState />;
@@ -375,7 +384,11 @@ export default function ProductPage({ productData, orgId }: Data) {
 
               <h1 className="heading">Ratings</h1>
               <div className="w-full h-full my-8">
-                <Bar options={chartOptions} data={chartData} />
+                {showBar ? (
+                  <Bar options={chartOptions} data={chartData} />
+                ) : (
+                  <em className="paragraph text-secondary--gray">Still no rates yet...</em>
+                )}
               </div>
               <div className="w-full h-full flex flex-col items-center justify-center gap-y-3">
                 <p className="small-paragraph text-secondary--orange">
@@ -591,7 +604,9 @@ export async function getStaticPaths() {
   const paths = orgsData.map((org) => {
     const orgName = org.name.toLowerCase().replace(/\s/g, "");
 
-    return org.products.map((product: any) => ({
+    const products = org.products || [];
+
+    return products.map((product: any) => ({
       params: { orgName, productId: product.id },
     }));
   });
