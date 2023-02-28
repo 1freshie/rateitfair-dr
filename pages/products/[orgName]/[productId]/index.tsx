@@ -68,6 +68,8 @@ export default function ProductPage({ productData, orgId }: Data) {
   const router = useRouter();
   const { orgName, productId } = router.query;
 
+  const [isVerifiedUser, setIsVerifiedUser] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -89,6 +91,22 @@ export default function ProductPage({ productData, orgId }: Data) {
   );
 
   const cancelButtonRef = useRef(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    if (user) {
+      if (
+        user.emailVerified ||
+        user.providerId === "google.com" ||
+        user.providerId === "facebook.com"
+      ) {
+        setIsVerifiedUser(true);
+      }
+    }
+
+    setIsLoading(false);
+  }, [user]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -138,12 +156,27 @@ export default function ProductPage({ productData, orgId }: Data) {
     }
   }, []);
 
+  if (!isVerifiedUser) {
+    return (
+      <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
+        <p>Email not verified!</p>
+        <p>
+          Please verify your email <strong>{user?.email}</strong> to continue.
+        </p>
+      </div>
+    );
+  }
+
   if (loading || isLoading || !userRole) {
     return <LoadingState />;
   }
 
   if (error) {
     return <ErrorState error={error.message} />;
+  }
+
+  if (!user) {
+    router.push("/login");
   }
 
   async function handleRateSubmit(e: React.FormEvent<HTMLFormElement>) {

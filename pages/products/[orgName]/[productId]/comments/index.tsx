@@ -2,11 +2,8 @@ import {
   collection,
   doc,
   DocumentData,
-  DocumentReference,
   getDoc,
   getDocs,
-  Timestamp,
-  updateDoc,
 } from "firebase/firestore";
 import { GetStaticProps } from "next";
 import Head from "next/head";
@@ -15,8 +12,9 @@ import { ParsedUrlQuery } from "querystring";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import AuthState from "../../../../../components/AuthState/AuthState";
 import ProductCommentCard from "../../../../../components/cards/ProductCommentCard";
+import ErrorState from "../../../../../components/states/ErrorState";
+import LoadingState from "../../../../../components/states/LoadingState";
 import { auth, db } from "../../../../../firebaseApp";
 
 interface Data {
@@ -35,15 +33,57 @@ interface Params extends ParsedUrlQuery {
   productId: string;
 }
 
-export default function ProductCommentsPage({ productTitle, usersRated }: Data) {
+export default function ProductCommentsPage({
+  productTitle,
+  usersRated,
+}: Data) {
   const [user, loading, error] = useAuthState(auth);
+
+  const [isVerifiedUser, setIsVerifiedUser] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
-  const { orgName, productId } = router.query;
+  // const { orgName, productId } = router.query;
 
-  if (loading || error) {
-    return <AuthState />;
+  useEffect(() => {
+    setIsLoading(true);
+
+    if (user) {
+      if (
+        user.emailVerified ||
+        user.providerId === "google.com" ||
+        user.providerId === "facebook.com"
+      ) {
+        setIsVerifiedUser(true);
+      }
+    }
+
+    setIsLoading(false);
+  }, [user]);
+
+  if (!isVerifiedUser) {
+    return (
+      <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
+        <p>Email not verified!</p>
+        <p>
+          Please verify your email <strong>{user?.email}</strong> to continue.
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <ErrorState error={error.message} />;
+  }
+
+  if (loading || isLoading) {
+    return <LoadingState />;
+  }
+
+  if (!user) {
+    router.push("/login");
   }
 
   return (
@@ -57,7 +97,7 @@ export default function ProductCommentsPage({ productTitle, usersRated }: Data) 
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      
+
       <div className="w-full h-full mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4">
         {usersRated.map((userRated) => (
           <ProductCommentCard

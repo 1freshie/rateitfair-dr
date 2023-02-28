@@ -10,6 +10,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
+import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import ErrorState from "../../../components/states/ErrorState";
 import LoadingState from "../../../components/states/LoadingState";
@@ -27,9 +28,40 @@ interface Params extends ParsedUrlQuery {
 export default function OrgPage({ orgData }: Data) {
   const [user, loading, error] = useAuthState(auth);
 
+  const [isVerifiedUser, setIsVerifiedUser] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
-  if (loading) {
+  useEffect(() => {
+    setIsLoading(true);
+
+    if (user) {
+      if (
+        user.emailVerified ||
+        user.providerId === "google.com" ||
+        user.providerId === "facebook.com"
+      ) {
+        setIsVerifiedUser(true);
+      }
+    }
+
+    setIsLoading(false);
+  }, [user]);
+
+  if (!isVerifiedUser) {
+    return (
+      <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
+        <p>Email not verified!</p>
+        <p>
+          Please verify your email <strong>{user?.email}</strong> to continue.
+        </p>
+      </div>
+    );
+  }
+
+  if (loading || isLoading) {
     return <LoadingState />;
   }
 

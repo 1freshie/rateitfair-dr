@@ -9,7 +9,7 @@ import { GetStaticProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import ProfileCard from "../../../components/cards/ProfileCard";
@@ -18,6 +18,7 @@ import AddProductModal from "../../../components/modals/AddProductModal";
 import RecentlyRatedProductsModal from "../../../components/modals/RecentlyRatedProductsModal";
 import RoleActivityButton from "../../../components/RoleActivity/RoleActivityButton";
 import ErrorState from "../../../components/states/ErrorState";
+import LoadingState from "../../../components/states/LoadingState";
 import { auth, db } from "../../../firebaseApp";
 
 interface Data {
@@ -41,7 +42,41 @@ export default function ProfilePage({
 
   const router = useRouter();
 
+  const [isVerifiedUser, setIsVerifiedUser] = useState(false);
+
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    if (user) {
+      if (
+        user.emailVerified ||
+        user.providerId === "google.com" ||
+        user.providerId === "facebook.com"
+      ) {
+        setIsVerifiedUser(true);
+      }
+    }
+
+    setIsLoading(false);
+  }, [user]);
+
+  if (loading || isLoading) return <LoadingState />;
+
+  if (error) return <ErrorState error={error.message} />;
+
+  if (!isVerifiedUser) {
+    return (
+      <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
+        <p>Email not verified!</p>
+        <p>
+          Please verify your email <strong>{user?.email}</strong> to continue.
+        </p>
+      </div>
+    );
+  }
 
   if (!user) {
     router.push("/login");

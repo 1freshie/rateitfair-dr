@@ -11,7 +11,7 @@ import { deleteObject, ref } from "firebase/storage";
 import { GetStaticProps } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import OrgCard from "../../components/cards/OrgCard";
 import ErrorState from "../../components/states/ErrorState";
@@ -32,10 +32,51 @@ export default function OrgsPage({ orgsData }: Data) {
 
   const router = useRouter();
 
+  const [isVerifiedUser, setIsVerifiedUser] = useState(false);
+
   const [orgList, setOrgList] = useState(orgsData);
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    if (user) {
+      if (
+        user.emailVerified ||
+        user.providerId === "google.com" ||
+        user.providerId === "facebook.com"
+      ) {
+        setIsVerifiedUser(true);
+      }
+    }
+
+    setIsLoading(false);
+  }, [user]);
+
+  if (!isVerifiedUser) {
+    return (
+      <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
+        <p>Email not verified!</p>
+        <p>
+          Please verify your email <strong>{user?.email}</strong> to continue.
+        </p>
+      </div>
+    );
+  }
+
+  if (loading || isLoading) {
+    return <LoadingState />;
+  }
+
+  if (error) {
+    return <ErrorState error={error.message} />;
+  }
+
+  if (!user) {
+    router.push("/login");
+  }
 
   async function handleDeleteOrg(orgId: string) {
     setIsLoading(true);
@@ -95,18 +136,6 @@ export default function OrgsPage({ orgsData }: Data) {
 
     setIsLoading(false);
     setErrorMessage("");
-  }
-
-  if (loading || isLoading) {
-    return <LoadingState />;
-  }
-
-  if (error) {
-    return <ErrorState error={error.message} />;
-  }
-
-  if (!user) {
-    router.push("/login");
   }
 
   return (
