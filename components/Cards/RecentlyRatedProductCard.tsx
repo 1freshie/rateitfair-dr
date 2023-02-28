@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { db } from "../../firebaseApp";
+import LoadingState from "../states/LoadingState";
 
 interface RecentlyRatedProductCardProps {
   orgId: string;
@@ -25,7 +26,11 @@ export default function RecentlyRatedProductCard({
   const [productTitle, setProductTitle] = useState("");
   const [productImageURL, setProductImageURL] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
+    setIsLoading(true);
+
     async function getProductInfo() {
       const orgDoc = doc(db, "organizations", orgId);
 
@@ -44,7 +49,11 @@ export default function RecentlyRatedProductCard({
     }
 
     getProductInfo();
+
+    setIsLoading(false);
   }, []);
+
+  if (isLoading) return <LoadingState />;
 
   return (
     <>
@@ -78,7 +87,10 @@ export default function RecentlyRatedProductCard({
             <div className="w-full h-full p-4 flex flex-col justify-center items-center gap-y-4">
               <div className="flex justify-center items-center gap-x-1">
                 <p className="paragraph text-center">
-                  <span className="text-primary--orange font-medium">{rate}</span>/10
+                  <span className="text-primary--orange font-medium">
+                    {rate}
+                  </span>
+                  /10
                 </p>
                 <StarIcon
                   fill="none"
@@ -87,9 +99,13 @@ export default function RecentlyRatedProductCard({
                 />
               </div>
 
-              <em className="w-5/6 h-auto small-paragraph text-secondary--gray  text-center italic">
-                {comment}
-              </em>
+              <div className="paragraph text-primary--blue font-medium">
+                "{" "}
+                <em className="w-5/6 h-auto small-paragraph text-secondary--gray  text-center">
+                  {comment}
+                </em>{" "}
+                "
+              </div>
             </div>
           </div>
         </Link>

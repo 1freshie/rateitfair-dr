@@ -122,7 +122,7 @@ export const getStaticPaths = async () => {
   const paths = orgsData.map((orgData) => {
     const orgName = orgData.name.toLowerCase().replace(/\s/g, "");
 
-    const products = orgData.products;
+    const products = orgData.products || [];
 
     const productPaths = products.map((product: any) => {
       return {
@@ -205,7 +205,6 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
   // );
 
   const usersRated = sortedUsersRated.map((user: any) => {
-    console.log(user.userRatedAt);
     return {
       ...user,
       userRatedAt: user.userRatedAt.toLocaleString(),

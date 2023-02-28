@@ -1,9 +1,5 @@
 import { StarIcon } from "@heroicons/react/24/solid";
-import {
-  doc,
-  DocumentData,
-  getDoc,
-} from "firebase/firestore";
+import { doc, DocumentData, getDoc } from "firebase/firestore";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -27,6 +23,7 @@ export default function ProductCommentCard({
 }: ProductCommentCardProps) {
   const [user, loading, error] = useAuthState(auth);
 
+  const [username, setUsername] = useState("");
   const [userProfilePhoto, setUserProfilePhoto] = useState("");
   // const [userRateDate, setUserRateDate] = useState(userRatedAt);
 
@@ -39,8 +36,11 @@ export default function ProductCommentCard({
 
         const userData = userSnapshot.data() as DocumentData;
 
+        const username = userData.username;
+
         const userProfilePhoto = userData.photoURL;
 
+        setUsername(username);
         setUserProfilePhoto(userProfilePhoto);
       }
     }
@@ -51,8 +51,8 @@ export default function ProductCommentCard({
   return (
     <article className="w-full h-full border border-secondary--orange rounded-2xl">
       <div className="w-full p-4 flex flex-col justify-center items-center border-b border-b-secondary--orange rounded-t-2xl">
-        <div className="w-full flex flex-col lg:flex-row justify-between items-center">
-          <div className="w-full flex justify-center lg:justify-start items-center gap-x-4">
+        <div className="w-full flex flex-col justify-between items-center gap-y-1">
+          <div className="w-full flex flex-col justify-center items-center gap-y-2">
             <div className="w-8 h-8">
               <Image
                 src={
@@ -68,7 +68,10 @@ export default function ProductCommentCard({
               />
             </div>
             <p className="small-paragraph text-primary--blue font-medium text-center">
-              {userEmail}
+              {username}{" "}
+              <span className="text-secondary--gray font-normal">
+                {userEmail}
+              </span>
             </p>
           </div>
           <div className="flex justify-center items-center gap-x-1">
@@ -87,10 +90,12 @@ export default function ProductCommentCard({
         </div>
         <p className="small-paragraph">{userRatedAt}</p>
       </div>
-      <div className="w-full h-full p-4 text-center">
+      <div className="w-full h-full p-4 heading text-center text-primary--blue">
+        "{" "}
         <em className="paragraph w-full h-auto text-secondary--gray italic">
           {userComment}
         </em>
+        {" "}"
       </div>
     </article>
   );
