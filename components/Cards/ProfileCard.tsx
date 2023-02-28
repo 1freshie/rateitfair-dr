@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dialog, Transition } from "@headlessui/react";
 // import { signOut } from "firebase/auth";
 import { deleteDoc, doc, DocumentData } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { Fragment, useRef, useState } from "react";
@@ -12,7 +13,7 @@ import {
   useSignOut,
 } from "react-firebase-hooks/auth";
 
-import { auth, db } from "../../firebaseApp";
+import { auth, db, storage } from "../../firebaseApp";
 import ErrorState from "../states/ErrorState";
 import LoadingState from "../states/LoadingState";
 
@@ -94,6 +95,14 @@ export default function ProfileCard({ userData }: UserData) {
 
     if (!success) {
       return <ErrorState error="Something went wrong!" />;
+    }
+
+    const storageRef = ref(storage, `users/${user.uid}/profilePhoto/`);
+
+    try {
+      await deleteObject(storageRef);
+    } catch (error: any) {
+      return <ErrorState error={error.message} />;
     }
 
     router.replace("/signup");
