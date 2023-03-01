@@ -1,5 +1,4 @@
 import { Dialog, Transition } from "@headlessui/react";
-import Link from "next/link";
 import { Fragment, useRef } from "react";
 import RecentlyRatedProductCard from "../cards/RecentlyRatedProductCard";
 

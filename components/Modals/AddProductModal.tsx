@@ -2,11 +2,9 @@ import { uuidv4 } from "@firebase/util";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   arrayUnion,
-  collection,
   doc,
   DocumentData,
   getDoc,
-  setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -208,7 +206,7 @@ export default function AddProductModal({
               })
               .catch((error: any) => {
                 setErrorMessage(error.message);
-              })
+              });
           });
       }
     );

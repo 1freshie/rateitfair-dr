@@ -1,15 +1,7 @@
 import { uuidv4 } from "@firebase/util";
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import {
-  arrayUnion,
-  collection,
-  doc,
-  DocumentData,
-  getDoc,
-  setDoc,
-  updateDoc,
-} from "firebase/firestore";
+import { doc, DocumentData, setDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { validateImage } from "image-validator";
 import Image from "next/image";

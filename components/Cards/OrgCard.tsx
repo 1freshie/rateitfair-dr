@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dialog, Transition } from "@headlessui/react";
 import Image from "next/image";
 import Link from "next/link";
-import { title } from "process";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 interface OrgCardProps {

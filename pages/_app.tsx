@@ -1,7 +1,4 @@
 import type { AppProps } from "next/app";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import NavbarNew from "../components/Navbar/NavbarNew";

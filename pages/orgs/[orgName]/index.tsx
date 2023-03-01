@@ -1,4 +1,3 @@
-import { StarIcon } from "@heroicons/react/24/solid";
 import {
   collection,
   doc,
@@ -14,7 +13,6 @@ import { useRouter } from "next/router";
 import { ParsedUrlQuery } from "querystring";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import ProductCard from "../../../components/cards/ProductCard";
 import ShortOrgCard from "../../../components/cards/ShortOrgCard";
 import UserCard from "../../../components/cards/UserCard";
 import ErrorState from "../../../components/states/ErrorState";

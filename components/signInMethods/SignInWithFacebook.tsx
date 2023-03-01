@@ -23,7 +23,6 @@ export default function SignInWithFacebook() {
     const userSnapshot = await getDoc(userDoc);
 
     if (!userSnapshot.exists()) {
-
       try {
         await setDoc(userDoc, {
           id: uid,

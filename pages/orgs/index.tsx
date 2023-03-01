@@ -13,10 +13,10 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+
 import OrgCard from "../../components/cards/OrgCard";
 import ErrorState from "../../components/states/ErrorState";
 import LoadingState from "../../components/states/LoadingState";
-
 import { auth, db, storage } from "../../firebaseApp";
 
 interface Data {
