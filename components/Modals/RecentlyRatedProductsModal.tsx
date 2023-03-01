@@ -75,7 +75,9 @@ export default function RecentlyRatedProductsModal({
                     </div>
                   ) : (
                     <em className="small-paragraph text-center">
-                      No rated products yet...
+                        No rated products yet...
+                        <br />
+                        <span className="text-secondary--orange">Rate some products to see them here!</span>
                     </em>
                   )}
                   <button

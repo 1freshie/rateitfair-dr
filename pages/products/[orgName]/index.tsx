@@ -167,23 +167,29 @@ export default function ProductsPage({ orgData }: Data) {
       </Head>
 
       <div className="w-full h-full mt-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center items-center">
-          {productList.map((product: any, index: number) => (
-            <ProductCard
-              key={index}
-              orgId={orgData.id}
-              orgSlug={orgData.name.toLowerCase().replace(/\s/g, "")}
-              id={product.id}
-              title={product.title}
-              rates={product.rates}
-              // description={product.description}
-              ratesCount={product.ratesCount}
-              imageURL={product.imageURL}
-              isAdminOrOrg={isAdminOrOrg}
-              deleteProduct={handleDeleteProduct}
-            />
-          ))}
-        </div>
+        {productList && productList.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center items-center">
+            {productList.map((product: any, index: number) => (
+              <ProductCard
+                key={index}
+                orgId={orgData.id}
+                orgSlug={orgData.name.toLowerCase().replace(/\s/g, "")}
+                id={product.id}
+                title={product.title}
+                rates={product.rates}
+                // description={product.description}
+                ratesCount={product.ratesCount}
+                imageURL={product.imageURL}
+                isAdminOrOrg={isAdminOrOrg}
+                deleteProduct={handleDeleteProduct}
+              />
+            ))}
+          </div>
+        ) : (
+          <em className="paragraph text-secondary--gray text-center">
+            No available products yet!
+          </em>
+        )}
       </div>
     </>
   );
