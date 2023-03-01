@@ -55,6 +55,10 @@ export default function OrgsPage({ orgsData }: Data) {
     setIsLoading(false);
   }, [user]);
 
+  if (loading || isLoading) {
+    return <LoadingState />;
+  }
+
   if (!isVerifiedUser) {
     return (
       <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
@@ -64,10 +68,6 @@ export default function OrgsPage({ orgsData }: Data) {
         </p>
       </div>
     );
-  }
-
-  if (loading || isLoading) {
-    return <LoadingState />;
   }
 
   if (error) {

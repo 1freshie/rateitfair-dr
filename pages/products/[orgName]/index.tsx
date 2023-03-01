@@ -79,6 +79,10 @@ export default function ProductsPage({ orgData }: Data) {
     setIsLoading(false);
   }, [user]);
 
+  if (loading || isLoading) {
+    return <LoadingState />;
+  }
+
   if (!isVerifiedUser) {
     return (
       <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
@@ -92,10 +96,6 @@ export default function ProductsPage({ orgData }: Data) {
 
   if (error) {
     return <ErrorState error={error.message} />;
-  }
-
-  if (loading || isLoading) {
-    return <LoadingState />;
   }
 
   if (!user) {

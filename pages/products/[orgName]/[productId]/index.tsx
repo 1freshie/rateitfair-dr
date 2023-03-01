@@ -156,6 +156,10 @@ export default function ProductPage({ productData, orgId }: Data) {
     }
   }, []);
 
+  if (loading || isLoading || !userRole) {
+    return <LoadingState />;
+  }
+
   if (!isVerifiedUser) {
     return (
       <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
@@ -165,10 +169,6 @@ export default function ProductPage({ productData, orgId }: Data) {
         </p>
       </div>
     );
-  }
-
-  if (loading || isLoading || !userRole) {
-    return <LoadingState />;
   }
 
   if (error) {
@@ -408,6 +408,8 @@ export default function ProductPage({ productData, orgId }: Data) {
             title={productData.title}
             description={productData.description}
             imageURL={productData.imageURL}
+            ratesCount={productData.ratesCount}
+            rates={productData.rates}
           />
 
           {userRole !== "Admin" && userRole !== "User" ? (
@@ -471,7 +473,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                           className={`paragraph duration-300 ${
                             rateValue! >= i &&
                             rateValue !== null &&
-                            "text-primary--blue"
+                            "text-primary--blue font-bold"
                           }`}
                         >
                           {i}
@@ -512,9 +514,9 @@ export default function ProductPage({ productData, orgId }: Data) {
                     <div className="flex justify-center items-center gap-x-1">
                       <p className="paragraph">
                         You rated this product{" "}
-                        <span className="text-primary--orange font-medium">
+                        <strong className="text-primary--orange">
                           {rateValue}
-                        </span>
+                        </strong>
                         /10
                       </p>
                       <StarIcon

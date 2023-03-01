@@ -103,57 +103,6 @@ export default function SignUpPage({ takenUsernames }: SignUpData) {
     }
   }
 
-  // async function handleFileUpload() {
-  //   if (!file) {
-  //     console.log("No file selected.");
-  //     return;
-  //   }
-
-  //   // setIsLoading(true);
-
-  //   const storageRef = ref(
-  //     storage,
-  //     `users/${createUser!.user.uid}/profilePhoto/`
-  //   );
-  //   console.log("path: " + storageRef.fullPath);
-
-  //   // await uploadFile(storageRef, file);
-
-  //   // const downloadURL = await getDownloadURL(storageRef);
-  //   // console.log(downloadURL);
-  //   // setFileDownloadURL(downloadURL);
-  //   const uploadTask = uploadBytesResumable(storageRef, file);
-
-  //   uploadTask.on(
-  //     "state_changed",
-  //     (snapshot) => {
-  //       const progress =
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //       // console.log("Upload is " + progress + "% done");
-  //       setUploadLoading(progress);
-  //       switch (snapshot.state) {
-  //         case "paused":
-  //           console.log("Upload is paused");
-  //           break;
-  //         case "running":
-  //           console.log("Upload is running");
-  //           break;
-  //       }
-  //     },
-  //     (error) => {
-  //       setErrorMessage(error.message);
-  //     },
-  //     () => {
-  //       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-  //         console.log("File available at", downloadURL);
-  //         setFileDownloadURL(downloadURL);
-  //       });
-  //     }
-  //   );
-
-  //   // setIsLoading(false);
-  // }
-
   async function handleSubmitSignUp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 

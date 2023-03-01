@@ -49,13 +49,6 @@ export default function MyApp({ Component, pageProps }: AppProps) {
           <Component {...pageProps} />
         )} */}
 
-        {/* div className="self-center flex flex-1 flex-col justify-center items-center gap-y-2">
-             <p>Please sign in to continue.</p>
-             <Link href="/login" className="button-blue">Login</Link>
-             <p>No account yet? Sign up now!</p>
-             <Link href="/signup" className="button-orange">Sign up</Link>
-           </div> */}
-
         <Component {...pageProps} />
       </div>
     </div>

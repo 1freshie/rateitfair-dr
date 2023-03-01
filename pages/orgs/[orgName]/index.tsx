@@ -84,6 +84,10 @@ export default function OrgPage({ orgData }: Data) {
     setIsLoading(false);
   }, [user]);
 
+  if (loading || isLoading) {
+    return <LoadingState />;
+  }
+
   if (!isVerifiedUser) {
     return (
       <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
@@ -93,10 +97,6 @@ export default function OrgPage({ orgData }: Data) {
         </p>
       </div>
     );
-  }
-
-  if (loading || isLoading) {
-    return <LoadingState />;
   }
 
   if (error) {
@@ -193,6 +193,7 @@ export default function OrgPage({ orgData }: Data) {
 
                           return (
                             <ShortOrgCard
+                              key={product.id}
                               orgSlug={orgData.name
                                 .toLowerCase()
                                 .replace(/\s/g, "")}
@@ -256,6 +257,7 @@ export default function OrgPage({ orgData }: Data) {
 
                       return (
                         <ShortOrgCard
+                          key={product.id}
                           orgSlug={orgData.name
                             .toLowerCase()
                             .replace(/\s/g, "")}

@@ -63,6 +63,10 @@ export default function ProductCommentsPage({
     setIsLoading(false);
   }, [user]);
 
+  if (loading || isLoading) {
+    return <LoadingState />;
+  }
+
   if (!isVerifiedUser) {
     return (
       <div className="w-full h-full self-center flex flex-col justify-center items-center text-center">
@@ -76,10 +80,6 @@ export default function ProductCommentsPage({
 
   if (error) {
     return <ErrorState error={error.message} />;
-  }
-
-  if (loading || isLoading) {
-    return <LoadingState />;
   }
 
   if (!user) {
