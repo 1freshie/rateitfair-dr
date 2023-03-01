@@ -146,12 +146,24 @@ export default function ProfileCard({ userData }: UserData) {
           </div>
           <div className="w-full flex flex-col items-center justify-between gap-y-1">
             <FontAwesomeIcon icon={faStar} style={iconStyle} />
-            <p className="small-paragraph">
-              <span className="font-medium">
-                {userData.ratedProducts ? userData.ratedProducts.length : 0}
-              </span>{" "}
-              rated products
-            </p>
+            {!userData.orgId ? (
+              <>
+                {userData.role !== "Admin" ? (
+                  <p className="small-paragraph">
+                    <span className="font-medium">
+                      {userData.ratedProducts
+                        ? userData.ratedProducts.length
+                        : 0}
+                    </span>{" "}
+                    rated products
+                  </p>
+                ) : (
+                  <p className="small-paragraph">Administration & Support</p>
+                )}
+              </>
+            ) : (
+              <p className="small-paragraph">Organization Face</p>
+            )}
           </div>
         </div>
         <div className="flex flex-col justify-center items-center gap-y-2">

@@ -53,25 +53,22 @@ export default function ProductCommentCard({
       <div className="w-full p-4 flex flex-col justify-center items-center border-b border-b-secondary--orange rounded-t-2xl">
         <div className="w-full flex flex-col justify-between items-center gap-y-1">
           <div className="w-full flex flex-col justify-center items-center gap-y-2">
-            <div className="w-8 h-8">
+            <div className="w-16 h-16">
               <Image
                 src={
                   userProfilePhoto
                     ? userProfilePhoto
                     : "https://via.placeholder.com/32"
                 }
-                width={32}
-                height={32}
+                width={64}
+                height={64}
                 alt="Profile Photo"
                 className="rounded-full object-center object-cover w-full h-full"
                 priority={true}
               />
             </div>
             <p className="small-paragraph text-primary--blue font-medium text-center">
-              {username}{" "}
-              <span className="text-secondary--gray font-normal">
-                {userEmail}
-              </span>
+              {username} ({userEmail})
             </p>
           </div>
           <div className="flex justify-center items-center gap-x-1">
@@ -94,8 +91,8 @@ export default function ProductCommentCard({
         "{" "}
         <em className="paragraph w-full h-auto text-secondary--gray italic">
           {userComment}
-        </em>
-        {" "}"
+        </em>{" "}
+        "
       </div>
     </article>
   );

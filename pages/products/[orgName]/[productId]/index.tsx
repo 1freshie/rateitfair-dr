@@ -411,7 +411,7 @@ export default function ProductPage({ productData, orgId }: Data) {
           />
 
           {userRole !== "Admin" && userRole !== "User" ? (
-            <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-2xl">
+            <article className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-2xl">
               {errorMessage && <ErrorState error={errorMessage} />}
 
               <h1 className="heading">Ratings</h1>
@@ -438,9 +438,9 @@ export default function ProductPage({ productData, orgId }: Data) {
                   </Link>
                 )}
               </div>
-            </div>
+            </article>
           ) : (
-            <div className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-2xl">
+            <article className="w-full lg:w-1/2 h-full p-6 border border-primary--blue rounded-2xl">
               {errorMessage && <ErrorState error={errorMessage} />}
 
               {inEditMode ? (
@@ -622,7 +622,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                   </Transition.Root>
                 </>
               )}
-            </div>
+            </article>
           )}
         </div>
       )}
