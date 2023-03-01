@@ -146,7 +146,7 @@ export default function OrgCard({
               <h1 className="small-paragraph text-secondary--orange text-center">
                 Users
               </h1>
-              <p className="paragraph text-secondary--gray font-medium text-center">
+              <p className="paragraph text-secondary--gray font-bold text-center">
                 {orgUsersCount}
               </p>
             </div>
@@ -154,7 +154,7 @@ export default function OrgCard({
               <h1 className="small-paragraph text-secondary--orange text-center">
                 Products
               </h1>
-              <p className="paragraph text-secondary--gray font-medium text-center">
+              <p className="paragraph text-secondary--gray font-bold text-center">
                 {orgProductsCount}
               </p>
             </div>

@@ -73,9 +73,7 @@ export default function ProductCommentCard({
           </div>
           <div className="flex justify-center items-center gap-x-1">
             <p className="paragraph">
-              <span className="text-primary--orange font-medium">
-                {userRate}
-              </span>
+              <strong className="text-primary--orange">{userRate}</strong>
               /10
             </p>
             <StarIcon

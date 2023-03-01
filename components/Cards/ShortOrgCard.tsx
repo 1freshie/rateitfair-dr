@@ -43,7 +43,7 @@ export default function ShortOrgCard({
       </h1>
       <div className="flex justify-center items-center text-center gap-x-1">
         <p className="small-paragraph text-secondary--orange">
-          <span className="font-medium">{averageRate}</span>/10
+          <strong>{averageRate}</strong>/10
         </p>
         <StarIcon
           fill="none"

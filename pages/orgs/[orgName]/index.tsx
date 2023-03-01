@@ -64,6 +64,11 @@ export default function OrgPage({ orgData }: Data) {
     setIsLoading(true);
 
     async function updateOrgUsers() {
+      if (!orgData.users) {
+        setOrgUsers([]);
+        return;
+      }
+
       const users = await Promise.all(
         orgData.users.map(async (user: any) => {
           const userDoc = await getDoc(doc(db, "users", user.id));
@@ -124,9 +129,9 @@ export default function OrgPage({ orgData }: Data) {
         </div>
 
         <div className="w-full flex flex-col lg:flex-row justify-between items-center lg:items-start gap-y-8 lg:gap-x-8">
-          <article className="w-full lg:w-auto h-full p-6 flex flex-col items-center gap-y-8 border border-primary--blue rounded-2xl">
+          <article className="w-full h-full p-6 flex flex-col items-center gap-y-8 border border-primary--blue rounded-2xl">
             <h1 className="heading text-center">Users</h1>
-            {orgUsers ? (
+            {orgUsers && orgUsers.length !== 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {orgUsers.map((orgUser: any) => (
                   <UserCard
@@ -145,10 +150,10 @@ export default function OrgPage({ orgData }: Data) {
             )}
           </article>
 
-          <article className="w-full lg:w-auto h-full p-6 flex flex-col justify-center items-center gap-y-8 border border-primary--blue rounded-2xl">
+          <article className="w-full h-full p-6 flex flex-col justify-center items-center gap-y-8 border border-primary--blue rounded-2xl">
             <h1 className="heading text-center">Products</h1>
 
-            {orgData.products ? (
+            {orgData.products && orgData.products.length !== 0 ? (
               <>
                 {totalProducts > 2 ? (
                   <div className="w-full flex flex-col justify-center items-center gap-y-4">
@@ -203,7 +208,7 @@ export default function OrgPage({ orgData }: Data) {
                       <span className="heading text-secondary--gray text-center">
                         ...
                       </span>
-                      <p className="small-paragraph text-center">
+                      <p className="small-paragraph text-secondary--orange text-center">
                         <strong>{totalProducts - 2}</strong> more products...
                       </p>
                       <Link

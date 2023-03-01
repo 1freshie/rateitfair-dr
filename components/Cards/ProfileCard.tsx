@@ -150,11 +150,11 @@ export default function ProfileCard({ userData }: UserData) {
               <>
                 {userData.role !== "Admin" ? (
                   <p className="small-paragraph">
-                    <span className="font-medium">
+                    <strong>
                       {userData.ratedProducts
                         ? userData.ratedProducts.length
                         : 0}
-                    </span>{" "}
+                    </strong>{" "}
                     rated products
                   </p>
                 ) : (

@@ -426,9 +426,8 @@ export default function ProductPage({ productData, orgId }: Data) {
               </div>
               <div className="w-full h-full flex flex-col items-center justify-center gap-y-3">
                 <p className="small-paragraph text-secondary--orange">
-                  There are{" "}
-                  <span className="font-medium">{usersCommentsCount}</span>{" "}
-                  comments on this product...
+                  There are <strong>{usersCommentsCount}</strong> comments on
+                  this product...
                 </p>
                 {usersCommentsCount > 0 && (
                   <Link href={`/products/${orgName}/${productId}/comments`}>

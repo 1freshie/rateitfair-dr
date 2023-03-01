@@ -87,9 +87,7 @@ export default function RecentlyRatedProductCard({
             <div className="w-full h-full p-4 flex flex-col justify-center items-center gap-y-4">
               <div className="flex justify-center items-center gap-x-1">
                 <p className="paragraph text-center">
-                  <span className="text-primary--orange font-medium">
-                    {rate}
-                  </span>
+                  <strong className="text-primary--orange">{rate}</strong>
                   /10
                 </p>
                 <StarIcon
