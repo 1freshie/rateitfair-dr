@@ -210,7 +210,7 @@ export default function ProductPage({ productData, orgId }: Data) {
     const userRatedAt = Timestamp.fromDate(new Date());
 
     if (userRated) {
-      console.log("im here");
+      // console.log("im here");
       newRates[userRated.userRate] -= 1;
 
       userRated = {
@@ -220,7 +220,7 @@ export default function ProductPage({ productData, orgId }: Data) {
         userRatedAt: userRatedAt,
       };
 
-      console.log(userRated);
+      // console.log(userRated);
 
       newUsersRated = newUsersRated.map((currUserRated: any) => {
         if (currUserRated.userId === user!.uid) {
@@ -229,7 +229,7 @@ export default function ProductPage({ productData, orgId }: Data) {
         return currUserRated;
       });
 
-      console.log(newUsersRated);
+      // console.log(newUsersRated);
     } else {
       newUsersRated.push({
         userId: user!.uid,
@@ -451,7 +451,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                     </h1>
                     <p className="paragraph">Choose from 0 to 10...</p>
                   </div>
-                  <div className="w-full h-full my-8 grid grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-2">
+                  <div className="w-full h-full my-8 grid grid-cols-4 md:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2">
                     {[...Array(11)].map((_, i) => (
                       <div
                         key={i}
@@ -682,7 +682,7 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
       productData: {
         ...neededProduct,
         usersRated: neededProduct.usersRated.map((user: any) => {
-          console.log(user.userRatedAt);
+          // console.log(user.userRatedAt);
           return {
             ...user,
             userRatedAt: user.userRatedAt.toDate().toString(),

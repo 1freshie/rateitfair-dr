@@ -1,10 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { validateImage } from "image-validator";
 import { GetStaticProps } from "next";
 import Head from "next/head";
@@ -164,7 +160,7 @@ export default function SignUpPage({ takenUsernames }: SignUpData) {
     if (!newUser) return;
 
     if (file) {
-      console.log("uploading file...");
+      // console.log("uploading file...");
       const storageRef = ref(
         storage,
         `users/${newUser.user.uid}/profilePhoto/`
@@ -193,7 +189,7 @@ export default function SignUpPage({ takenUsernames }: SignUpData) {
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            console.log("File available at", downloadURL);
+            // console.log("File available at", downloadURL);
             // setFileDownloadURL(downloadURL);
 
             const userDoc = doc(db, "users", newUser.user.uid);

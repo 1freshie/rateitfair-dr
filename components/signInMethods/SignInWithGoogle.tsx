@@ -33,7 +33,7 @@ export default function SignInWithGoogle() {
           photoURL: photoURL,
           role: "User",
           orgId: "",
-          ratedProductsCount: 0,
+          // ratedProductsCount: 0,
         });
       } catch (error: any) {
         return <ErrorState error={error.message} />;

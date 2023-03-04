@@ -105,37 +105,70 @@ export default function ProductsPage({ orgData }: Data) {
   async function handleDeleteProduct(productId: string) {
     setIsLoading(true);
 
-    const orgRef = doc(collection(db, "organizations"), orgData.id);
+    const orgDoc = doc(collection(db, "organizations"), orgData.id);
 
     const products = orgData.products.filter(
       (product: DocumentData) => product.id !== productId
     );
 
     try {
-      await updateDoc(orgRef, {
+      await updateDoc(orgDoc, {
         products,
       });
     } catch (error: any) {
       return <ErrorState error={error.message} />;
     }
 
-    const userRef = doc(collection(db, "users"), user!.uid);
+    const usersDoc = await getDocs(collection(db, "users"));
 
-    const userDoc = await getDoc(userRef);
+    const usersData = usersDoc.docs.map((user) => user.data());
 
-    const userData = userDoc.data() as DocumentData;
+    const updatedUsersData = usersData.filter((userData: DocumentData) => {
+      if (userData.ratedProducts) {
+        const ratedProducts = userData.ratedProducts.filter(
+          (product: DocumentData) => product.productId !== productId
+        );
 
-    const ratedProducts = userData.ratedProducts.filter(
-      (product: DocumentData) => product.productId !== productId
-    );
+        return {
+          ...userData,
+          ratedProducts,
+        };
+      } else {
+        return userData;
+      }
+    });
 
-    try {
-      await updateDoc(userRef, {
-        ratedProducts,
-      });
-    } catch (error: any) {
-      return <ErrorState error={error.message} />;
-    }
+    updatedUsersData.forEach(async (userData: DocumentData) => {
+      const userDoc = doc(collection(db, "users"), userData.id);
+
+      if (userData.ratedProducts) {
+        try {
+          await updateDoc(userDoc, {
+            ratedProducts: userData.ratedProducts,
+          });
+        } catch (error: any) {
+          return <ErrorState error={error.message} />;
+        }
+      }
+    });
+
+    // const userRef = doc(collection(db, "users"), user!.uid);
+
+    // const userDoc = await getDoc(userRef);
+
+    // const userData = userDoc.data() as DocumentData;
+
+    // const ratedProducts = userData.ratedProducts.filter(
+    //   (product: DocumentData) => product.productId !== productId
+    // );
+
+    // try {
+    //   await updateDoc(userRef, {
+    //     ratedProducts,
+    //   });
+    // } catch (error: any) {
+    //   return <ErrorState error={error.message} />;
+    // }
 
     const storageRef = ref(
       storage,
@@ -168,7 +201,7 @@ export default function ProductsPage({ orgData }: Data) {
 
       <div className="w-full h-full mt-10">
         {productList && productList.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 justify-items-center items-center">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 justify-items-center items-center">
             {productList.map((product: any, index: number) => (
               <ProductCard
                 key={index}

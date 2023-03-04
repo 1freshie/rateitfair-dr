@@ -31,7 +31,7 @@ export default function SignInWithFacebook() {
           photoURL: photoURL,
           role: "User",
           orgId: "",
-          ratedProductsCount: 0,
+          // ratedProductsCount: 0,
         });
       } catch (error: any) {
         prompt("Error", error.message);

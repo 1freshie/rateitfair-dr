@@ -177,7 +177,7 @@ export default function AddProductModal({
       () => {
         getDownloadURL(uploadTask.snapshot.ref)
           .then((downloadURL) => {
-            console.log("File available at", downloadURL);
+            // console.log("File available at", downloadURL);
 
             newProduct = {
               ...newProduct,

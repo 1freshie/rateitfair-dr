@@ -13,6 +13,7 @@ import { db, storage } from "../../firebaseApp";
 import SelectedUserCard from "../cards/SelectedUserCard";
 import FileInput from "../inputs/FileInput";
 import Input from "../inputs/Input";
+import LoadingState from "../states/LoadingState";
 
 interface AddOrganizationModalProps {
   availableUsers: DocumentData[];
@@ -32,11 +33,11 @@ export default function AddOrganizationModal({
 
   const [enteredOrgName, setEnteredOrgName] = useState("");
 
-  const [uploadFile, uploadLoading, uploadSnapshot, uploadError] =
-    useUploadFile();
+  // const [uploadFile, uploadLoading, uploadSnapshot, uploadError] =
+  //   useUploadFile();
   const [file, setFile] = useState<File>();
   const [filePreviewURL, setFilePreviewURL] = useState("");
-  const [fileDownloadURL, setFileDownloadURL] = useState("");
+  // const [fileDownloadURL, setFileDownloadURL] = useState("");
 
   const [availableUsersForSelection, setAvailableUsersForSelection] =
     useState(availableUsers);
@@ -92,7 +93,9 @@ export default function AddOrganizationModal({
     });
   }, [query, availableUsersForSelection]);
 
-  console.log(selectedUsers);
+  // console.log(selectedUsers);
+
+  if (isLoading) return <LoadingState />;
 
   function handleUserSelectionRemoval(userId: string) {
     setSelectedUsers((prevSelectedUsers) => {
