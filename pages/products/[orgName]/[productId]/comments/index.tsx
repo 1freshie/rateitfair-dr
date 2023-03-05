@@ -217,6 +217,6 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
       productTitle: product.title,
       usersRated,
     },
-    revalidate: 10,
+    revalidate: 1,
   };
 };

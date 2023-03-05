@@ -253,6 +253,6 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
       },
       availableUsers: updatedFilteredUsers,
     },
-    revalidate: 10,
+    revalidate: 1,
   };
 };
