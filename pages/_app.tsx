@@ -30,6 +30,8 @@ export default function MyApp({ Component, pageProps }: AppProps) {
   //   router.replace("/login");
   // }
 
+  // ...
+
   return (
     <div className="min-h-screen flex flex-col py-5 px-7 md:py-10 md:px-14 bg-background--white font-Montserrat">
       <NavbarNew />

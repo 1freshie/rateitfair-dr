@@ -21,9 +21,6 @@ interface AddOrganizationModalProps {
   closeModal: () => void;
 }
 
-// TODO: When adding users to an organization, set the users orgId to the orgId of the organization they are being added to
-// and their role to the organization's name
-
 export default function AddOrganizationModal({
   availableUsers,
   isOpen,
@@ -175,10 +172,10 @@ export default function AddOrganizationModal({
       return;
     }
 
-    // if (selectedUsers.length === 0) {
-    //   setError("Please select at least one user to add to the organization!");
-    //   return;
-    // }
+    if (selectedUsers.length === 0) {
+      setError("Please select at least one user to add to the organization!");
+      return;
+    }
 
     if (!file) {
       setError("Please select a logo for the organization!");
