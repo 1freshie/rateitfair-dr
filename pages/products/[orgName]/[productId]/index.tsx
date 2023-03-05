@@ -361,8 +361,6 @@ export default function ProductPage({ productData, orgId }: Data) {
       }
     }
 
-    // TODO: Check if the user already rated the product!
-
     setIsLoading(false);
     setErrorMessage("");
     setRateValue(null);
@@ -691,6 +689,6 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
       },
       orgId,
     },
-    revalidate: 10,
+    revalidate: 1,
   };
 };
