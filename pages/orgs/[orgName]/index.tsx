@@ -427,5 +427,6 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
         products: updatedOrgProducts,
       },
     },
+    revalidate: 10,
   };
 };

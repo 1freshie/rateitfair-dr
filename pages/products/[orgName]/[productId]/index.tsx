@@ -691,5 +691,6 @@ export const getStaticProps: GetStaticProps<Data, Params> = async (context) => {
       },
       orgId,
     },
+    revalidate: 10,
   };
 };

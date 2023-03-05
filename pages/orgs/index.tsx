@@ -212,5 +212,6 @@ export const getStaticProps: GetStaticProps<Data> = async (context) => {
     props: {
       orgsData: updatedOrgsData,
     },
+    revalidate: 10,
   };
 };
