@@ -30,7 +30,7 @@ export default function ProductCommentCard({
   useEffect(() => {
     async function getUserInfo() {
       if (user) {
-        const userDoc = doc(db, "users", user.uid);
+        const userDoc = doc(db, "users", userId);
 
         const userSnapshot = await getDoc(userDoc);
 

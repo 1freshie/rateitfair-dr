@@ -421,6 +421,6 @@ export const getStaticProps: GetStaticProps<SignUpData> = async (context) => {
     props: {
       takenUsernames,
     },
-    revalidate: 1,
+    // revalidate: 1,
   };
 };
