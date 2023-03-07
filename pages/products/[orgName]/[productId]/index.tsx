@@ -198,7 +198,7 @@ export default function ProductPage({ productData, orgId }: Data) {
 
     if (productData.usersRated) {
       newUsersRated = productData.usersRated;
-      console.log(newUsersRated);
+      // console.log(newUsersRated);
     } else {
       newUsersRated = [];
     }
@@ -226,6 +226,12 @@ export default function ProductPage({ productData, orgId }: Data) {
         if (currUserRated.userId === user!.uid) {
           return userRated;
         }
+
+        // console.log(currUserRated.userRatedAt);
+        // const localeTimestamp = Date.parse(currUserRated.userRatedAt);
+        // const fixedDate = new Date(localeTimestamp);
+        // console.log(fixedDate);
+
         return currUserRated;
       });
 
@@ -252,12 +258,31 @@ export default function ProductPage({ productData, orgId }: Data) {
     //   userRatedAt: userRatedAt,
     // });
 
+    const updatedNewUsersRated = newUsersRated.map((userRated: any) => {
+      if (userRated.userRatedAt instanceof Timestamp) {
+        return userRated;
+      }
+
+      const localeTimestamp = Date.parse(userRated.userRatedAt);
+      const fixedDate = new Date(localeTimestamp);
+      const fixedFirebaseDate = Timestamp.fromDate(fixedDate);
+
+      return {
+        ...userRated,
+        userRatedAt: fixedFirebaseDate,
+      };
+    });
+
+    // console.log(updatedNewUsersRated);
+
     const updatedProduct = {
       ...productData,
       rates: newRates,
       ratesCount: newRatesCount,
-      usersRated: newUsersRated,
+      usersRated: updatedNewUsersRated,
     };
+
+    // console.log("updatedProduct");
 
     const orgDoc = doc(db, "organizations", orgId);
 
@@ -338,15 +363,6 @@ export default function ProductPage({ productData, orgId }: Data) {
           ratedAt: userRatedAt,
         });
       }
-
-      // newRatedProducts.push({
-      //   orgId: orgData.id,
-      //   productId: productData.id,
-      //   comment: enteredComment,
-      //   rate: rateValue,
-      //   // editMode: false,
-      //   ratedAt: userRatedAt,
-      // });
 
       const newUserData = {
         ...userData,

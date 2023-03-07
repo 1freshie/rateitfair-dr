@@ -98,17 +98,19 @@ export default function ProductCommentsPage({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="w-full h-full mt-10 grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {usersRated.map((userRated) => (
-          <ProductCommentCard
-            key={userRated.userId}
-            userId={userRated.userId}
-            userComment={userRated.userComment}
-            userRate={userRated.userRate}
-            userEmail={userRated.userEmail}
-            userRatedAt={userRated.userRatedAt}
-          />
-        ))}
+      <div className="w-full h-full">
+        <div className="mt-10 flex flex-col lg:grid lg:grid-cols-2 gap-4">
+          {usersRated.map((userRated) => (
+            <ProductCommentCard
+              key={userRated.userId}
+              userId={userRated.userId}
+              userComment={userRated.userComment}
+              userRate={userRated.userRate}
+              userEmail={userRated.userEmail}
+              userRatedAt={userRated.userRatedAt}
+            />
+          ))}
+        </div>
       </div>
     </>
   );

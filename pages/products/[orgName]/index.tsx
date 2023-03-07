@@ -201,7 +201,7 @@ export default function ProductsPage({ orgData }: Data) {
 
       <div className="w-full h-full mt-10">
         {productList && productList.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 justify-items-center items-center">
+          <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 justify-items-center items-center">
             {productList.map((product: any, index: number) => (
               <ProductCard
                 key={index}

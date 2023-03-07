@@ -58,7 +58,7 @@ export default function ProductCommentCard({
                 src={
                   userProfilePhoto
                     ? userProfilePhoto
-                    : "https://via.placeholder.com/32"
+                    : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
                 }
                 width={64}
                 height={64}

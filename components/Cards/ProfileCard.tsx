@@ -120,7 +120,7 @@ export default function ProfileCard({ userData }: UserData) {
     <div className="h-full w-full flex justify-center">
       <div className="w-full lg:w-[500px] flex flex-col justify-center items-center gap-y-6 border border-primary--blue rounded-2xl p-4">
         <div className="flex flex-col justify-center items-center gap-y-2">
-          <div className="w-24 h-24">
+          <div className="w-16 h-16 lg:w-24 lg:h-24">
             <Image
               src={
                 userData.photoURL

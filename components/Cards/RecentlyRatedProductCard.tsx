@@ -61,15 +61,15 @@ export default function RecentlyRatedProductCard({
         <Link href={`/products/${orgSlug}/${productId}`} className="w-full">
           <div className="w-full flex flex-col justify-center items-center border border-secondary--orange duration-300 hover:border-primary--orange rounded-2xl">
             <div className="w-full p-4 flex flex-col justify-center items-center gap-y-4 border-b border-b-secondary--orange rounded-t-2xl">
-              <div className="h-24">
+              <div className="w-24 h-24 lg:w-32 lg:h-32">
                 <Image
                   src={
                     productImageURL
                       ? productImageURL
-                      : "https://via.placeholder.com/96"
+                      : "https://via.placeholder.com/128"
                   }
-                  width={96}
-                  height={96}
+                  width={128}
+                  height={128}
                   alt="Product Image"
                   className="w-full h-full"
                   priority={true}

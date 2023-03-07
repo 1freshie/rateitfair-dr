@@ -28,7 +28,7 @@ export default function ShortOrgCard({
       href={`/products/${orgSlug}/${productId}`}
       className="w-full h-full flex flex-col justify-center items-center gap-y-2 p-6 border border-secondary--gray hover:border-primary--blue duration-300 rounded-2xl"
     >
-      <div className="w-32 h-32">
+      <div className="w-24 h-24 lg:w-32 lg:h-32">
         <Image
           src={productImageURL}
           alt="Product image"

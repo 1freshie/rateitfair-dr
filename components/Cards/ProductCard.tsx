@@ -184,13 +184,16 @@ export default function ProductCard({
             </Transition.Root>
           </>
         )}
-        <Image
-          src={imageURL}
-          width={128}
-          height={128}
-          alt={title}
-          className="w-auto h-auto"
-        />
+
+        <div className="w-24 h-24 lg:w-32 lg:h-32">
+          <Image
+            src={imageURL}
+            width={128}
+            height={128}
+            alt={title}
+            className="w-full h-full"
+          />
+        </div>
         <h1 className="paragraph w-11/12 text-primary--blue font-medium text-center">
           {title}
         </h1>
@@ -210,8 +213,7 @@ export default function ProductCard({
           </div>
           <p className="small-paragraph">
             {"("}
-            <strong>{ratesCount}</strong> total rates so
-            far...)
+            <strong>{ratesCount}</strong> total rates so far...)
           </p>
         </div>
         <button className="duration-300 button-orange">

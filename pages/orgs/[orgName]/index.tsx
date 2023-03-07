@@ -114,8 +114,8 @@ export default function OrgPage({ orgData }: Data) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="self-center flex-1 flex flex-col items-center justify-center gap-y-8">
-        <div className="w-64 h-64">
+      <div className="self-center mt-10 flex-1 flex flex-col items-center justify-center gap-y-8">
+        <div className=" lg:w-48 lg:h-48">
           <Image
             src={orgData.logoURL}
             alt="Org Logo"
@@ -130,7 +130,7 @@ export default function OrgPage({ orgData }: Data) {
           <article className="w-full h-full p-6 flex flex-col items-center gap-y-8 border border-primary--blue rounded-2xl">
             <h1 className="heading text-center">Users</h1>
             {orgUsers && orgUsers.length !== 0 ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
                 {orgUsers.map((orgUser: any) => (
                   <UserCard
                     key={orgUser.id}
@@ -155,7 +155,7 @@ export default function OrgPage({ orgData }: Data) {
               <>
                 {totalProducts > 2 ? (
                   <div className="w-full flex flex-col justify-center items-center gap-y-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
                       {orgData.products
                         .slice(totalProducts - 2, totalProducts)
                         .map((product: any) => {
@@ -221,7 +221,7 @@ export default function OrgPage({ orgData }: Data) {
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                  <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
                     {orgData.products.map((product: any) => {
                       let rates = {
                         0: 0,
@@ -276,88 +276,6 @@ export default function OrgPage({ orgData }: Data) {
             )}
           </article>
         </div>
-
-        {/* <article className="w-full lg:w-auto h-full p-6 flex flex-col justify-center items-center gap-y-8 border border-primary--blue rounded-2xl">
-          <h1 className="heading text-center">Products</h1>
-
-          {orgData.products && totalProducts < 3 ? (
-            
-          )}
-
-          // {orgData.products ? (
-          //   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          //     {orgData.products.map((product: any) => {
-          //       let rates = {
-          //         0: 0,
-          //         1: 0,
-          //         2: 0,
-          //         3: 0,
-          //         4: 0,
-          //         5: 0,
-          //         6: 0,
-          //         7: 0,
-          //         8: 0,
-          //         9: 0,
-          //         10: 0,
-          //       };
-
-                rates = product.rates;
-
-                let sum = 0;
-                let count = 0;
-
-                for (const [key, value] of Object.entries(rates)) {
-                  if (value > 0) {
-                    sum += Number(key) * value;
-                    count += value;
-                  }
-                }
-
-                let average = count > 0 ? sum / count : 0;
-
-                const averageRate = Math.round(average * 10) / 10;
-
-          //       return (
-          //         // <Link
-          //         //   href={`/${orgData.name
-          //         //     .toLowerCase()
-          //         //     .replace(/\s/g, "")}/products/${product.id}`}
-          //         //   key={product.id}
-          //         //   className="w-full h-full flex flex-col justify-center items-center gap-y-2 p-6 border border-primary--blue rounded-2xl"
-          //         // >
-          //         //   <div className="w-32 h-32">
-          //         //     <Image
-          //         //       src={product.imageURL}
-          //         //       alt="Product Image"
-          //         //       width={128}
-          //         //       height={128}
-          //         //       className="w-full h-full"
-          //         //       priority={true}
-          //         //     />
-          //         //   </div>
-          //         //   <h1 className="small-paragraph text-primary--blue text-center">
-          //         //     {product.title}
-          //         //   </h1>
-          //         //   <div className="flex justify-center items-center text-center gap-x-1">
-          //         //     <p className="small-paragraph text-secondary--orange">
-          //         //       <span className="font-medium">{averageRate}</span>/10
-          //         //     </p>
-          //         //     <StarIcon
-          //         //       fill="none"
-          //         //       stroke="#f9ab55"
-          //         //       className="w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6 text-primary--orange"
-          //         //     />
-          //         //   </div>
-          //         // </Link>
-          //       );
-          //     })}
-          //   </div>
-          // ) : (
-          //   <em className="paragraph text-secondary--gray">
-          //     No products yet...
-          //   </em>
-          // )}
-        </article> */}
       </div>
     </>
   );
