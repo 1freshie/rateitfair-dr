@@ -2,7 +2,7 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-interface ProductProps {
+interface ProductInfoCardProps {
   title: string;
   description: string;
   imageURL: string;
@@ -22,13 +22,13 @@ interface ProductProps {
   };
 }
 
-export default function ProductInfo({
+export default function ProductInfoCard({
   title,
   description,
   imageURL,
   ratesCount,
   rates,
-}: ProductProps) {
+}: ProductInfoCardProps) {
   const [averageRate, setAverageRate] = useState(0);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export default function ProductInfo({
 
   return (
     <article className="w-full h-full flex flex-1 flex-col gap-y-4 lg:gap-y-5 justify-center items-center">
-      <div className="w-64 h-64">
+      <div className="w-48 h-48 lg:w-64 lg:h-64">
         <Image
           src={imageURL}
           width={256}

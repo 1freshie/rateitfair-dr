@@ -28,7 +28,7 @@ import { Bar } from "react-chartjs-2";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import TextArea from "../../../../components/inputs/TextArea";
-import ProductInfo from "../../../../components/ProductInfo/ProductInfo";
+import ProductInfoCard from "../../../../components/cards/ProductInfoCard";
 import ErrorState from "../../../../components/states/ErrorState";
 import LoadingState from "../../../../components/states/LoadingState";
 import { auth, db } from "../../../../firebaseApp";
@@ -417,7 +417,7 @@ export default function ProductPage({ productData, orgId }: Data) {
 
       {user && (
         <div className="w-full h-full self-center flex flex-1 flex-col lg:flex-row gap-y-11 lg:gap-x-11 justify-between items-center text-center">
-          <ProductInfo
+          <ProductInfoCard
             title={productData.title}
             description={productData.description}
             imageURL={productData.imageURL}
