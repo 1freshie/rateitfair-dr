@@ -35,7 +35,7 @@ export default function FileInput({
               />
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+            <div className="flex flex-col items-center justify-center pt-5 pb-6 px-2">
               <div className="flex items-center justify-center">
                 <span className="rounded-full inline-flex items-center justify-center h-8 lg:h-10 w-8 lg:w-10 bg-background--white text-secondary--gray">
                   <FontAwesomeIcon icon={faCloudArrowUp} />
