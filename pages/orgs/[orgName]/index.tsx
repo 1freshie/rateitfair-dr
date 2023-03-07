@@ -105,6 +105,34 @@ export default function OrgPage({ orgData }: Data) {
     router.push("/login");
   }
 
+  function calculateAverageRate(rates: {
+    0: 0;
+    1: 0;
+    2: 0;
+    3: 0;
+    4: 0;
+    5: 0;
+    6: 0;
+    7: 0;
+    8: 0;
+    9: 0;
+    10: 0;
+  }) {
+    let sum = 0;
+    let count = 0;
+
+    for (const [key, value] of Object.entries(rates)) {
+      if (value > 0) {
+        sum += Number(key) * value;
+        count += value;
+      }
+    }
+
+    let average = count > 0 ? sum / count : 0;
+
+    return Math.round(average * 10) / 10;
+  }
+
   return (
     <>
       <Head>
@@ -159,35 +187,9 @@ export default function OrgPage({ orgData }: Data) {
                       {orgData.products
                         .slice(totalProducts - 2, totalProducts)
                         .map((product: any) => {
-                          let rates = {
-                            0: 0,
-                            1: 0,
-                            2: 0,
-                            3: 0,
-                            4: 0,
-                            5: 0,
-                            6: 0,
-                            7: 0,
-                            8: 0,
-                            9: 0,
-                            10: 0,
-                          };
-
-                          rates = product.rates;
-
-                          let sum = 0;
-                          let count = 0;
-
-                          for (const [key, value] of Object.entries(rates)) {
-                            if (value > 0) {
-                              sum += Number(key) * value;
-                              count += value;
-                            }
-                          }
-
-                          let average = count > 0 ? sum / count : 0;
-
-                          const averageRate = Math.round(average * 10) / 10;
+                          const averageRate = calculateAverageRate(
+                            product.rates
+                          );
 
                           return (
                             <ShortOrgCard
@@ -223,35 +225,7 @@ export default function OrgPage({ orgData }: Data) {
                 ) : (
                   <div className="flex flex-col lg:grid lg:grid-cols-2 gap-4">
                     {orgData.products.map((product: any) => {
-                      let rates = {
-                        0: 0,
-                        1: 0,
-                        2: 0,
-                        3: 0,
-                        4: 0,
-                        5: 0,
-                        6: 0,
-                        7: 0,
-                        8: 0,
-                        9: 0,
-                        10: 0,
-                      };
-
-                      rates = product.rates;
-
-                      let sum = 0;
-                      let count = 0;
-
-                      for (const [key, value] of Object.entries(rates)) {
-                        if (value > 0) {
-                          sum += Number(key) * value;
-                          count += value;
-                        }
-                      }
-
-                      let average = count > 0 ? sum / count : 0;
-
-                      const averageRate = Math.round(average * 10) / 10;
+                      const averageRate = calculateAverageRate(product.rates);
 
                       return (
                         <ShortOrgCard
