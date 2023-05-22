@@ -192,6 +192,7 @@ export default function ProductCard({
             height={128}
             alt={title}
             className="w-full h-full"
+            priority={true}
           />
         </div>
         <h1 className="paragraph w-11/12 text-primary--blue font-medium text-center">
