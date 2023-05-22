@@ -145,7 +145,7 @@ export default function ProductPage({ productData, orgId }: Data) {
     checkIfUserRated();
 
     setIsLoading(false);
-  }, [user]);
+  }, [user, confirmEditing]);
 
   useEffect(() => {
     for (const key in productData.rates) {
@@ -545,7 +545,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                         You also commented on it:
                       </p>
                       <em className="small-paragraph text-center italic">
-                        {enteredComment}
+                        {enteredComment ? enteredComment : "..."}
                       </em>
                     </div>
                   )}
