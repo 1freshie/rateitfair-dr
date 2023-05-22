@@ -82,6 +82,7 @@ export default function ProductPage({ productData, orgId }: Data) {
   const [showBar, setShowBar] = useState(false);
   const [confirmEditing, setConfirmEditing] = useState(false);
   const [inEditMode, setInEditMode] = useState(true);
+  const [isRating, setIsRating] = useState(false);
 
   const [usersCommentsCount, setUsersCommentsCount] = useState<number>(
     productData.usersRated.filter(
@@ -135,8 +136,8 @@ export default function ProductPage({ productData, orgId }: Data) {
           } else {
             setRateValue(null);
             setEnteredComment("");
-          //   // setInEditMode(true);
-          //   // setInEditMode(true);
+            //   // setInEditMode(true);
+            //   // setInEditMode(true);
           }
         }
       }
@@ -145,7 +146,7 @@ export default function ProductPage({ productData, orgId }: Data) {
     checkIfUserRated();
 
     setIsLoading(false);
-  }, [user, confirmEditing]);
+  }, [user, isRating, confirmEditing]);
 
   useEffect(() => {
     for (const key in productData.rates) {
@@ -383,6 +384,7 @@ export default function ProductPage({ productData, orgId }: Data) {
     setEnteredComment("");
     setConfirmEditing(false);
     setInEditMode(false);
+    setIsRating(true);
   }
 
   function handleCommentChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -402,6 +404,7 @@ export default function ProductPage({ productData, orgId }: Data) {
         backgroundColor: "rgba(249, 171, 85, 0.2)",
         borderColor: "rgba(245, 138, 7, 1)",
         borderWidth: 1,
+        pointHoverRadius: 10,
       },
     ],
   };
@@ -545,7 +548,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                         You also commented on it:
                       </p>
                       <em className="small-paragraph text-center italic">
-                        {enteredComment ? enteredComment : "..."}
+                        {enteredComment}
                       </em>
                     </div>
                   )}
