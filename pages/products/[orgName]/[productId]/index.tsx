@@ -27,8 +27,8 @@ import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { useAuthState } from "react-firebase-hooks/auth";
 
-import TextArea from "../../../../components/inputs/TextArea";
 import ProductInfoCard from "../../../../components/cards/ProductInfoCard";
+import TextArea from "../../../../components/inputs/TextArea";
 import ErrorState from "../../../../components/states/ErrorState";
 import LoadingState from "../../../../components/states/LoadingState";
 import { auth, db } from "../../../../firebaseApp";
@@ -135,8 +135,8 @@ export default function ProductPage({ productData, orgId }: Data) {
           } else {
             setRateValue(null);
             setEnteredComment("");
-            setInEditMode(true);
-            // setInEditMode(true);
+          //   // setInEditMode(true);
+          //   // setInEditMode(true);
           }
         }
       }
@@ -145,7 +145,7 @@ export default function ProductPage({ productData, orgId }: Data) {
     checkIfUserRated();
 
     setIsLoading(false);
-  }, [user, inEditMode]);
+  }, [user]);
 
   useEffect(() => {
     for (const key in productData.rates) {
@@ -528,7 +528,7 @@ export default function ProductPage({ productData, orgId }: Data) {
                       <p className="paragraph">
                         You rated this product{" "}
                         <strong className="text-primary--orange">
-                          {rateValue}
+                          {rateValue ? rateValue : "..."}
                         </strong>
                         /10
                       </p>
@@ -636,6 +636,19 @@ export default function ProductPage({ productData, orgId }: Data) {
                   </Transition.Root>
                 </>
               )}
+              <div className="w-full h-full mt-8 flex flex-col items-center justify-center gap-y-3">
+                <p className="small-paragraph text-secondary--gray">
+                  There are <strong>{usersCommentsCount}</strong> comments on
+                  this product...
+                </p>
+                {usersCommentsCount > 0 && (
+                  <Link href={`/products/${orgName}/${productId}/comments`}>
+                    <button className="button-orange duration-300">
+                      View all
+                    </button>
+                  </Link>
+                )}
+              </div>
             </article>
           )}
         </div>
